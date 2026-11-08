@@ -65,7 +65,7 @@ Hand-edited data:
 - Working canvas `W x H` = 160 x 230, skin at `OX, OY` = 60, 112.
 - Views: `VIEW` (head-and-chest crop, `ART_H` 84px art), `BODY_VIEW`/`LOOK_VIEW` (whole body, `.art-box.tall`), `MINI_VIEW` (Equipped tiles), `PREVIEW_VIEW` 150 with `PREVIEW_PAD` 256.
 - `#preview` exposes `data-zoom`, `data-view` and `data-pose` for tests.
-- `exportPng()` exists but is not wired to any button.
+- Copy character image (stage tool, Character book): `copyCharacter()` in `src/main.js` copies the character alone (name tag and chat bubble left out, no backdrop), in the pose on show, cropped to its opaque box at 4x, as a transparent PNG to the clipboard; if the browser refuses clipboard images it downloads `maple-character.png` instead. The old `exportPng()` was replaced by it.
 - **Feature flags:** `SHOW_UPCOMING = false`. `DISABLED_SLOTS` is empty (a slot named there is hidden everywhere).
 - **Storage keys** (localStorage, prefix kept as `maple-layers:` so saves survive): `looks-v1` (Look Book), `working-v1` (the stage's current look and baseline), `default-v2` (legacy single default, migrated into the book as `look-1` on first read), `housing-v2`.
 - Vercel Analytics: `if (import.meta.env.PROD && !location.hostname.endsWith('github.io')) import('@vercel/analytics').then(m => m.inject()).catch(() => {})` (it only works on Vercel). **Keep it a dynamic, fail-safe import.** A static import let ad blockers (which block anything named "analytics") kill the whole module graph and blank the page. Mention analytics in any privacy notice.

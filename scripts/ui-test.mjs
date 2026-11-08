@@ -50,6 +50,17 @@ check('hair cards still draw with no face worn', borrowed);
 await clickTab('Face'); await settle(); await (await page.$$('#content .grid .card:not(.placeholder)'))[0].click(); await settle();
 await clickTab('Hair'); await settle(); await (await page.$$('#content .grid .card:not(.placeholder)'))[0].click(); await settle();
 check('picking a face and a hair equips them', (await page.$$('#colour .slot')).length === 2);
+{
+  // Copy character image: the clipboard is replaced by a stub that decodes what it is given.
+  await page.evaluate(() => {
+    window.__copied = null;
+    navigator.clipboard.write = async items => { const blob = await items[0].getType('image/png'); const bmp = await createImageBitmap(blob); const c = document.createElement('canvas'); c.width = bmp.width; c.height = bmp.height; const x = c.getContext('2d'); x.drawImage(bmp, 0, 0); const d = x.getImageData(0, 0, c.width, c.height).data; let opaque = 0; for (let k = 3; k < d.length; k += 4) if (d[k]) opaque++; window.__copied = { w: c.width, h: c.height, corner: d[3], opaque, type: blob.type }; };
+  });
+  await page.click('button.tool[aria-label^="Copy character image"]');
+  await page.waitForFunction(() => window.__copied, { timeout: 5000 }).catch(() => {});
+  const got = await page.evaluate(() => window.__copied);
+  check('the copy button puts a PNG of the character alone on the clipboard, corner transparent', !!got && got.type === 'image/png' && got.corner === 0 && got.opaque > 500 && got.opaque < got.w * got.h * 0.9, JSON.stringify(got));
+}
 
 // Body tab: gender picker and the undergarments that come with it (not equipped items, not in the Top and Bottom lists)
 await clickTab('Body'); await settle();

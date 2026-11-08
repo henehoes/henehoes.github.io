@@ -82,7 +82,7 @@ input { font: inherit; border-radius: 0; }
 .tool.pose[aria-pressed="true"] { background: linear-gradient(to bottom, var(--brass), var(--brass-dark)); box-shadow: 0 -3px 0 0 var(--bench-line), 0 3px 0 0 var(--bench-line), -3px 0 0 0 var(--bench-line), 3px 0 0 0 var(--bench-line), inset 0 2px 0 0 var(--brass-dark); }
 .small-btn { padding: 5px 12px; font: 11px var(--font-label); }
 .btn-row { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 14px; padding: 3px; }
-.stage-note { position: absolute; top: 18px; left: 140px; z-index: 2; font: 11px var(--font-label); color: #fff; text-shadow: 1px 1px 0 oklch(25% .05 255); opacity: 0; transition: opacity .2s; pointer-events: none; }
+.stage-note { position: absolute; top: 18px; left: 176px; z-index: 2; font: 11px var(--font-label); color: #fff; text-shadow: 1px 1px 0 oklch(25% .05 255); opacity: 0; transition: opacity .2s; pointer-events: none; }
 .stage-note.show { opacity: 1; }
 
 /* ---- Equipped panel (the workbench) ---- */
@@ -399,3 +399,8 @@ input { font: inherit; border-radius: 0; }
 .past-title ~ .past-section ~ .colour-bar { margin: 6px 3px 4px; }
 .group-title.sub { margin: 14px 0 8px; font-size: 15px; }
 .group-title.sub::before { width: 6px; height: 6px; }
+
+/* A seamless page: the Equipped panel, the catalogue list and the left column still scroll (wheel, trackpad, touch, keyboard) but show
+   no scrollbar of their own, even where the system is set to always show scroll bars. */
+.scroll, .colour, .side { scrollbar-width: none; }
+.scroll::-webkit-scrollbar, .colour::-webkit-scrollbar, .side::-webkit-scrollbar { display: none; }

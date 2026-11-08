@@ -1210,24 +1210,42 @@ function select(slot, id) {
 function afterChangeKeep(keepScroll = true) { renderTabs(); renderFilters(); renderContent(keepScroll); renderColour(); renderPreview(); }
 function afterChange() { afterChangeKeep(); }
 
-// ---------- export ----------
-// Saves the character as a PNG. Not wired to any button at the moment (the Download button was removed): call exportPng() to use it.
-async function exportPng() {
-  const out = await withScene(state, (buf, source) => {
-    let x0 = W, y0 = H, x1 = 0, y1 = 0;
-    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) if (buf.data[(y * W + x) * 4 + 3]) { x0 = Math.min(x0, x); y0 = Math.min(y0, y); x1 = Math.max(x1, x); y1 = Math.max(y1, y); }
-    const pad = 4, w = x1 - x0 + 1 + pad * 2, h = y1 - y0 + 1 + pad * 2;
-    const c = el('canvas', { width: w * 4, height: h * 4 });
+// ---------- copy the character as a picture ----------
+// The character alone (no name tag or chat bubble, no backdrop), in the pose on show, cropped to its opaque box, on a transparent
+// background, each sprite pixel drawn as 4 whole pixels. It goes to the clipboard as a PNG; where the browser will not allow that
+// (no clipboard image support, or an insecure page) the same picture is downloaded instead.
+async function characterPng() {
+  const wear = { ...state.wear };
+  for (const slot of RING_SLOTS) wear[slot] = { ...wear[slot], item: null };
+  const out = await withScene({ ...state, wear }, (buf, source) => {
+    const w = buf.width ?? source.width, h = source.height;
+    let x0 = w, y0 = h, x1 = -1, y1 = -1;
+    for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) if (buf.data[(y * w + x) * 4 + 3]) { x0 = Math.min(x0, x); y0 = Math.min(y0, y); x1 = Math.max(x1, x); y1 = Math.max(y1, y); }
+    if (x1 < 0) return null;
+    const pad = 4, cw = x1 - x0 + 1 + pad * 2, ch = y1 - y0 + 1 + pad * 2;
+    const c = el('canvas', { width: cw * 4, height: ch * 4 });
     const ctx = c.getContext('2d');
     ctx.imageSmoothingEnabled = false;
-    ctx.drawImage(source, x0 - pad, y0 - pad, w, h, 0, 0, w * 4, h * 4);
+    ctx.drawImage(source, x0 - pad, y0 - pad, cw, ch, 0, 0, cw * 4, ch * 4);
     return c;
-  });
-  out.toBlob(blob => {
-    const a = el('a', { href: URL.createObjectURL(blob), download: 'maple-character.png' });
-    a.click();
-    URL.revokeObjectURL(a.href);
-  });
+  }, pose, PREVIEW_PAD);
+  return out && new Promise(res => out.toBlob(res, 'image/png'));
+}
+async function copyCharacter() {
+  try {
+    const made = characterPng();
+    if (!(await made)) return flash('Nothing to copy');
+    try {
+      // The blob is handed over as a promise so Safari still counts this as part of the click.
+      await navigator.clipboard.write([new ClipboardItem({ 'image/png': made })]);
+      flash('Character copied');
+    } catch {
+      const a = el('a', { href: URL.createObjectURL(await made), download: 'maple-character.png' });
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+      flash('Saved as a picture');
+    }
+  } catch { flash('Could not copy'); }
 }
 
 // ---------- preview buttons: randomise, save as default, back to default ----------
@@ -1376,6 +1394,7 @@ const ICONS = {
   random: '<rect width="12" height="12" x="2" y="10" rx="2" ry="2"/><path d="m17.92 14 3.5-3.5a2.24 2.24 0 0 0 0-3l-5-4.92a2.24 2.24 0 0 0-3 0L10 6"/><path stroke-width="3" d="M6 18h.01M10 14h.01M15 6h.01M18 9h.01"/>', // two dice (the Lucide "dices" icon, ISC licence, as in the mockup)
   save: '<path d="M5 3h11l3 3v15H5zM8 3v5h7V3M8 21v-7h8v7"/>',
   reset: '<path d="M4 12a8 8 0 1 0 2.6-5.9M4 4v4.5h4.5"/>',
+  copy: '<rect width="13" height="13" x="8" y="8" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/>',
   trash: '<path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>', // Lucide "trash-2" (ISC licence)
 };
 function stageTools() {
@@ -1391,7 +1410,8 @@ function stageTools() {
   : [
     make('random', 'Randomise look', randomise),
     make('save', 'Save to the Look Book (adds a new look)', saveLook),
-    make('reset', 'Undo changes since the look was loaded or saved', undoChanges)]));  poseButtons();
+    make('reset', 'Undo changes since the look was loaded or saved', undoChanges),
+    make('copy', 'Copy character image (transparent background)', copyCharacter)]));  poseButtons();
 }
 
 // The two books, as tabs along the top of the page: dressing up a character, and decorating a home.
