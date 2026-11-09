@@ -34,7 +34,7 @@ export function askUnlock() {
     const q1 = h('label', { htmlFor: 'gate-name' }); q1.innerHTML = 'Who made <b>henehoes</b>?';
     const form = h('form', { method: 'dialog' },
       h('h2', { id: 'gate-title', textContent: 'Datamine is locked' }),
-      h('p', { className: 'gate-note', textContent: 'Answer both questions once and it stays open in this browser.' }),
+      h('p', { className: 'gate-note', textContent: "Loading this many images for thousands of visitors will push us past our hosting limits, so the datamine is limited to friends for now. Answer these two questions to unlock all Datamine tabs:" }),
       q1, name,
       h('label', { textContent: 'What have they been trying to dye?' }),
       h('div', { className: 'gate-row' }, item, colour),
