@@ -2,6 +2,7 @@
 // home; the selected piece carries a mirror button (top left) and a remove button (top right) right on it. Data:
 // public/housing/catalog.json (made by scripts/extract-housing.mjs). main.js calls into this file while the Housing book is open;
 // this file does not know about the character side.
+import { assetUrl, loadCors } from './assets.js';
 const KEY = 'maple-layers:housing-v2'; // v2: the home pictures are cropped to the house, so v1 positions would be off
 export const MAX_PIECES = 16;           // the most pieces a home holds
 let h;            // helpers from main.js: { el, $, iconBox, flash, refresh }
@@ -48,7 +49,7 @@ export function renderContent(c, tab, matches, changed) {
   if (tab === 'homes') {
     const grid = h.el('div', { className: 'grid homes' });
     for (const home of data.homes.filter(x => matches(x.name))) {
-      const img = h.el('img', { className: 'home-thumb', src: '/' + home.file, alt: '', loading: 'lazy' });
+      const img = h.el('img', { className: 'home-thumb', src: assetUrl(home.file), alt: '', loading: 'lazy' });
       const b = h.el('button', { className: 'card home-card', type: 'button' }, h.el('span', { className: 'art-box' }, img), h.el('span', { className: 'label', textContent: home.name }));
       b.title = home.name;
       b.setAttribute('aria-pressed', String(homeOf().id === home.id));
@@ -106,7 +107,7 @@ export function renderPanel(c, changed) {
 const pics = new Map();
 function pic(file) {
   let i = pics.get(file);
-  if (!i) { i = new Image(); i.onload = () => { i._alpha = null; draw(); }; i.src = '/' + file; pics.set(file, i); }
+  if (!i) { i = loadCors(new Image()); i.onload = () => { i._alpha = null; draw(); }; i.src = assetUrl(file); pics.set(file, i); }
   return i;
 }
 const alphaOf = img => { // the picture's alpha channel, for clicking only on the solid parts

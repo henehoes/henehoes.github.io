@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build"
+    "build": "vite build && node scripts/strip-assets.mjs"
   },
   "devDependencies": {
     "pngjs": "^7.0.0",

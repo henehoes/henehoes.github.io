@@ -12,6 +12,7 @@ const page = await browser.newPage();
 const errors = [];
 page.on('pageerror', e => errors.push(e.message));
 page.on('console', m => m.type() === 'error' && errors.push(m.text()));
+await page.evaluateOnNewDocument(() => { try { localStorage.setItem('henehoes.datamine-unlocked', '1'); } catch {} }); // the datamine lock is tested on its own, further down
 await page.goto(BASE, { waitUntil: 'networkidle0' });
 
 // Counts come from the built catalogue, so the checks follow the data (items move from upcoming to released as boxes come out)
@@ -660,7 +661,7 @@ await page.screenshot({ path: 'tmp/ui-final.png' });
   const got = {}; for (const [label] of Object.entries(expected)) { await pickPill(label); got[label] = await shown(); }
   check('Past tab: each box shows the items from the saved Nexon pages (Founder\'s 50, Oct 21 crate 50, Mystery Styles 24 and 24, Aurora 26)', JSON.stringify(got) === JSON.stringify(expected), JSON.stringify(got));
   await pickPill('Season 1');
-  check('Past tab: the Aurora box says it is the Aurora Mystery Fashion Crate and leaves the palette coupons out', /Aurora Mystery Fashion Crate/.test(await page.$eval('#content .past-title ~ .hint', e => e.textContent)));
+  check('Past tab: the Aurora box carries no note line', (await page.$('#content .past-title ~ .hint')) === null);
   await pickPill('Oct 28 – Nov 11');
   const female = await page.$$eval('#content .past-title ~ .grid .card .label', l => l.map(x => x.textContent));
   check('Past tab: the Oct 28 Mystery Styles has Cecelia Twist (not Rockstar Hair), as the post corrected', female.includes('Cecelia Twist') && !female.includes('Rockstar Hair'));
@@ -915,6 +916,27 @@ await page.screenshot({ path: 'tmp/ui-final.png' });
   check('hair: only the front-view layers and the hair shade are in the catalogue (no back-view layers)', [...layers].every(l => ['hair', 'hairOverHead', 'hairBelowBody', 'hairShade'].includes(l)) && layers.has('hairShade'), [...layers].join());
   const shade = FULL.hair.flatMap(h => h.variants.flatMap(v => v.parts.filter(p => p.layer === 'hairShade')));
   check('hair shade: each picture lists the skin tones it is for, and every skin tone is covered', shade.length > 0 && shade.every(p => Array.isArray(p.tones)) && FULL.skins.every(sk => FULL.hair[0].variants[0].parts.filter(p => p.layer === 'hairShade').some(p => p.tones.includes(sk.tone))));
+}
+// The datamine lock, in a clean browser profile (nothing remembered)
+{
+  const ctx = await (browser.createBrowserContext ?? browser.createIncognitoBrowserContext).call(browser);
+  const g = await ctx.newPage();
+  await g.goto(BASE, { waitUntil: 'networkidle0' });
+  await g.evaluate(() => [...document.querySelectorAll('.tab')].find(t => t.title.startsWith('Hair')).click());
+  const sw = () => g.evaluate(() => [...document.querySelectorAll('#source .seg button')].find(b => b.textContent.includes('Datamine')));
+  check('datamine lock: the All · Datamine button carries a padlock while locked', await g.evaluate(() => [...document.querySelectorAll('#source .seg button')].find(b => b.textContent.includes('Datamine')).classList.contains('locked')));
+  const click = () => g.evaluate(() => [...document.querySelectorAll('#source .seg button')].find(b => b.textContent.includes('Datamine')).click());
+  await click(); await g.waitForSelector('dialog.gate[open]');
+  const options = await g.$$eval('#gate-item option, #gate-colour option', os => os.length);
+  check('datamine lock: the question box opens with an item list (8 + blank) and a colour list (10 + blank)', options === 9 + 11, String(options));
+  const answer = async (name, item, colour) => { await g.$eval('#gate-name', (e, v) => { e.value = v; }, name); await g.select('#gate-item', item); await g.select('#gate-colour', colour); await g.click('dialog.gate button[type=submit]'); await new Promise(r => setTimeout(r, 400)); };
+  await answer('Hernz', 'Halo', 'Pastel Pink');
+  check('datamine lock: a wrong dye answer is refused and the box stays open', await g.evaluate(() => !!document.querySelector('dialog.gate[open]') && document.querySelector('.gate-msg').textContent.startsWith('Not quite')));
+  await answer('  HERNZ ', 'Angel Wand', 'Pastel Pink');
+  check('datamine lock: the right answers (any capitalisation) close the box and open the datamine view', await g.evaluate(() => !document.querySelector('dialog.gate') && [...document.querySelectorAll('#source .seg button')].find(b => b.textContent.includes('Datamine')).getAttribute('aria-pressed') === 'true'));
+  await g.reload({ waitUntil: 'networkidle0' });
+  check('datamine lock: the unlock is remembered after a reload (no padlock)', await g.evaluate(() => { [...document.querySelectorAll('.tab')].find(t => t.title.startsWith('Hair')).click(); return ![...document.querySelectorAll('#source .seg button')].find(b => b.textContent.includes('Datamine')).classList.contains('locked'); }));
+  await ctx.close();
 }
 console.log(results.join('\n'));
 console.log('console/page errors:', errors.length ? errors : 'none');

@@ -249,3 +249,17 @@ A tab shows a check (`.tick`) when something in it is worn (never on Look Book, 
 - Credits do not yet name the game files as a source. Add a privacy notice for Vercel Analytics before going public.
 - `npm audit` reports a moderate esbuild/Vite dev-server advisory (fix needs a major Vite upgrade; it affects only the dev server).
 - No admin panel, by decision: rules stay hand-edited files.
+
+## Datamine lock (added 2026-11-09)
+- Every "All · Datamine" view (Face, Hair, clothing, weapons, rings), and datamined items in Search and in saved looks, stay shut until the visitor answers two questions once: "Who made henehoes?" (free text, any capitalisation) and "What have they been trying to dye?" (an item list and a colour list; the order is shuffled each time). The unlock is remembered in localStorage (`henehoes.datamine-unlocked`).
+- Code: `src/unlock.js` (question box, `isUnlocked()`, `askUnlock()`), `datamineOn()` in `src/main.js`, padlock and `dialog.gate` in `src/style.css`. Only SHA-256 hashes of the answers are in the code.
+- It is a soft lock: the page and `catalog-datamine.json` are public, so anyone reading the JavaScript or the data can get round it. Real privacy would need server-side authentication.
+- `scripts/ui-test.mjs` pre-sets the unlock key for its main page and tests the lock itself in a clean browser profile.
+
+## Pictures from GitHub Pages on the Vercel site (added 2026-11-10)
+- Why: Vercel's free plan allows 1,000,000 requests a month and was at 930,014. One first visit costs 55 requests, and a short browse about 360, nearly all of them sprite files.
+- How: `src/assets.js` (`assetUrl`, `loadCors`) builds every sprite, housing, map and pose URL. With `VITE_ASSET_BASE` unset (dev, tests, the GitHub Pages build) nothing changes. The Vercel project sets `VITE_ASSET_BASE=https://henehoes.github.io` (an environment variable in the Vercel dashboard, never in the repo); `npm run build` then runs `scripts/strip-assets.mjs`, which leaves `sprites/`, `maps/`, `poses/` and the housing pictures out of `dist` (about 3 MB instead of about 49 MB). `catalog.json`, `catalog-datamine.json` and `housing/catalog.json` stay on Vercel.
+- GitHub Pages (henehoes/henehoes.github.io) sends `access-control-allow-origin: *`, which the dye code needs; its cache is 10 minutes (`max-age=600`) and cannot be changed.
+- Order matters: new sprites must be on the Pages site before the Vercel site that uses them. Push to the Pages repository first, wait for its Pages workflow to finish, then push to Vercel's repository.
+- Checked on 2026-11-10 with `VITE_ASSET_BASE=https://henehoes.github.io npm run build` and `vite preview`: sprites came from henehoes.github.io, the preview drew, dyeing worked, no CORS errors.
+- Hair cards draw every layer of the hairstyle (about 3.8 files on average, 9 at most; the shade is left out) with the current face and skin, so opening the Hair tab costs about 116 requests. Pre-made one-picture thumbnails would cut that to 1 per card (not done).

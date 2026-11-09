@@ -1,3 +1,5 @@
+import { isUnlocked, askUnlock } from './unlock.js';
+import { assetUrl, loadCors } from './assets.js';
 import '@fontsource/noto-sans-kr/latin-500.css'; // the game's own text font (its client embeds Noto Sans KR Medium), for the text drawn on the Ink-and-Wash rings
 import '@fontsource/pixelify-sans/400.css';
 import '@fontsource/pixelify-sans/600.css';
@@ -26,6 +28,8 @@ const SHOW_UPCOMING = false;
 // GitHub Pages test site (henehoes.github.io) is built that way; the Vercel site is not (listing them all cost too many file requests on
 // its free tier). Face and Hair keep their datamine views everywhere.
 const SHOW_DATAMINE_WEARABLES = import.meta.env.VITE_DATAMINE === '1';
+// Every datamine view, and datamined items in Search and in saved looks, stay shut until the visitor has answered the questions in src/unlock.js.
+const datamineOn = () => SHOW_DATAMINE_WEARABLES && isUnlocked();
 const DISABLED_SLOTS = new Set(); // a slot named here is hidden everywhere (the code and data stay); empty now that the rings are rebuilt from the game files
 const WEAR_ORDER = ['cap', 'faceAcc', 'eyeAcc', 'earrings', 'longcoat', 'coat', 'pants', 'glove', 'shoes', 'cape', 'weapon', 'nameTag', 'chatBalloon'];
 
@@ -66,7 +70,7 @@ const imgCache = new Map();
 function loadImg(file) {
   if (!imgCache.has(file)) {
     imgCache.set(file, new Promise((resolve, reject) => {
-      const im = new Image();
+      const im = loadCors(new Image());
       im.onload = () => {
         const c = document.createElement('canvas');
         c.width = im.width; c.height = im.height;
@@ -75,7 +79,7 @@ function loadImg(file) {
         resolve(ctx.getImageData(0, 0, im.width, im.height));
       };
       im.onerror = () => reject(new Error(`failed to load ${file}`));
-      im.src = '/' + file;
+      im.src = assetUrl(file);
     }));
   }
   return imgCache.get(file);
@@ -138,7 +142,7 @@ function unpack(d) {
     for (const k of WEAR_ORDER) {
       if (DISABLED_SLOTS.has(k)) continue; // a ring saved before they were switched off is not brought back
       const w = d.wear?.[k];
-      if (w && (w.item == null || catalog.wearables[k]?.items.some(i => i.id === w.item && (i.released !== false || SHOW_DATAMINE_WEARABLES)))) s.wear[k] = { item: w.item, two: !!w.two, h: clamp(Math.round(+w.h || 0), 0, 359), c: clamp(Math.round(+w.c || 0), -99, 99), b: clamp(Math.round(+w.b || 0), -99, 99) };
+      if (w && (w.item == null || catalog.wearables[k]?.items.some(i => i.id === w.item && (i.released !== false || datamineOn())))) s.wear[k] = { item: w.item, two: !!w.two, h: clamp(Math.round(+w.h || 0), 0, 359), c: clamp(Math.round(+w.c || 0), -99, 99), b: clamp(Math.round(+w.b || 0), -99, 99) };
     }
     // A look saved before the placeholder became "henehoe" carries the old placeholder "Maple": show the new one instead.
     if (typeof d.text?.name === 'string') s.text = { name: d.text.name === 'Maple' ? DEFAULT_NAME : d.text.name.slice(0, 12) };
@@ -229,7 +233,7 @@ function baseOf(sel) {
 // first time they are needed: the body per action and frame (with the points everything hangs on), and each worn item's and hair
 // colour's parts, already placed. A face is the standing one moved with the brow, and is left out when the frame turns the face away.
 const poseFiles = new Map();
-const fetchPose = path => { if (!poseFiles.has(path)) poseFiles.set(path, fetch(path).then(r => r.ok ? r.json() : null).catch(() => null)); return poseFiles.get(path); };
+const fetchPose = path => { if (!poseFiles.has(path)) poseFiles.set(path, fetch(assetUrl(path)).then(r => r.ok ? r.json() : null).catch(() => null)); return poseFiles.get(path); };
 let pose = { name: 'stand' }; // what the preview shows: { name, act, frame } while posing (act 'stand1' is the catalogue's standing picture)
 const weaponWorn = sel => sel.wear.weapon.item != null && catalog.wearables.weapon?.items.find(i => i.id === sel.wear.weapon.item);
 // What an attack motion (body.motions: one-handed swing, spear stab, ...) does with the worn weapon: the actions it plays in turn and the
@@ -559,7 +563,11 @@ function renderSourceSwitch(label, what, withRotation = false) {
     const btn = el('button', { type: 'button', role: 'radio', textContent: text, title: tips[s] });
     btn.setAttribute('aria-pressed', String(shown === s));
     btn.setAttribute('aria-checked', String(shown === s));
-    btn.onclick = () => { source = s; renderFilters(); renderContent(true); };
+    if (s === 'datamine' && !isUnlocked()) btn.classList.add('locked');
+    btn.onclick = async () => {
+      if (s === 'datamine' && !(await askUnlock())) return;
+      source = s; renderFilters(); renderContent(true);
+    };
     sw.append(btn);
   }
   group.append(sw); src.append(group);
@@ -636,7 +644,7 @@ function placeholderCard(p) {
 
 // Wearables show the item's own inventory icon at a whole-number scale; hair and face show a drawn thumbnail.
 function iconBox(file, size = ART_H) {
-  const img = el('img', { className: 'icon', src: '/' + file, alt: '', loading: 'lazy' });
+  const img = el('img', { className: 'icon', src: assetUrl(file), alt: '', loading: 'lazy' });
   img.onload = () => { const k = Math.max(1, Math.floor((size - 4) / Math.max(img.naturalWidth, img.naturalHeight))); img.style.width = `${img.naturalWidth * k}px`; };
   return el('span', { className: 'art-box' }, img);
 }
@@ -1152,7 +1160,7 @@ function renderSearch(c) {
   for (const slot of WEAR_ORDER) {
     if (DISABLED_SLOTS.has(slot) || !catalog.wearables[slot]) continue;
     // datamined items too while SHOW_DATAMINE_WEARABLES is on (badged DATAMINE), after the released ones
-    const found = catalog.wearables[slot].items.filter(it => !it.effect && (!SHOW_UPCOMING || !it.upcoming) && (SHOW_DATAMINE_WEARABLES || it.released !== false) && flat(it.name).includes(q));
+    const found = catalog.wearables[slot].items.filter(it => !it.effect && (!SHOW_UPCOMING || !it.upcoming) && (datamineOn() || it.released !== false) && flat(it.name).includes(q));
     add(CHAPTER_TITLES[slot] ?? catalog.wearables[slot].label, [...found.filter(it => it.released !== false), ...found.filter(it => it.released === false)].map(it => () => wearableCard(slot, it)));
   }
   const total = groups.reduce((n, g) => n + g.entries.length, 0);
@@ -1444,9 +1452,9 @@ async function setMode(m) {
 // Loads the map picture, then redraws the preview. If it is missing the preview just has no backdrop.
 async function loadBackdrop() {
   try {
-    const info = await (await fetch('/maps/henesys.json')).json();
-    const img = new Image();
-    img.src = '/maps/henesys.webp';
+    const info = await (await fetch(assetUrl('maps/henesys.json'))).json();
+    const img = loadCors(new Image());
+    img.src = assetUrl('maps/henesys.webp');
     await img.decode();
     // Colours to continue the picture with: its top row (meadow) and bottom row (cobblestone).
     const c = document.createElement('canvas'); c.width = img.width; c.height = img.height;

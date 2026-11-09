@@ -404,3 +404,15 @@ input { font: inherit; border-radius: 0; }
    no scrollbar of their own, even where the system is set to always show scroll bars. */
 .scroll, .colour, .side { scrollbar-width: none; }
 .scroll::-webkit-scrollbar, .colour::-webkit-scrollbar, .side::-webkit-scrollbar { display: none; }
+
+/* The datamine lock: a small padlock on the locked "All · Datamine" button, and the question box. */
+.seg button.locked::after { content: " \1F512"; font-size: .85em; }
+dialog.gate { max-width: min(92vw, 380px); padding: 18px 20px; border: 2px solid var(--maple-deep); background: var(--bench-deep, #fff); color: var(--bench-text, #222); }
+dialog.gate::backdrop { background: oklch(20% .03 255 / .55); }
+.gate h2 { margin: 0 0 6px; font: 13px var(--font-label); }
+.gate-note { margin: 0 0 12px; font-size: 13px; }
+.gate label { display: block; margin: 10px 0 4px; font-size: 14px; }
+.gate input, .gate select { width: 100%; box-sizing: border-box; padding: 7px 8px; font: 14px inherit; }
+.gate-row { display: grid; gap: 8px; }
+.gate-msg { min-height: 1.2em; margin: 10px 0 0; font-size: 13px; color: #c0392b; }
+.gate-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 8px; }
