@@ -1,4 +1,3 @@
-import { isUnlocked, askUnlock } from './unlock.js';
 import { assetUrl, loadCors } from './assets.js';
 import '@fontsource/noto-sans-kr/latin-500.css'; // the game's own text font (its client embeds Noto Sans KR Medium), for the text drawn on the Ink-and-Wash rings
 import '@fontsource/pixelify-sans/400.css';
@@ -28,8 +27,7 @@ const SHOW_UPCOMING = false;
 // GitHub Pages test site (henehoes.github.io) is built that way; the Vercel site is not (listing them all cost too many file requests on
 // its free tier). Face and Hair keep their datamine views everywhere.
 const SHOW_DATAMINE_WEARABLES = import.meta.env.VITE_DATAMINE === '1';
-// Every datamine view, and datamined items in Search and in saved looks, stay shut until the visitor has answered the questions in src/unlock.js.
-const datamineOn = () => SHOW_DATAMINE_WEARABLES && isUnlocked();
+const datamineOn = () => SHOW_DATAMINE_WEARABLES; // datamined clothing in Search and in saved looks (the datamine views are open to everyone: the question lock was removed)
 const DISABLED_SLOTS = new Set(); // a slot named here is hidden everywhere (the code and data stay); empty now that the rings are rebuilt from the game files
 const WEAR_ORDER = ['cap', 'faceAcc', 'eyeAcc', 'earrings', 'longcoat', 'coat', 'pants', 'glove', 'shoes', 'cape', 'weapon', 'nameTag', 'chatBalloon'];
 
@@ -43,7 +41,7 @@ const BODY_VIEW = { scale: 1.5, focus: [OX + 21, OY + 27], feet: OY + 66 }; // f
 const LOOK_VIEW = { scale: 1.5, focus: [OX + 21, OY + 27], body: true }; // body: centred on the bare body (head to feet), whatever is worn
 const MINI_VIEW = { scale: 1, focus: [OX + 21, OY + 15], centre: true }; // centre: put whatever is drawn in the middle of the tile
 const MINI_ART = 44;                              // art height of a small Equipped tile, CSS px
-const SHORT_LABEL = { faceAcc: 'Face', eyeAcc: 'Eye' }; // category names shortened for the small tiles
+const SHORT_LABEL = { faceAcc: 'Face Acc.', eyeAcc: 'Eye' }; // category names shortened for the small tiles
 // Sprite pixels the main preview aims to show across. 150 with a preview 25% taller than before (300 px, 235 px on a phone) keeps the
 // character the same size as when it was 120 in 240 px, and leaves room above the head for a chat bubble up to about 64 px tall, so
 // wearing most rings no longer makes the preview zoom out.
@@ -113,6 +111,7 @@ const fresh = () => ({
   skin: 0,
   face: { style: null, colour: 0 },
   hair: { style: null, colour: 0 },
+  pet: { id: null, equip: null }, // a pet standing beside the character, and the piece of pet equipment it wears (both ids from the game files)
   wear: Object.fromEntries(WEAR_ORDER.map(k => [k, { item: null, h: 0, c: 0, b: 0, two: false }])), // the game's dye: tone 0..359 (h), chroma -99..99 (c), brightness -99..99 (b); all 0 = the item's own colours
 });
 // The starting look: a male body in the lowest-numbered skin, no face, no hair and nothing worn.
@@ -126,6 +125,7 @@ const pack = () => ({
   gender, sex: state.sex, skin: state.skin, text: state.text,
   face: { key: styleOf('face')?.key ?? null, colour: state.face.colour },
   hair: { key: styleOf('hair')?.key ?? null, colour: state.hair.colour },
+  pet: { ...state.pet },
   wear: Object.fromEntries(WEAR_ORDER.map(k => [k, { ...state.wear[k] }])),
 });
 // A packed look back as a state (anything no longer in the catalogue is left off), or null when it cannot be read.
@@ -144,6 +144,9 @@ function unpack(d) {
       const w = d.wear?.[k];
       if (w && (w.item == null || catalog.wearables[k]?.items.some(i => i.id === w.item && (i.released !== false || datamineOn())))) s.wear[k] = { item: w.item, two: !!w.two, h: clamp(Math.round(+w.h || 0), 0, 359), c: clamp(Math.round(+w.c || 0), -99, 99), b: clamp(Math.round(+w.b || 0), -99, 99) };
     }
+    // The pet and its equipment, when they are still in the catalogue.
+    const pets = catalog.pets, pet = pets?.pets.find(p => p.id === d.pet?.id);
+    if (pet) { s.pet.id = pet.id; s.pet.equip = pets.equips.find(e => e.id === d.pet.equip && e.art[pet.id])?.id ?? null; }
     // A look saved before the placeholder became "henehoe" carries the old placeholder "Maple": show the new one instead.
     if (typeof d.text?.name === 'string') s.text = { name: d.text.name === 'Maple' ? DEFAULT_NAME : d.text.name.slice(0, 12) };
     return { state: s, gender: ['male', 'female'].includes(d.gender) ? d.gender : 'all' };
@@ -301,7 +304,29 @@ async function buildLayers(sel, view = null) {
     const item = catalog.wearables[slot]?.items.find(i => i.id === sel.wear[slot].item);
     if (item) jobs.push(ringLayer(item.effect, sel.text));
   }
+  jobs.push(...petJobs(sel));
   return Promise.all(jobs);
+}
+
+// ---------- the pet beside the character ----------
+// The pet's resting picture (stand0 frame 0) and its equipment share one anchor point, the pet's feet: each picture is drawn with its own
+// origin on that point. The pet stands to the right of the character, on the same ground line, pulled in when it is wide so it never runs off the canvas.
+const PET_DX = 46;
+const petDx = (pet, equipArt) => Math.min(PET_DX, W - CENTRE_X - Math.max(pet.stand.w - pet.stand.ox, equipArt ? equipArt.w - equipArt.ox : 0) - 1);
+// How far right of the character's centre the pet (and its gear) reaches. Fixed, so the frame does not change while the character moves.
+function petRight(sel) {
+  const pets = catalog.pets, pet = pets?.pets.find(p => p.id === sel.pet?.id);
+  if (!pet) return 0;
+  const equipArt = pets.equips.find(e => e.id === sel.pet.equip)?.art[pet.id];
+  return CENTRE_X + petDx(pet, equipArt) + Math.max(pet.stand.w - pet.stand.ox, equipArt ? equipArt.w - equipArt.ox : 0) - PREVIEW_FOCUS[0];
+}
+function petJobs(sel) {
+  const pets = catalog.pets, pet = pets?.pets.find(p => p.id === sel.pet?.id);
+  if (!pet) return [];
+  const equipArt = pets.equips.find(e => e.id === sel.pet.equip)?.art[pet.id];
+  const dx = petDx(pet, equipArt);
+  const at = (a, z) => loadImg(a.file).then(img => ({ img, x: CENTRE_X + dx - a.ox, y: FEET_Y - a.oy, z }));
+  return [at(pet.stand, 9000), ...(equipArt ? [at(equipArt, 9001)] : [])];
 }
 
 // ---------- name tag and chat bubble rings ----------
@@ -348,6 +373,7 @@ async function ringLayer(effect, text) {
   return { img, x: Math.round(CENTRE_X - canvas.width / 2), y: Math.round(y), z: 9999 };
 }
 const ringWorn = sel => RING_SLOTS.some(slot => sel.wear[slot].item != null);
+const petWorn = sel => sel.pet?.id != null;
 
 // Composes `sel` into a canvas of its own and runs `paint(buf, source)` in the same step. Every call gets a fresh canvas on purpose:
 // WebKit (the engine of every iPhone browser) reads a canvas late when it is drawn into another one, so with one shared canvas that
@@ -399,7 +425,7 @@ function paintFocus(canvas, boxW, boxH, n, focus, source, withBackdrop = false, 
   ctx.drawImage(source, startX + pad, startY + pad, sw, sh, 0, 0, canvas.width, canvas.height);
 }
 
-let renderToken = 0;
+let renderToken = 0, frameKey = '', frameBox = null; // frameBox: the frame worked out while standing, kept for that look's poses (see renderPreview)
 const PREVIEW_PAD = 256; // room around the preview's scene for a weapon effect, which is drawn whole even past the stage's edges
 async function renderPreview() {
   if (mode === 'housing') return housing.renderStage();
@@ -411,10 +437,19 @@ async function renderPreview() {
     const box = $('stage').getBoundingClientRect();
     // Normally a fixed frame on the character. With a tag or bubble worn, widen it to fit them.
     let viewW = PREVIEW_VIEW, viewH = PREVIEW_VIEW, focus = PREVIEW_FOCUS;
-    if (ringWorn(state)) {
+    if (petWorn(state) && !ringWorn(state)) {
+      // A pet alone: the frame is the default one, widened (equally on both sides) to hold the pet. It is worked out from the pet, not from
+      // what is drawn, so it stays put while the character attacks and the weapon swings.
+      viewW = Math.max(PREVIEW_VIEW, 2 * petRight(state) + 8);
+    } else if (ringWorn(state)) {
       let x0 = CENTRE_X - 28, x1 = CENTRE_X + 28, y0 = OY - 15, y1 = OY + 72;
       const bw = W + 2 * PREVIEW_PAD; // the frame fits what is in the unpadded scene, as before (an effect may run off the stage)
       for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) if (buf.data[((y + PREVIEW_PAD) * bw + x + PREVIEW_PAD) * 4 + 3]) { x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y); }
+      // The frame is worked out while standing and kept for the poses of that look (an attack must not move the character or the background):
+      // a swing that reaches past it is cropped rather than moving the frame.
+      const key = JSON.stringify({ ...state, text: undefined });
+      if (pose.name === 'stand' || key !== frameKey || !frameBox) { frameKey = key; frameBox = [x0, x1, y0, y1]; }
+      [x0, x1, y0, y1] = frameBox;
       viewH = Math.max(PREVIEW_VIEW, y1 - y0 + 8); viewW = Math.max(PREVIEW_VIEW, x1 - x0 + 8); // each axis on its own: a wide bubble must not shrink a stage that is wide anyway
       focus = [(x0 + x1) / 2, (y0 + y1) / 2];
     }
@@ -422,6 +457,7 @@ async function renderPreview() {
     const n = Math.max(1, Math.floor(Math.min((box.width - 2) / viewW, (box.height - 2) / viewH) * dpr() / 0.95));
     paintFocus($('preview'), box.width - 2, box.height - 2, n, focus, source, true, PREVIEW_PAD);
     $('preview').dataset.view = `${viewW}x${viewH}`; // the frame in sprite pixels (read by the tests)
+    $('preview').dataset.focus = focus.join(); // the frame's centre in sprite pixels (read by the tests)
     $('preview').dataset.zoom = n; // device pixels per sprite pixel (read by the tests)
     $('preview').dataset.pose = pose.name === 'stand' ? 'stand' : `${pose.name}:${pose.act}:${pose.frame}`; // read by the tests
   }, pose, PREVIEW_PAD);
@@ -470,8 +506,21 @@ const note = text => { $('ph-note').textContent = text; };
 
 // Chapter tabs down the right edge of the book. Short names keep the rail narrow; the chapter title shows the full one.
 const TAB_NAMES = { looks: 'Look Book', search: 'All', faceAcc: 'Face Acc.', eyeAcc: 'Eye Deco', longcoat: 'Overall', nameTag: 'Name Ring', chatBalloon: 'Chat Ring', upcoming: 'Upcoming', past: 'Released' };
-const CHAPTER_TITLES = { looks: 'Look Book', past: 'Released Crates & Styles', upcoming: 'Upcoming Crates', search: 'Search Everything', body: 'Body', face: 'Faces', hair: 'Hairstyles', cap: 'Hats', faceAcc: 'Face Accessories', eyeAcc: 'Eye Decorations', earrings: 'Earrings', longcoat: 'Overalls', coat: 'Tops', pants: 'Bottoms', glove: 'Gloves', shoes: 'Shoes', cape: 'Capes', weapon: 'Weapons', nameTag: 'Name Rings', chatBalloon: 'Chat Rings' };
+const CHAPTER_TITLES = { pet: 'Pets', looks: 'Look Book', past: 'Released Crates & Styles', upcoming: 'Upcoming Crates', search: 'Search Everything', body: 'Body', face: 'Faces', hair: 'Hairstyles', cap: 'Hats', faceAcc: 'Face Accessories', eyeAcc: 'Eye Decorations', earrings: 'Earrings', longcoat: 'Overalls', coat: 'Tops', pants: 'Bottoms', glove: 'Gloves', shoes: 'Shoes', cape: 'Capes', weapon: 'Weapons', nameTag: 'Name Rings', chatBalloon: 'Chat Rings' };
 
+// The category rail fits the book: when its tabs would run past the bottom (a short screen, or more tabs), they shrink together (their
+// height, gaps and text) until every one is visible, down to a floor. Tall screens keep the normal size. The sprites and cards are not touched.
+// The phone layout is a strip that scrolls sideways, so it is left alone.
+const MIN_FIT = 0.6;
+function fitRail() {
+  const t = $('tabs'), last = t.lastElementChild;
+  const set = f => { t.style.setProperty('--fit', String(f)); t.style.setProperty('--tab-font', `${Math.max(9, Math.round(13 * f))}px`); };
+  set(1);
+  if (!last || narrowLayout.matches) return;
+  const room = t.clientHeight - 6; // the rail is as tall as the book
+  const need = () => last.getBoundingClientRect().bottom - t.getBoundingClientRect().top;
+  for (let f = 1; need() > room && f > MIN_FIT;) { f = Math.max(MIN_FIT, Math.round((f - 0.04) * 100) / 100); set(f); }
+}
 function renderTabs() {
   const tabs = $('tabs');
   const scrolled = tabs.scrollLeft; // on a phone the tabs scroll sideways: rebuilding them must not send the strip back to the start
@@ -487,6 +536,7 @@ function renderTabs() {
     }
     tabs.scrollLeft = scrolled;
     $('chapter').textContent = housing.chapterTitle(activeTab);
+    fitRail();
     return;
   }
   const add = (key, label, active, group) => {
@@ -503,12 +553,16 @@ function renderTabs() {
   add('face', 'Face', state.face.style != null, 'character');
   add('hair', 'Hair', state.hair.style != null, 'character');
   WEAR_ORDER.filter(s => catalog.wearables[s] && !DISABLED_SLOTS.has(s)).forEach((s, i) => add(s, catalog.wearables[s].label, state.wear[s].item != null, i === 0 ? 'wearable first' : 'wearable'));
+  if (catalog.pets) { // pets and pet equipment: a section of their own above the Look Book, not part of WEAR_ORDER
+    add('pet', 'Pet', state.pet.id != null, 'pets pets-first');
+  }
   // The Look Book, then Released (every crate and box so far, newest first) and Upcoming (a guess), close the rail below Chat Ring.
   add('looks', 'Look Book: your saved looks', false, 'looks');
   add('past', 'Released crates and boxes, and what each held', false, 'wearable past');
   add('upcoming', 'Upcoming: why the next boxes can no longer be predicted', false, 'wearable upcoming'); // never a checkmark: it is not something you wear
   tabs.scrollLeft = scrolled;
   $('chapter').textContent = CHAPTER_TITLES[activeTab] ?? catalog.wearables[activeTab]?.label ?? '';
+  fitRail();
 }
 
 // The search box (every tab) and the All / Male / Female picker (Face and Hair), just above the cards.
@@ -527,6 +581,7 @@ function renderFilters() {
   if (everything) { input.focus(); input.setSelectionRange(input.value.length, input.value.length); }
   if (activeTab === 'body') return renderSexPicker();
   if (WEAR_ORDER.includes(activeTab) && hasUpcoming(activeTab)) renderCrateSwitch();
+  if (activeTab === 'pet') return renderSourceSwitch('Which pets to list', 'Pets');
   if (RING_SLOTS.includes(activeTab)) return SHOW_DATAMINE_WEARABLES && renderSourceSwitch(activeTab === 'nameTag' ? 'Which name tags to list' : 'Which chat bubbles to list', 'Rings');
   if (WEAR_ORDER.includes(activeTab)) { // every clothing tab: Released | All · Datamine, then the Hat tab's Fit or the Weapon tab's Works with
     const what = CHAPTER_TITLES[activeTab] ?? catalog.wearables[activeTab].label;
@@ -563,11 +618,7 @@ function renderSourceSwitch(label, what, withRotation = false) {
     const btn = el('button', { type: 'button', role: 'radio', textContent: text, title: tips[s] });
     btn.setAttribute('aria-pressed', String(shown === s));
     btn.setAttribute('aria-checked', String(shown === s));
-    if (s === 'datamine' && !isUnlocked()) btn.classList.add('locked');
-    btn.onclick = async () => {
-      if (s === 'datamine' && !(await askUnlock())) return;
-      source = s; renderFilters(); renderContent(true);
-    };
+    btn.onclick = () => { source = s; renderFilters(); renderContent(true); };
     sw.append(btn);
   }
   group.append(sw); src.append(group);
@@ -739,6 +790,7 @@ function equippedCard(e) {
 // Takes one worn thing off (the x on its Equipped tile).
 function removeEquipped(e) {
   if (e.key === 'face' || e.key === 'hair') state[e.key] = { style: null, colour: state[e.key].colour };
+  else if (e.key === 'pet') state.pet = { id: null, equip: null };
   else state.wear[e.key].item = null;
   afterChange();
 }
@@ -756,6 +808,8 @@ function equipped() {
     const item = id != null && catalog.wearables[slot]?.items.find(i => i.id === id);
     if (item) out.push({ key: slot, slot: catalog.wearables[slot].label, label: SHORT_LABEL[slot] ?? catalog.wearables[slot].label, name: item.name, item });
   }
+  const pet = catalog.pets?.pets.find(p => p.id === state.pet.id);
+  if (pet) out.push({ key: 'pet', slot: 'Pet', label: 'Pet', name: pet.name, item: pet });
   return out;
 }
 
@@ -788,11 +842,13 @@ function availability(target) {
   if (now) return line(true, `Available now${now.b.end ? ` · ${leftText(saleEnd(now.b) - Date.now(), isDay(now.b.end))}` : ''} · ${now.noun}`);
   const last = found.sort((x, y) => saleEnd(y.b) - saleEnd(x.b))[0];
   if (last) return line(false, `Last available ${agoText(Date.now() - saleEnd(last.b), isDay(last.b.end))} · ${last.noun}`);
+  // Frieren collab items and Founder's items (the FOUNDERS-tagged datamine ones and the two Founder rings) are simply not available
+  if (item.collab || item.tag === 'FOUNDERS' || /^Founder's (Label|Chat) Ring$/.test(item.name)) return line(false, 'Not available');
   return line(false, item.released === false || item.upcoming ? 'Not released yet' : 'Not in any Mystery box on record');
 }
 function renderColour() {
   renderColourPanel();
-  const c = $('colour'), target = mode === 'housing' ? null : equipped().find(e => e.key === configTarget)?.key, avail = target && availability(target);
+  const c = $('colour'), target = mode === 'housing' ? null : equipped().find(e => e.key === configTarget)?.key, avail = target && !/^pet/.test(target) && availability(target);
   if (avail) c.append(panelSection('Availability', avail));
 }
 function renderColourPanel() {
@@ -813,6 +869,10 @@ function renderColourPanel() {
   }
   c.append(grid);
   if (configTarget === 'face' || configTarget === 'hair') return c.append(panelHeading(configTarget === 'face' ? 'Face' : 'Hair', styleOf(configTarget)?.style), ...(configTarget === 'face' && whiteEyesWorn() ? [eyeWhiteNote()] : []), panelSection(configTarget === 'face' ? 'Eye colour' : 'Hair colour', colourGrid(configTarget)));
+  if (configTarget === 'pet') { // pets have no colour settings; their equipment is chosen here, as a setting of the pet
+    const it = equipped().find(e => e.key === 'pet');
+    return c.append(panelHeading('Pet', it?.name), panelSection('Pet equipment', petGearGrid(it.item)));
+  }
   const data = catalog.wearables[configTarget], w = state.wear[configTarget];
   // Every worn item's panel starts with its category and name; then sections with small-caps subheadings.
   const worn = data.items.find(i => i.id === w.item), isWeapon = configTarget === 'weapon' && !!worn;
@@ -857,6 +917,7 @@ function renderContent(keepScroll = false) {
   else if (activeTab === 'upcoming') renderUpcoming(c)
   else if (activeTab === 'past') renderPast(c);
   else if (activeTab === 'face' || activeTab === 'hair') renderStyles(c, activeTab);
+  else if (activeTab === 'pet') renderPets(c);
   else renderWearable(c, activeTab);
   if (activeTab !== 'search' && search && !c.querySelector('.card')) c.append(el('p', { className: 'empty', textContent: 'No entries match. Try another word.' }));
   c.scrollTop = keepScroll ? top : 0;
@@ -889,6 +950,8 @@ function skinCard(s) {
   return card;
 }
 
+// The label on an item that is not released: DATAMINE, or its own where it belongs to a group (FOUNDERS for Founder's Package items, EXPIRING NX for 10-day equips).
+const unreleasedBadge = item => { const b = el('span', { className: 'badge unreleased-badge', textContent: item.tag ?? 'DATAMINE' }); if (item.tag) b.dataset.tag = item.tag; return b; };
 function styleCard(kind, s, i) {
   const first = s.variants.find(v => v.colour === browse[kind]) ?? s.variants[0];
   const worn = () => state[kind].style === i && state[kind].colour === first.colour; // this style in the colour the card shows
@@ -913,7 +976,7 @@ function wearableCard(slot, item) {
   const card = item.effect ? ringCard(item, selected, slot) : optionCard(item.name, selected, null, null, () => select(slot, item.id), item.check, item.icon);
   if (item.classicId) card.title = `${card.title} · Classic ${item.classicId}`;
   if (item.collab) card.append(el('span', { className: 'badge collab-badge', textContent: `${item.collab.toUpperCase()} COLLAB` }));
-  if (item.released === false) { card.classList.add('unreleased'); card.append(el('span', { className: 'badge unreleased-badge', textContent: 'DATAMINE' })); }
+  if (item.released === false) { card.classList.add('unreleased'); card.append(unreleasedBadge(item)); }
   // A possible upcoming item has its own violet look (the Next Crate tab's colour), apart from the blue DATAMINE one, so a card can carry both.
   if (item.upcoming && SHOW_UPCOMING) { card.classList.add('upcoming-card'); card.append(el('span', { className: 'badge upcoming-badge', title: 'Possible item for a coming Mystery Fashion Crate (unconfirmed)' }, 'UPCOMING', el('i', { className: 'q-icon', 'aria-hidden': 'true' }))); }
   return card;
@@ -1011,6 +1074,44 @@ function tickEnds() {
   else if (rotating && Number.isFinite(mysteryBoundary())) wakeAt(mysteryBoundary());
 }
 document.addEventListener('visibilitychange', () => { if (!document.hidden) tickEnds(); });
+// The Pet and Pet Equip tabs: every pet in the game files, and the pieces of pet equipment the chosen pet can wear. Released ones are listed
+// first; the datamined ones (badged DATAMINE) appear under All · Datamine. Each is the game's own picture.
+function petCard(x, selected, onClick, title) {
+  const b = optionCard(x.name, selected, null, null, onClick, undefined, x.icon);
+  b.title = x.released === false ? `${title} · datamine` : title;
+  if (x.released === false) { b.classList.add('unreleased'); b.append(el('span', { className: 'badge unreleased-badge', textContent: 'DATAMINE' })); }
+  return b;
+}
+function petNote(c) {
+  if (source === 'datamine') c.append(el('p', { className: 'datamine-note', textContent: 'Showing everything in the game files, including pets and pet equipment that are not released yet.' }));
+}
+const petListed = x => x.released !== false || source === 'datamine';
+function renderPets(c) {
+  const data = catalog.pets;
+  if (!data) return;
+  petNote(c);
+  const pets = data.pets.filter(p => petListed(p) && matches(p.name));
+  const grid = el('div', { className: 'grid' });
+  for (const p of pets) grid.append(petCard(p, state.pet.id === p.id, () => {
+    const on = state.pet.id === p.id;
+    state.pet = on ? { id: null, equip: null } : { id: p.id, equip: data.equips.find(e => e.id === state.pet.equip)?.art[p.id] ? state.pet.equip : null }; // equipment that does not fit the new pet comes off
+    if (!on) configTarget = 'pet';
+    afterChange();
+  }, `${p.name} · Classic ${p.id}`));
+  c.append(grid);
+  if (!pets.length) c.append(el('p', { className: 'empty', textContent: source === 'released' && !search.trim() ? 'No pets are listed as released yet. Open All · Datamine to see them all.' : 'No pets match. Try another word.' }));
+}
+// The equipment the chosen pet can wear, as options in the Equipped panel: None first, then each piece that fits.
+function petGearGrid(pet) {
+  const data = catalog.pets, grid = el('div', { className: 'grid pet-gear' });
+  const none = el('button', { className: 'card', type: 'button', title: 'No pet equipment' }, el('span', { className: 'art-box' }, el('i', { className: 'none-icon', 'aria-hidden': 'true' })), el('span', { className: 'label', textContent: 'None' }));
+  none.setAttribute('aria-pressed', String(state.pet.equip == null));
+  none.onclick = () => { state.pet.equip = null; afterChange(); };
+  grid.append(none);
+  for (const e of data.equips.filter(e => e.art[pet.id]).sort((a, b) => (a.released === false) - (b.released === false))) grid.append(petCard(e, state.pet.equip === e.id, () => { state.pet.equip = e.id; afterChange(); }, `${e.name} · Classic ${e.id}`));
+  return grid;
+}
+
 function renderStyles(c, kind) {
   renderColourBar(kind);
   if (kind === 'face' && catalog.face.some(s => s.variants.some(v => v.colour === browse.face && v.label === NO_COUPON_EYES))) c.append(eyeWhiteNote()); // the list is shown in White
@@ -1137,6 +1238,7 @@ function renderWearable(c, slot) {
   const grid = el('div', { className: 'grid' });
   if (RING_SLOTS.includes(slot) && SHOW_DATAMINE_WEARABLES && source === 'datamine') c.append(el('p', { className: 'datamine-note', textContent: 'Showing everything in the game data. Rings marked DATAMINE are not released yet.' }));
   if (hasUpcoming(slot) && crate === 'upcoming') c.append(unconfirmedNote());
+  // One list in the game's own id order: in All · Datamine the released and datamined items are mixed as they come, so patterns in what was released show.
   for (const item of data.items.filter(i => inView(slot, i) && matches(i.name) && listedWear(i) && (slot !== 'cap' || hatFit === 'all' || hairEffectOf(i) === hatFit) && (slot !== 'weapon' || worksWithShown(i)))) grid.append(wearableCard(slot, item));
   for (const p of (data.placeholders ?? []).filter(p => matches(p.name))) grid.append(placeholderCard(p));
   c.append(grid);
@@ -1225,7 +1327,7 @@ function afterChange() { afterChangeKeep(); }
 async function characterPng() {
   const wear = { ...state.wear };
   for (const slot of RING_SLOTS) wear[slot] = { ...wear[slot], item: null };
-  const out = await withScene({ ...state, wear }, (buf, source) => {
+  const out = await withScene({ ...state, wear, pet: { id: null, equip: null } }, (buf, source) => {
     const w = buf.width ?? source.width, h = source.height;
     let x0 = w, y0 = h, x1 = -1, y1 = -1;
     for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) if (buf.data[(y * w + x) * 4 + 3]) { x0 = Math.min(x0, x); y0 = Math.min(y0, y); x1 = Math.max(x1, x); y1 = Math.max(y1, y); }
@@ -1486,7 +1588,7 @@ async function init() {
   afterChangeKeep();
   // Redraw at the right pixel sizes when the window changes size or moves to another display.
   let timer;
-  const redraw = () => { clearTimeout(timer); timer = setTimeout(() => { setStageHeight(); renderContent(true); renderColour(); renderPreview(); }, 150); };
+  const redraw = () => { clearTimeout(timer); timer = setTimeout(() => { setStageHeight(); fitRail(); renderContent(true); renderColour(); renderPreview(); }, 150); };
   window.addEventListener('resize', redraw);
   // Zooming the page (or dragging it to a screen with another pixel density) changes the device pixel ratio, and not every browser sends a
   // resize for that. Check the ratio itself twice a second, so the thumbnails and the preview are redrawn and re-centred either way.

@@ -1,10 +1,12 @@
-// The Housing book: pick a home, then place furniture in it (at most MAX_PIECES per home). Furniture can be dragged anywhere in the
+// The Housing book: pick a home, then place furniture in it (at most LIMITS per home: 16 decor pieces, plus 1 chest and 1 crafting station, each counted on its own). Furniture can be dragged anywhere in the
 // home; the selected piece carries a mirror button (top left) and a remove button (top right) right on it. Data:
 // public/housing/catalog.json (made by scripts/extract-housing.mjs). main.js calls into this file while the Housing book is open;
 // this file does not know about the character side.
 import { assetUrl, loadCors } from './assets.js';
 const KEY = 'maple-layers:housing-v2'; // v2: the home pictures are cropped to the house, so v1 positions would be off
-export const MAX_PIECES = 16;           // the most pieces a home holds
+// What one home holds, per group of furniture: chests and crafting stations count toward their own limit, not the 16 decor pieces.
+export const LIMITS = { decor: 16, chests: 1, stations: 1 };
+const NAMES = { decor: ['decor piece', 'decor pieces'], chests: ['chest', 'chests'], stations: ['crafting station', 'crafting stations'] };
 let h;            // helpers from main.js: { el, $, iconBox, flash, refresh }
 let data = null;  // the catalogue
 let canvas = null, flipBtn = null, delBtn = null, countEl = null;
@@ -16,17 +18,22 @@ const homeOf = () => data?.homes.find(x => x.id === st.home) ?? data?.homes[0];
 const layout = () => (st.layouts[homeOf().id] ??= []);
 const picked = () => layout().find(p => p.uid === st.selected);
 const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
-export const isFull = () => !!data && layout().length >= MAX_PIECES;
+const countOf = group => layout().filter(p => furnitureOf(p.id)?.group === group).length;
+export const isFull = group => !!data && countOf(group) >= LIMITS[group];
+// "3/16 decor · 1/1 chest · 0/1 crafting station", for the counter on the stage
+const countLine = () => `${countOf('decor')}/${LIMITS.decor} decor · ${countOf('chests')}/${LIMITS.chests} chest · ${countOf('stations')}/${LIMITS.stations} crafting station`;
 
 // ---------- saving ----------
 function save() { try { localStorage.setItem(KEY, JSON.stringify({ home: st.home, layouts: Object.fromEntries(Object.entries(st.layouts).map(([k, l]) => [k, l.map(({ id, x, y, flip }) => ({ id, x, y, flip }))])) })); } catch {} }
+// For loading a saved home: known furniture only, and no more of each group than a home holds.
+function keepWithinLimits() { const seen = {}; return p => { const g = furnitureOf(p.id)?.group; return !!g && (seen[g] = (seen[g] ?? 0) + 1) <= LIMITS[g]; }; }
 function restore() {
   try {
     const s = JSON.parse(localStorage.getItem(KEY) ?? 'null'); if (!s) return;
     if (data.homes.some(x => x.id === s.home)) st.home = s.home;
     for (const [k, l] of Object.entries(s.layouts ?? {})) {
       const home = data.homes.find(x => x.id === k); if (!home) continue;
-      st.layouts[k] = (Array.isArray(l) ? l : []).filter(p => furnitureOf(p.id)).slice(0, MAX_PIECES).map(p => ({ uid: uid++, id: p.id, x: clamp(Math.round(+p.x || 0), 0, home.width), y: clamp(Math.round(+p.y || 0), 0, home.height), flip: !!p.flip }));
+      st.layouts[k] = (Array.isArray(l) ? l : []).filter(keepWithinLimits()).map(p => ({ uid: uid++, id: p.id, x: clamp(Math.round(+p.x || 0), 0, home.width), y: clamp(Math.round(+p.y || 0), 0, home.height), flip: !!p.flip }));
     }
   } catch {}
 }
@@ -43,7 +50,6 @@ export const loaded = () => !!data;
 // ---------- what the book shows ----------
 export const tabs = () => data ? [{ key: 'homes', label: 'Homes', count: 0 }, ...data.groups.map(g => ({ key: g.id, label: g.label, count: layout().filter(p => furnitureOf(p.id)?.group === g.id).length }))] : [];
 export const chapterTitle = key => key === 'homes' ? 'Homes' : data?.groups.find(g => g.id === key)?.label ?? '';
-const countText = () => `${layout().length} of ${MAX_PIECES} pieces`;
 
 export function renderContent(c, tab, matches, changed) {
   if (tab === 'homes') {
@@ -56,16 +62,18 @@ export function renderContent(c, tab, matches, changed) {
       b.onclick = () => { st.home = home.id; st.selected = null; save(); changed(); };
       grid.append(b);
     }
-    c.append(h.el('p', { className: 'hint', textContent: `Choose a home, then open Decor, Chests or Crafting stations and click furniture to put it in. A home holds up to ${MAX_PIECES} pieces.` }), grid);
+    c.append(h.el('p', { className: 'hint', textContent: `Choose a home, then open Decor, Chests or Crafting stations and click furniture to put it in. A home holds up to ${LIMITS.decor} decor pieces, plus 1 chest and 1 crafting station.` }), grid);
     return;
   }
-  const full = isFull();
-  c.append(h.el('p', { className: `hint${full ? ' full' : ''}`, textContent: full ? `This home is full (${MAX_PIECES} of ${MAX_PIECES} pieces). Remove a piece to add another.` : `${countText()} placed. A home holds up to ${MAX_PIECES}.` }));
+  const full = isFull(tab), [one, many] = NAMES[tab], max = LIMITS[tab], theMost = max === 1 ? `a ${one}` : `${max} ${many}`;
+  c.append(h.el('p', { className: `hint${full ? ' full' : ''}`, textContent: full
+    ? `This home already has ${theMost}, the most it holds. Remove ${max === 1 ? 'it' : 'one'} to add another.`
+    : `${countOf(tab)} of ${max} ${max === 1 ? one : many} placed.${tab === 'decor' ? ' Chests and crafting stations have their own limit.' : ''}` }));
   const grid = h.el('div', { className: 'grid' });
   for (const f of data.furniture.filter(f => f.group === tab && matches(f.name))) {
     const b = h.el('button', { className: 'card', type: 'button' }, h.iconBox(f.icon), h.el('span', { className: 'label', textContent: f.name }));
     b.title = f.desc ? `${f.name}: ${f.desc}` : f.name;
-    if (full) { b.disabled = true; b.title = `${b.title}\n(This home is full: ${MAX_PIECES} pieces)`; }
+    if (full) { b.disabled = true; b.title = `${b.title}\n(This home already has ${theMost})`; }
     b.onclick = () => { if (add(f.id)) changed(); };
     grid.append(b);
   }
@@ -74,7 +82,8 @@ export function renderContent(c, tab, matches, changed) {
 
 // ---------- changing the layout ----------
 function add(id) {
-  if (isFull()) { h.flash(`This home is full: ${MAX_PIECES} pieces is the most`); return false; }
+  const g = furnitureOf(id).group;
+  if (isFull(g)) { h.flash(LIMITS[g] === 1 ? `This home already has a ${NAMES[g][0]}` : `This home is full: ${LIMITS[g]} ${NAMES[g][1]} is the most`); return false; }
   const home = homeOf(), n = layout().length;
   const p = { uid: uid++, id, x: Math.round(home.width * 0.5 + ((n % 5) - 2) * 40), y: Math.round(home.height * 0.6), flip: false };
   layout().push(p); st.selected = p.uid; save();
@@ -87,9 +96,9 @@ export const placedCount = () => data ? layout().length : 0;
 
 // ---------- the left panel: what is placed ----------
 export function renderPanel(c, changed) {
-  c.append(h.el('h3', { textContent: `Placed in ${homeOf().name} (${layout().length}/${MAX_PIECES})` }));
+  c.append(h.el('h3', { textContent: `Placed in ${homeOf().name} (${layout().length}/${LIMITS.decor + LIMITS.chests + LIMITS.stations})` }));
   const l = layout();
-  if (!l.length) return c.append(h.el('div', { className: 'empty-note', role: 'note' }, h.el('span', { className: 'empty-badge', textContent: 'i', 'aria-hidden': 'true' }), h.el('p', {}, h.el('strong', { textContent: 'Nothing placed yet.' }), ` Pick furniture from the book to add it, then drag it into place. A home holds up to ${MAX_PIECES} pieces.`)));
+  if (!l.length) return c.append(h.el('div', { className: 'empty-note', role: 'note' }, h.el('span', { className: 'empty-badge', textContent: 'i', 'aria-hidden': 'true' }), h.el('p', {}, h.el('strong', { textContent: 'Nothing placed yet.' }), ` Pick furniture from the book to add it, then drag it into place. A home holds up to ${LIMITS.decor} decor pieces, plus 1 chest and 1 crafting station.`)));
   const grid = h.el('div', { className: 'equipped grid' });
   [...l].reverse().forEach(p => { // front-most first
     const f = furnitureOf(p.id);
@@ -191,7 +200,7 @@ export function draw() {
   if (p) { // a dashed frame around the selected piece
     const b = bounds(p, furnitureOf(p.id)); g.lineWidth = 2 / view.s; g.setLineDash([6 / view.s, 4 / view.s]); g.strokeStyle = '#ff8a1c'; g.strokeRect(b.left - 2, b.top - 2, b.w + 4, b.h + 4); g.setLineDash([]);
   }
-  countEl.textContent = `${layout().length}/${MAX_PIECES} pieces`; countEl.classList.toggle('full', isFull());
+  countEl.textContent = countLine(); countEl.classList.toggle('full', isFull('decor'));
   placeButtons(p);
 }
 

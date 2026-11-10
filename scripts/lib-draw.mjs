@@ -54,6 +54,17 @@ export function drawItem(it, dir) {
   // a face accessory (and an earring) has no animations: one picture in default/default
   if (!parts && it.folder === 'Accessory' && at(img, 'default/default')) parts = partsOf(img, at(img, 'default'), dir, '');
   if (!parts?.length) { rmSync(dir, { recursive: true, force: true }); return { problem: 'no stand1 picture' }; }
+  // A cape whose own pictures are blank 1x1 placeholders is drawn by an item effect instead (Silent Sea of Clouds: Effect/ItemEff.img/<id>/effect/default,
+  // a looping faded cloud of 8 frames, 196x108, behind the character). Its first frame is used as a still, behind the body, with the effect's
+  // origin on the navel (the game places an effect on the character's body centre).
+  if (it.folder === 'Cape' && parts.every(p => p.w <= 1 && p.h <= 1)) {
+    const fx = image('Effect', 'ItemEff.img')?.getFromPath(`${it.id}/effect/default/0`), q = fx && png(fx);
+    if (q) {
+      for (const part of parts) for (const suffix of ['', '.2']) rmSync(`${dir}/${part.key}${suffix}.png`, { force: true });
+      q.saveToFile(`${dir}/effect.png`); const [ox, oy] = originOf(fx);
+      parts = [{ key: 'effect', w: q.getWidth(), h: q.getHeight(), origin: { x: ox, y: oy, isEmpty: false }, maps: { navel: { x: 0, y: 0, isEmpty: false } }, position: 'backTamingMobMid' }];
+    }
+  }
   // a few items (Glowing Pumpkin Basket, Evil Skull, Cat Soul) have only iconRaw, no icon
   const icon = png(info?.getFromPath('icon')) ?? png(info?.getFromPath('iconRaw')); if (icon) icon.saveToFile(`${dir}/icon.png`);
   // an icon with nothing in it (Dreamy Candy Pillow's is a blank 1x1): the item's own standing picture instead (its first part that is not an effect)

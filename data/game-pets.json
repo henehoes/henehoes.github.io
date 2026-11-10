@@ -1,0 +1,1396 @@
+{
+ "pets": [
+  {
+   "id": 5000000,
+   "name": "Brown Kitty",
+   "icon": "sprites/pet/5000000/icon.png",
+   "iw": 32,
+   "ih": 28,
+   "stand": {
+    "file": "sprites/pet/5000000/stand.png",
+    "w": 38,
+    "h": 39,
+    "ox": 19,
+    "oy": 39
+   }
+  },
+  {
+   "id": 5000001,
+   "name": "Brown Puppy",
+   "icon": "sprites/pet/5000001/icon.png",
+   "iw": 32,
+   "ih": 23,
+   "stand": {
+    "file": "sprites/pet/5000001/stand.png",
+    "w": 48,
+    "h": 30,
+    "ox": 24,
+    "oy": 30
+   }
+  },
+  {
+   "id": 5000002,
+   "name": "Pink Bunny",
+   "icon": "sprites/pet/5000002/icon.png",
+   "iw": 30,
+   "ih": 31,
+   "stand": {
+    "file": "sprites/pet/5000002/stand.png",
+    "w": 40,
+    "h": 41,
+    "ox": 20,
+    "oy": 41
+   }
+  },
+  {
+   "id": 5000003,
+   "name": "Mini Kargo",
+   "icon": "sprites/pet/5000003/icon.png",
+   "iw": 31,
+   "ih": 28,
+   "stand": {
+    "file": "sprites/pet/5000003/stand.png",
+    "w": 55,
+    "h": 39,
+    "ox": 27,
+    "oy": 39
+   },
+   "released": false
+  },
+  {
+   "id": 5000004,
+   "name": "Black Kitty",
+   "icon": "sprites/pet/5000004/icon.png",
+   "iw": 32,
+   "ih": 28,
+   "stand": {
+    "file": "sprites/pet/5000004/stand.png",
+    "w": 38,
+    "h": 39,
+    "ox": 19,
+    "oy": 39
+   }
+  },
+  {
+   "id": 5000005,
+   "name": "White Bunny",
+   "icon": "sprites/pet/5000005/icon.png",
+   "iw": 30,
+   "ih": 31,
+   "stand": {
+    "file": "sprites/pet/5000005/stand.png",
+    "w": 40,
+    "h": 41,
+    "ox": 20,
+    "oy": 41
+   }
+  },
+  {
+   "id": 5000006,
+   "name": "Husky",
+   "icon": "sprites/pet/5000006/icon.png",
+   "iw": 33,
+   "ih": 30,
+   "stand": {
+    "file": "sprites/pet/5000006/stand.png",
+    "w": 41,
+    "h": 37,
+    "ox": 20,
+    "oy": 37
+   },
+   "released": false
+  },
+  {
+   "id": 5000007,
+   "name": "Black Pig",
+   "icon": "sprites/pet/5000007/icon.png",
+   "iw": 32,
+   "ih": 23,
+   "stand": {
+    "file": "sprites/pet/5000007/stand.png",
+    "w": 54,
+    "h": 35,
+    "ox": 27,
+    "oy": 35
+   }
+  },
+  {
+   "id": 5000008,
+   "name": "Panda",
+   "icon": "sprites/pet/5000008/icon.png",
+   "iw": 31,
+   "ih": 27,
+   "stand": {
+    "file": "sprites/pet/5000008/stand.png",
+    "w": 41,
+    "h": 33,
+    "ox": 20,
+    "oy": 33
+   },
+   "released": false
+  },
+  {
+   "id": 5000009,
+   "name": "Dino Boy",
+   "icon": "sprites/pet/5000009/icon.png",
+   "iw": 33,
+   "ih": 25,
+   "stand": {
+    "file": "sprites/pet/5000009/stand.png",
+    "w": 48,
+    "h": 42,
+    "ox": 24,
+    "oy": 42
+   },
+   "released": false
+  },
+  {
+   "id": 5000010,
+   "name": "Dino Girl",
+   "icon": "sprites/pet/5000010/icon.png",
+   "iw": 33,
+   "ih": 25,
+   "stand": {
+    "file": "sprites/pet/5000010/stand.png",
+    "w": 48,
+    "h": 42,
+    "ox": 24,
+    "oy": 42
+   },
+   "released": false
+  },
+  {
+   "id": 5000011,
+   "name": "Maple Snail",
+   "icon": "sprites/pet/5000011/icon.png",
+   "iw": 31,
+   "ih": 31,
+   "stand": {
+    "file": "sprites/pet/5000011/stand.png",
+    "w": 37,
+    "h": 41,
+    "ox": 14,
+    "oy": 41
+   },
+   "released": false
+  },
+  {
+   "id": 5000012,
+   "name": "Monkey",
+   "icon": "sprites/pet/5000012/icon.png",
+   "iw": 31,
+   "ih": 28,
+   "stand": {
+    "file": "sprites/pet/5000012/stand.png",
+    "w": 42,
+    "h": 38,
+    "ox": 18,
+    "oy": 37
+   },
+   "released": false
+  },
+  {
+   "id": 5000013,
+   "name": "White Tiger",
+   "icon": "sprites/pet/5000013/icon.png",
+   "iw": 33,
+   "ih": 31,
+   "stand": {
+    "file": "sprites/pet/5000013/stand.png",
+    "w": 48,
+    "h": 38,
+    "ox": 16,
+    "oy": 38
+   },
+   "released": false
+  },
+  {
+   "id": 5000014,
+   "name": "Elephant",
+   "icon": "sprites/pet/5000014/icon.png",
+   "iw": 32,
+   "ih": 27,
+   "stand": {
+    "file": "sprites/pet/5000014/stand.png",
+    "w": 47,
+    "h": 34,
+    "ox": 27,
+    "oy": 32
+   },
+   "released": false
+  },
+  {
+   "id": 5000015,
+   "name": "Dasher",
+   "icon": "sprites/pet/5000015/icon.png",
+   "iw": 32,
+   "ih": 31,
+   "stand": {
+    "file": "sprites/pet/5000015/stand.png",
+    "w": 36,
+    "h": 45,
+    "ox": 20,
+    "oy": 45
+   },
+   "released": false
+  },
+  {
+   "id": 5000016,
+   "name": "Robot",
+   "icon": "sprites/pet/5000016/icon.png",
+   "iw": 34,
+   "ih": 32,
+   "stand": {
+    "file": "sprites/pet/5000016/stand.png",
+    "w": 52,
+    "h": 63,
+    "ox": 27,
+    "oy": 63
+   },
+   "released": false
+  },
+  {
+   "id": 5000017,
+   "name": "Mini Yeti",
+   "icon": "sprites/pet/5000017/icon.png",
+   "iw": 32,
+   "ih": 28,
+   "stand": {
+    "file": "sprites/pet/5000017/stand.png",
+    "w": 49,
+    "h": 49,
+    "ox": 25,
+    "oy": 49
+   },
+   "released": false
+  },
+  {
+   "id": 5000018,
+   "name": "Turkey",
+   "icon": "sprites/pet/5000018/icon.png",
+   "iw": 33,
+   "ih": 32,
+   "stand": {
+    "file": "sprites/pet/5000018/stand.png",
+    "w": 33,
+    "h": 43,
+    "ox": 16,
+    "oy": 43
+   },
+   "released": false
+  },
+  {
+   "id": 5000019,
+   "name": "Penguin",
+   "icon": "sprites/pet/5000019/icon.png",
+   "iw": 32,
+   "ih": 30,
+   "stand": {
+    "file": "sprites/pet/5000019/stand.png",
+    "w": 33,
+    "h": 38,
+    "ox": 17,
+    "oy": 38
+   },
+   "released": false
+  },
+  {
+   "id": 5000020,
+   "name": "Black Bunny",
+   "icon": "sprites/pet/5000020/icon.png",
+   "iw": 30,
+   "ih": 31,
+   "stand": {
+    "file": "sprites/pet/5000020/stand.png",
+    "w": 40,
+    "h": 41,
+    "ox": 20,
+    "oy": 41
+   },
+   "released": false
+  },
+  {
+   "id": 5000021,
+   "name": "Husky",
+   "icon": "sprites/pet/5000021/icon.png",
+   "iw": 33,
+   "ih": 30,
+   "stand": {
+    "file": "sprites/pet/5000021/stand.png",
+    "w": 41,
+    "h": 37,
+    "ox": 20,
+    "oy": 37
+   },
+   "released": false
+  },
+  {
+   "id": 5000022,
+   "name": "Porcupine",
+   "icon": "sprites/pet/5000022/icon.png",
+   "iw": 34,
+   "ih": 29,
+   "stand": {
+    "file": "sprites/pet/5000022/stand.png",
+    "w": 46,
+    "h": 35,
+    "ox": 28,
+    "oy": 35
+   },
+   "released": false
+  },
+  {
+   "id": 5000023,
+   "name": "Jr. Reaper",
+   "icon": "sprites/pet/5000023/icon.png",
+   "iw": 34,
+   "ih": 31,
+   "stand": {
+    "file": "sprites/pet/5000023/stand.png",
+    "w": 49,
+    "h": 41,
+    "ox": 22,
+    "oy": 42
+   },
+   "released": false
+  },
+  {
+   "id": 5000024,
+   "name": "Snowman",
+   "icon": "sprites/pet/5000024/icon.png",
+   "iw": 33,
+   "ih": 30,
+   "stand": {
+    "file": "sprites/pet/5000024/stand.png",
+    "w": 34,
+    "h": 42,
+    "ox": 16,
+    "oy": 42
+   },
+   "released": false
+  },
+  {
+   "id": 5000025,
+   "name": "Orange Tiger",
+   "icon": "sprites/pet/5000025/icon.png",
+   "iw": 33,
+   "ih": 31,
+   "stand": {
+    "file": "sprites/pet/5000025/stand.png",
+    "w": 48,
+    "h": 38,
+    "ox": 16,
+    "oy": 38
+   },
+   "released": false
+  },
+  {
+   "id": 5000026,
+   "name": "Skunk",
+   "icon": "sprites/pet/5000026/icon.png",
+   "iw": 32,
+   "ih": 30,
+   "stand": {
+    "file": "sprites/pet/5000026/stand.png",
+    "w": 57,
+    "h": 45,
+    "ox": 22,
+    "oy": 45
+   },
+   "released": false
+  },
+  {
+   "id": 5000027,
+   "name": "Kino",
+   "icon": "sprites/pet/5000027/icon.png",
+   "iw": 33,
+   "ih": 32,
+   "stand": {
+    "file": "sprites/pet/5000027/stand.png",
+    "w": 37,
+    "h": 35,
+    "ox": 17,
+    "oy": 35
+   },
+   "released": false
+  },
+  {
+   "id": 5000028,
+   "name": "Gorilla Robo",
+   "icon": "sprites/pet/5000028/icon.png",
+   "iw": 35,
+   "ih": 24,
+   "stand": {
+    "file": "sprites/pet/5000028/stand.png",
+    "w": 56,
+    "h": 46,
+    "ox": 27,
+    "oy": 45
+   },
+   "released": false
+  },
+  {
+   "id": 5000029,
+   "name": "Crys.Rudolph",
+   "icon": "sprites/pet/5000029/icon.png",
+   "iw": 35,
+   "ih": 35,
+   "stand": {
+    "file": "sprites/pet/5000029/stand.png",
+    "w": 44,
+    "h": 52,
+    "ox": 17,
+    "oy": 52
+   },
+   "released": false
+  },
+  {
+   "id": 5000030,
+   "name": "Toucan",
+   "icon": "sprites/pet/5000030/icon.png",
+   "iw": 35,
+   "ih": 29,
+   "stand": {
+    "file": "sprites/pet/5000030/stand.png",
+    "w": 45,
+    "h": 31,
+    "ox": 24,
+    "oy": 46
+   },
+   "released": false
+  },
+  {
+   "id": 5000031,
+   "name": "White Duck",
+   "icon": "sprites/pet/5000031/icon.png",
+   "iw": 32,
+   "ih": 33,
+   "stand": {
+    "file": "sprites/pet/5000031/stand.png",
+    "w": 36,
+    "h": 49,
+    "ox": 23,
+    "oy": 49
+   },
+   "released": false
+  },
+  {
+   "id": 5000032,
+   "name": "Golden Pig",
+   "icon": "sprites/pet/5000032/icon.png",
+   "iw": 37,
+   "ih": 35,
+   "stand": {
+    "file": "sprites/pet/5000032/stand.png",
+    "w": 58,
+    "h": 55,
+    "ox": 27,
+    "oy": 50
+   },
+   "released": false
+  },
+  {
+   "id": 5000033,
+   "name": "Snail",
+   "icon": "sprites/pet/5000033/icon.png",
+   "iw": 30,
+   "ih": 31,
+   "stand": {
+    "file": "sprites/pet/5000033/stand.png",
+    "w": 37,
+    "h": 41,
+    "ox": 19,
+    "oy": 40
+   },
+   "released": false
+  },
+  {
+   "id": 5000054,
+   "name": "Snail",
+   "icon": "sprites/pet/5000054/icon.png",
+   "iw": 30,
+   "ih": 31,
+   "stand": {
+    "file": "sprites/pet/5000054/stand.png",
+    "w": 37,
+    "h": 41,
+    "ox": 19,
+    "oy": 40
+   },
+   "released": false
+  }
+ ],
+ "equips": [
+  {
+   "id": 1802000,
+   "name": "Red Ribbon",
+   "icon": "sprites/pet/equip/1802000/icon.png",
+   "art": {
+    "5000000": {
+     "file": "sprites/pet/equip/1802000/5000000.png",
+     "w": 14,
+     "h": 10,
+     "ox": -10,
+     "oy": 30
+    },
+    "5000001": {
+     "file": "sprites/pet/equip/1802000/5000001.png",
+     "w": 13,
+     "h": 12,
+     "ox": -15,
+     "oy": 21
+    },
+    "5000002": {
+     "file": "sprites/pet/equip/1802000/5000002.png",
+     "w": 13,
+     "h": 12,
+     "ox": 7,
+     "oy": 34
+    },
+    "5000003": {
+     "file": "sprites/pet/equip/1802000/5000003.png",
+     "w": 10,
+     "h": 14,
+     "ox": -19,
+     "oy": 12
+    },
+    "5000004": {
+     "file": "sprites/pet/equip/1802000/5000000.png",
+     "w": 14,
+     "h": 10,
+     "ox": -10,
+     "oy": 30,
+     "from": 5000000
+    },
+    "5000005": {
+     "file": "sprites/pet/equip/1802000/5000002.png",
+     "w": 13,
+     "h": 12,
+     "ox": 7,
+     "oy": 34,
+     "from": 5000002
+    },
+    "5000006": {
+     "file": "sprites/pet/equip/1802000/5000006.png",
+     "w": 13,
+     "h": 8,
+     "ox": 10,
+     "oy": 14
+    },
+    "5000007": {
+     "file": "sprites/pet/equip/1802000/5000007.png",
+     "w": 10,
+     "h": 14,
+     "ox": -22,
+     "oy": 18
+    },
+    "5000008": {
+     "file": "sprites/pet/equip/1802000/5000008.png",
+     "w": 13,
+     "h": 12,
+     "ox": 5,
+     "oy": 34
+    },
+    "5000009": {
+     "file": "sprites/pet/equip/1802000/5000009.png",
+     "w": 14,
+     "h": 10,
+     "ox": 7,
+     "oy": 18
+    },
+    "5000010": {
+     "file": "sprites/pet/equip/1802000/5000010.png",
+     "w": 14,
+     "h": 10,
+     "ox": 7,
+     "oy": 45
+    }
+   }
+  },
+  {
+   "id": 1802001,
+   "name": "Yellow Hat",
+   "icon": "sprites/pet/equip/1802001/icon.png",
+   "art": {
+    "5000000": {
+     "file": "sprites/pet/equip/1802001/5000000.png",
+     "w": 32,
+     "h": 20,
+     "ox": 19,
+     "oy": 40
+    },
+    "5000001": {
+     "file": "sprites/pet/equip/1802001/5000001.png",
+     "w": 31,
+     "h": 20,
+     "ox": 18,
+     "oy": 37
+    },
+    "5000002": {
+     "file": "sprites/pet/equip/1802001/5000002.png",
+     "w": 32,
+     "h": 20,
+     "ox": 21,
+     "oy": 35
+    },
+    "5000003": {
+     "file": "sprites/pet/equip/1802001/5000003.png",
+     "w": 34,
+     "h": 21,
+     "ox": 26,
+     "oy": 40
+    },
+    "5000004": {
+     "file": "sprites/pet/equip/1802001/5000000.png",
+     "w": 32,
+     "h": 20,
+     "ox": 19,
+     "oy": 40,
+     "from": 5000000
+    },
+    "5000005": {
+     "file": "sprites/pet/equip/1802001/5000002.png",
+     "w": 32,
+     "h": 20,
+     "ox": 21,
+     "oy": 35,
+     "from": 5000002
+    },
+    "5000006": {
+     "file": "sprites/pet/equip/1802001/5000006.png",
+     "w": 31,
+     "h": 20,
+     "ox": 19,
+     "oy": 38
+    },
+    "5000007": {
+     "file": "sprites/pet/equip/1802001/5000007.png",
+     "w": 34,
+     "h": 19,
+     "ox": 20,
+     "oy": 42
+    },
+    "5000008": {
+     "file": "sprites/pet/equip/1802001/5000008.png",
+     "w": 34,
+     "h": 17,
+     "ox": 22,
+     "oy": 36
+    },
+    "5000009": {
+     "file": "sprites/pet/equip/1802001/5000009.png",
+     "w": 32,
+     "h": 23,
+     "ox": 16,
+     "oy": 43
+    },
+    "5000010": {
+     "file": "sprites/pet/equip/1802001/5000009.png",
+     "w": 32,
+     "h": 23,
+     "ox": 16,
+     "oy": 43,
+     "from": 5000009
+    }
+   }
+  },
+  {
+   "id": 1802002,
+   "name": "Red Hat",
+   "icon": "sprites/pet/equip/1802002/icon.png",
+   "art": {
+    "5000000": {
+     "file": "sprites/pet/equip/1802002/5000000.png",
+     "w": 32,
+     "h": 20,
+     "ox": 19,
+     "oy": 40
+    },
+    "5000001": {
+     "file": "sprites/pet/equip/1802002/5000001.png",
+     "w": 31,
+     "h": 20,
+     "ox": 18,
+     "oy": 37
+    },
+    "5000002": {
+     "file": "sprites/pet/equip/1802002/5000002.png",
+     "w": 32,
+     "h": 20,
+     "ox": 21,
+     "oy": 35
+    },
+    "5000003": {
+     "file": "sprites/pet/equip/1802002/5000003.png",
+     "w": 34,
+     "h": 21,
+     "ox": 26,
+     "oy": 40
+    },
+    "5000004": {
+     "file": "sprites/pet/equip/1802002/5000000.png",
+     "w": 32,
+     "h": 20,
+     "ox": 19,
+     "oy": 40,
+     "from": 5000000
+    },
+    "5000005": {
+     "file": "sprites/pet/equip/1802002/5000002.png",
+     "w": 32,
+     "h": 20,
+     "ox": 21,
+     "oy": 35,
+     "from": 5000002
+    },
+    "5000006": {
+     "file": "sprites/pet/equip/1802002/5000006.png",
+     "w": 31,
+     "h": 20,
+     "ox": 19,
+     "oy": 38
+    },
+    "5000007": {
+     "file": "sprites/pet/equip/1802002/5000007.png",
+     "w": 34,
+     "h": 18,
+     "ox": 20,
+     "oy": 42
+    },
+    "5000008": {
+     "file": "sprites/pet/equip/1802002/5000008.png",
+     "w": 34,
+     "h": 17,
+     "ox": 22,
+     "oy": 36
+    },
+    "5000009": {
+     "file": "sprites/pet/equip/1802002/5000009.png",
+     "w": 32,
+     "h": 23,
+     "ox": 16,
+     "oy": 43
+    },
+    "5000010": {
+     "file": "sprites/pet/equip/1802002/5000009.png",
+     "w": 32,
+     "h": 23,
+     "ox": 16,
+     "oy": 43,
+     "from": 5000009
+    }
+   }
+  },
+  {
+   "id": 1802003,
+   "name": "Black Hat",
+   "icon": "sprites/pet/equip/1802003/icon.png",
+   "art": {
+    "5000000": {
+     "file": "sprites/pet/equip/1802003/5000000.png",
+     "w": 32,
+     "h": 20,
+     "ox": 19,
+     "oy": 40
+    },
+    "5000001": {
+     "file": "sprites/pet/equip/1802003/5000001.png",
+     "w": 31,
+     "h": 20,
+     "ox": 18,
+     "oy": 37
+    },
+    "5000002": {
+     "file": "sprites/pet/equip/1802003/5000002.png",
+     "w": 32,
+     "h": 20,
+     "ox": 21,
+     "oy": 35
+    },
+    "5000003": {
+     "file": "sprites/pet/equip/1802003/5000003.png",
+     "w": 34,
+     "h": 21,
+     "ox": 26,
+     "oy": 40
+    },
+    "5000004": {
+     "file": "sprites/pet/equip/1802003/5000000.png",
+     "w": 32,
+     "h": 20,
+     "ox": 19,
+     "oy": 40,
+     "from": 5000000
+    },
+    "5000005": {
+     "file": "sprites/pet/equip/1802003/5000002.png",
+     "w": 32,
+     "h": 20,
+     "ox": 21,
+     "oy": 35,
+     "from": 5000002
+    },
+    "5000006": {
+     "file": "sprites/pet/equip/1802003/5000006.png",
+     "w": 31,
+     "h": 20,
+     "ox": 19,
+     "oy": 38
+    },
+    "5000007": {
+     "file": "sprites/pet/equip/1802003/5000007.png",
+     "w": 34,
+     "h": 19,
+     "ox": 20,
+     "oy": 42
+    },
+    "5000008": {
+     "file": "sprites/pet/equip/1802003/5000008.png",
+     "w": 34,
+     "h": 17,
+     "ox": 22,
+     "oy": 36
+    },
+    "5000009": {
+     "file": "sprites/pet/equip/1802003/5000009.png",
+     "w": 32,
+     "h": 23,
+     "ox": 16,
+     "oy": 43
+    },
+    "5000010": {
+     "file": "sprites/pet/equip/1802003/5000009.png",
+     "w": 32,
+     "h": 23,
+     "ox": 16,
+     "oy": 43,
+     "from": 5000009
+    }
+   }
+  },
+  {
+   "id": 1802004,
+   "name": "Pink Laced Cap",
+   "icon": "sprites/pet/equip/1802004/icon.png",
+   "art": {
+    "5000000": {
+     "file": "sprites/pet/equip/1802004/5000000.png",
+     "w": 17,
+     "h": 42,
+     "ox": 12,
+     "oy": 45
+    },
+    "5000001": {
+     "file": "sprites/pet/equip/1802004/5000001.png",
+     "w": 16,
+     "h": 37,
+     "ox": 13,
+     "oy": 42
+    },
+    "5000002": {
+     "file": "sprites/pet/equip/1802004/5000002.png",
+     "w": 17,
+     "h": 42,
+     "ox": 13,
+     "oy": 43
+    },
+    "5000003": {
+     "file": "sprites/pet/equip/1802004/5000003.png",
+     "w": 17,
+     "h": 46,
+     "ox": 18,
+     "oy": 46
+    },
+    "5000004": {
+     "file": "sprites/pet/equip/1802004/5000000.png",
+     "w": 17,
+     "h": 42,
+     "ox": 12,
+     "oy": 45,
+     "from": 5000000
+    },
+    "5000005": {
+     "file": "sprites/pet/equip/1802004/5000002.png",
+     "w": 17,
+     "h": 42,
+     "ox": 13,
+     "oy": 43,
+     "from": 5000002
+    },
+    "5000006": {
+     "file": "sprites/pet/equip/1802004/5000006.png",
+     "w": 16,
+     "h": 39,
+     "ox": 11,
+     "oy": 45
+    },
+    "5000007": {
+     "file": "sprites/pet/equip/1802004/5000007.png",
+     "w": 23,
+     "h": 46,
+     "ox": 17,
+     "oy": 46
+    },
+    "5000008": {
+     "file": "sprites/pet/equip/1802004/5000008.png",
+     "w": 18,
+     "h": 43,
+     "ox": 14,
+     "oy": 45
+    },
+    "5000009": {
+     "file": "sprites/pet/equip/1802004/5000009.png",
+     "w": 18,
+     "h": 43,
+     "ox": 7,
+     "oy": 51
+    },
+    "5000010": {
+     "file": "sprites/pet/equip/1802004/5000009.png",
+     "w": 18,
+     "h": 43,
+     "ox": 7,
+     "oy": 51,
+     "from": 5000009
+    }
+   }
+  },
+  {
+   "id": 1802005,
+   "name": "Sky Blue Laced Cap",
+   "icon": "sprites/pet/equip/1802005/icon.png",
+   "art": {
+    "5000000": {
+     "file": "sprites/pet/equip/1802005/5000000.png",
+     "w": 17,
+     "h": 42,
+     "ox": 12,
+     "oy": 45
+    },
+    "5000001": {
+     "file": "sprites/pet/equip/1802005/5000001.png",
+     "w": 16,
+     "h": 37,
+     "ox": 13,
+     "oy": 42
+    },
+    "5000002": {
+     "file": "sprites/pet/equip/1802005/5000002.png",
+     "w": 17,
+     "h": 42,
+     "ox": 13,
+     "oy": 43
+    },
+    "5000003": {
+     "file": "sprites/pet/equip/1802005/5000003.png",
+     "w": 17,
+     "h": 46,
+     "ox": 18,
+     "oy": 46
+    },
+    "5000004": {
+     "file": "sprites/pet/equip/1802005/5000000.png",
+     "w": 17,
+     "h": 42,
+     "ox": 12,
+     "oy": 45,
+     "from": 5000000
+    },
+    "5000005": {
+     "file": "sprites/pet/equip/1802005/5000002.png",
+     "w": 17,
+     "h": 42,
+     "ox": 13,
+     "oy": 43,
+     "from": 5000002
+    },
+    "5000006": {
+     "file": "sprites/pet/equip/1802005/5000006.png",
+     "w": 16,
+     "h": 39,
+     "ox": 11,
+     "oy": 45
+    },
+    "5000007": {
+     "file": "sprites/pet/equip/1802005/5000007.png",
+     "w": 24,
+     "h": 46,
+     "ox": 18,
+     "oy": 46
+    },
+    "5000008": {
+     "file": "sprites/pet/equip/1802005/5000008.png",
+     "w": 18,
+     "h": 43,
+     "ox": 14,
+     "oy": 45
+    },
+    "5000009": {
+     "file": "sprites/pet/equip/1802005/5000009.png",
+     "w": 18,
+     "h": 43,
+     "ox": 7,
+     "oy": 51
+    },
+    "5000010": {
+     "file": "sprites/pet/equip/1802005/5000009.png",
+     "w": 18,
+     "h": 43,
+     "ox": 7,
+     "oy": 51,
+     "from": 5000009
+    }
+   }
+  },
+  {
+   "id": 1802006,
+   "name": "Blue Top Hat",
+   "icon": "sprites/pet/equip/1802006/icon.png",
+   "art": {
+    "5000000": {
+     "file": "sprites/pet/equip/1802006/5000000.png",
+     "w": 31,
+     "h": 24,
+     "ox": 18,
+     "oy": 52
+    },
+    "5000001": {
+     "file": "sprites/pet/equip/1802006/5000001.png",
+     "w": 31,
+     "h": 24,
+     "ox": 18,
+     "oy": 48
+    },
+    "5000002": {
+     "file": "sprites/pet/equip/1802006/5000002.png",
+     "w": 31,
+     "h": 24,
+     "ox": 20,
+     "oy": 49
+    },
+    "5000003": {
+     "file": "sprites/pet/equip/1802006/5000003.png",
+     "w": 31,
+     "h": 24,
+     "ox": 27,
+     "oy": 53
+    },
+    "5000004": {
+     "file": "sprites/pet/equip/1802006/5000000.png",
+     "w": 31,
+     "h": 24,
+     "ox": 18,
+     "oy": 52,
+     "from": 5000000
+    },
+    "5000005": {
+     "file": "sprites/pet/equip/1802006/5000002.png",
+     "w": 31,
+     "h": 24,
+     "ox": 20,
+     "oy": 49,
+     "from": 5000002
+    },
+    "5000006": {
+     "file": "sprites/pet/equip/1802006/5000006.png",
+     "w": 31,
+     "h": 24,
+     "ox": 19,
+     "oy": 51
+    },
+    "5000007": {
+     "file": "sprites/pet/equip/1802006/5000007.png",
+     "w": 31,
+     "h": 24,
+     "ox": 21,
+     "oy": 52
+    },
+    "5000008": {
+     "file": "sprites/pet/equip/1802006/5000008.png",
+     "w": 31,
+     "h": 24,
+     "ox": 21,
+     "oy": 50
+    },
+    "5000009": {
+     "file": "sprites/pet/equip/1802006/5000009.png",
+     "w": 31,
+     "h": 24,
+     "ox": 17,
+     "oy": 56
+    },
+    "5000010": {
+     "file": "sprites/pet/equip/1802006/5000009.png",
+     "w": 31,
+     "h": 24,
+     "ox": 17,
+     "oy": 56,
+     "from": 5000009
+    }
+   }
+  },
+  {
+   "id": 1802007,
+   "name": "Red Top Hat",
+   "icon": "sprites/pet/equip/1802007/icon.png",
+   "art": {
+    "5000000": {
+     "file": "sprites/pet/equip/1802007/5000000.png",
+     "w": 31,
+     "h": 24,
+     "ox": 18,
+     "oy": 52
+    },
+    "5000001": {
+     "file": "sprites/pet/equip/1802007/5000001.png",
+     "w": 31,
+     "h": 24,
+     "ox": 18,
+     "oy": 48
+    },
+    "5000002": {
+     "file": "sprites/pet/equip/1802007/5000002.png",
+     "w": 31,
+     "h": 24,
+     "ox": 20,
+     "oy": 49
+    },
+    "5000003": {
+     "file": "sprites/pet/equip/1802007/5000003.png",
+     "w": 31,
+     "h": 24,
+     "ox": 27,
+     "oy": 53
+    },
+    "5000004": {
+     "file": "sprites/pet/equip/1802007/5000000.png",
+     "w": 31,
+     "h": 24,
+     "ox": 18,
+     "oy": 52,
+     "from": 5000000
+    },
+    "5000005": {
+     "file": "sprites/pet/equip/1802007/5000002.png",
+     "w": 31,
+     "h": 24,
+     "ox": 20,
+     "oy": 49,
+     "from": 5000002
+    },
+    "5000006": {
+     "file": "sprites/pet/equip/1802007/5000006.png",
+     "w": 31,
+     "h": 24,
+     "ox": 19,
+     "oy": 51
+    },
+    "5000007": {
+     "file": "sprites/pet/equip/1802007/5000007.png",
+     "w": 31,
+     "h": 24,
+     "ox": 21,
+     "oy": 52
+    },
+    "5000008": {
+     "file": "sprites/pet/equip/1802007/5000008.png",
+     "w": 31,
+     "h": 24,
+     "ox": 21,
+     "oy": 50
+    },
+    "5000009": {
+     "file": "sprites/pet/equip/1802007/5000009.png",
+     "w": 31,
+     "h": 24,
+     "ox": 17,
+     "oy": 56
+    },
+    "5000010": {
+     "file": "sprites/pet/equip/1802007/5000009.png",
+     "w": 31,
+     "h": 24,
+     "ox": 17,
+     "oy": 56,
+     "from": 5000009
+    }
+   }
+  },
+  {
+   "id": 1802008,
+   "name": "Rudolph's Hat",
+   "icon": "sprites/pet/equip/1802008/icon.png",
+   "art": {
+    "5000000": {
+     "file": "sprites/pet/equip/1802008/5000000.png",
+     "w": 30,
+     "h": 26,
+     "ox": 14,
+     "oy": 51
+    },
+    "5000001": {
+     "file": "sprites/pet/equip/1802008/5000001.png",
+     "w": 40,
+     "h": 35,
+     "ox": 25,
+     "oy": 45
+    },
+    "5000002": {
+     "file": "sprites/pet/equip/1802008/5000002.png",
+     "w": 32,
+     "h": 27,
+     "ox": 17,
+     "oy": 46
+    },
+    "5000003": {
+     "file": "sprites/pet/equip/1802008/5000003.png",
+     "w": 30,
+     "h": 25,
+     "ox": 20,
+     "oy": 51
+    },
+    "5000004": {
+     "file": "sprites/pet/equip/1802008/5000000.png",
+     "w": 30,
+     "h": 26,
+     "ox": 14,
+     "oy": 51,
+     "from": 5000000
+    },
+    "5000005": {
+     "file": "sprites/pet/equip/1802008/5000002.png",
+     "w": 32,
+     "h": 27,
+     "ox": 17,
+     "oy": 46,
+     "from": 5000002
+    },
+    "5000006": {
+     "file": "sprites/pet/equip/1802008/5000006.png",
+     "w": 35,
+     "h": 33,
+     "ox": 20,
+     "oy": 47
+    },
+    "5000007": {
+     "file": "sprites/pet/equip/1802008/5000007.png",
+     "w": 30,
+     "h": 25,
+     "ox": 18,
+     "oy": 48
+    },
+    "5000008": {
+     "file": "sprites/pet/equip/1802008/5000008.png",
+     "w": 30,
+     "h": 25,
+     "ox": 17,
+     "oy": 47
+    },
+    "5000009": {
+     "file": "sprites/pet/equip/1802008/5000009.png",
+     "w": 32,
+     "h": 27,
+     "ox": 13,
+     "oy": 56
+    },
+    "5000010": {
+     "file": "sprites/pet/equip/1802008/5000009.png",
+     "w": 32,
+     "h": 27,
+     "ox": 13,
+     "oy": 56,
+     "from": 5000009
+    }
+   },
+   "released": false
+  },
+  {
+   "id": 1802009,
+   "name": "Tree Hat",
+   "icon": "sprites/pet/equip/1802009/icon.png",
+   "art": {
+    "5000000": {
+     "file": "sprites/pet/equip/1802009/5000000.png",
+     "w": 23,
+     "h": 26,
+     "ox": 13,
+     "oy": 51
+    },
+    "5000001": {
+     "file": "sprites/pet/equip/1802009/5000001.png",
+     "w": 23,
+     "h": 26,
+     "ox": 13,
+     "oy": 47
+    },
+    "5000002": {
+     "file": "sprites/pet/equip/1802009/5000002.png",
+     "w": 23,
+     "h": 26,
+     "ox": 15,
+     "oy": 47
+    },
+    "5000003": {
+     "file": "sprites/pet/equip/1802009/5000003.png",
+     "w": 23,
+     "h": 26,
+     "ox": 19,
+     "oy": 52
+    },
+    "5000004": {
+     "file": "sprites/pet/equip/1802009/5000000.png",
+     "w": 23,
+     "h": 26,
+     "ox": 13,
+     "oy": 51,
+     "from": 5000000
+    },
+    "5000005": {
+     "file": "sprites/pet/equip/1802009/5000002.png",
+     "w": 23,
+     "h": 26,
+     "ox": 15,
+     "oy": 47,
+     "from": 5000002
+    },
+    "5000006": {
+     "file": "sprites/pet/equip/1802009/5000006.png",
+     "w": 23,
+     "h": 26,
+     "ox": 14,
+     "oy": 48
+    },
+    "5000007": {
+     "file": "sprites/pet/equip/1802009/5000007.png",
+     "w": 23,
+     "h": 26,
+     "ox": 17,
+     "oy": 52
+    },
+    "5000008": {
+     "file": "sprites/pet/equip/1802009/5000008.png",
+     "w": 23,
+     "h": 26,
+     "ox": 15,
+     "oy": 49
+    },
+    "5000009": {
+     "file": "sprites/pet/equip/1802009/5000009.png",
+     "w": 23,
+     "h": 26,
+     "ox": 12,
+     "oy": 56
+    },
+    "5000010": {
+     "file": "sprites/pet/equip/1802009/5000009.png",
+     "w": 23,
+     "h": 26,
+     "ox": 12,
+     "oy": 56,
+     "from": 5000009
+    }
+   },
+   "released": false
+  }
+ ]
+}

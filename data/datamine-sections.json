@@ -1,0 +1,157 @@
+{
+ "_comment": "Two groups of items inside the All · Datamine views (clothing and weapon tabs). They stay in the one full list, in its normal order, among the released and other datamine items, but are not labelled DATAMINE: Founder's Packages items carry a FOUNDERS label and the 10-day expiring NX equips an EXPIRING NX label (`badge` below). They are not mystery crate or event box items, so the main (Released) lists leave them out. build-catalog.mjs gives each item a `tag` with its badge. Founder's Packages: the Well-Loved, Founder's Thief and Manji's outfit sets and the Marks of the Founder (game strings: the Avatar Sets in String/Consume.img; MeowDB for which package has which; the Tan mark is inferred). 10-Day Equip Covers: the 10-day expiring NX equips on sale in the cash shop (reference/cash-shop, 'Cash Shop Update' pages; the same 15 on Oct 21, Oct 28 and Nov 4).",
+ "sections": [
+  {
+   "title": "Founder's Packages",
+   "items": [
+    {
+     "id": 1007129,
+     "name": "Well-Loved Brown Bamboo Hat"
+    },
+    {
+     "id": 1057073,
+     "name": "Well-Loved Blue Sauna Robe"
+    },
+    {
+     "id": 1077041,
+     "name": "Well-Loved White & Blue Sandals"
+    },
+    {
+     "id": 1087012,
+     "name": "Well-Loved Work Gloves"
+    },
+    {
+     "id": 1107009,
+     "name": "Well-Loved Pan Lid"
+    },
+    {
+     "id": 1702027,
+     "name": "Well-Loved Frozen Tuna"
+    },
+    {
+     "id": 1007130,
+     "name": "Founder's Thief Hat"
+    },
+    {
+     "id": 1057074,
+     "name": "Founder's Thief Outfit"
+    },
+    {
+     "id": 1077042,
+     "name": "Founder's Thief Boots"
+    },
+    {
+     "id": 1087013,
+     "name": "Founder's Thief Gloves"
+    },
+    {
+     "id": 1702028,
+     "name": "Founder's Thief Dagger"
+    },
+    {
+     "id": 1017020,
+     "name": "Founder's Thief Face"
+    },
+    {
+     "id": 1007131,
+     "name": "Manji's Bamboo Hat"
+    },
+    {
+     "id": 1057075,
+     "name": "Manji's Clothes"
+    },
+    {
+     "id": 1077043,
+     "name": "Reticent Steps"
+    },
+    {
+     "id": 1107010,
+     "name": "Silent Sea of Clouds"
+    },
+    {
+     "id": 1702029,
+     "name": "Manji's Blade"
+    },
+    {
+     "id": 1007126,
+     "name": "Mark of the Founder (Tan)"
+    },
+    {
+     "id": 1007127,
+     "name": "Mark of the Founder (Brown)"
+    },
+    {
+     "id": 1007128,
+     "name": "Mark of the Founder (Black)"
+    }
+   ],
+   "badge": "FOUNDERS"
+  },
+  {
+   "title": "10-Day Equip Covers",
+   "items": [
+    {
+     "id": 1007039,
+     "name": "Goggled Black Cap"
+    },
+    {
+     "id": 1007066,
+     "name": "Blue Picnic Hat"
+    },
+    {
+     "id": 1007098,
+     "name": "Kuniragi Hat"
+    },
+    {
+     "id": 1047028,
+     "name": "Beige Double Coat"
+    },
+    {
+     "id": 1047047,
+     "name": "Dark Rider"
+    },
+    {
+     "id": 1047049,
+     "name": "Green Striped Trainer"
+    },
+    {
+     "id": 1057007,
+     "name": "Red Raincoat"
+    },
+    {
+     "id": 1057029,
+     "name": "Yellow Tights"
+    },
+    {
+     "id": 1057045,
+     "name": "Green Picnicwear"
+    },
+    {
+     "id": 1067005,
+     "name": "Basic Wildcats Baseball Pants"
+    },
+    {
+     "id": 1067031,
+     "name": "Military Shorts"
+    },
+    {
+     "id": 1067066,
+     "name": "Red Training Shorts"
+    },
+    {
+     "id": 1077009,
+     "name": "Red Rain Boots"
+    },
+    {
+     "id": 1077013,
+     "name": "Black Baseball Cleats"
+    },
+    {
+     "id": 1077036,
+     "name": "Red Loose Sox"
+    }
+   ],
+   "badge": "EXPIRING NX"
+  }
+ ]
+}

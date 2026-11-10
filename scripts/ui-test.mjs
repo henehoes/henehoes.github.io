@@ -12,7 +12,6 @@ const page = await browser.newPage();
 const errors = [];
 page.on('pageerror', e => errors.push(e.message));
 page.on('console', m => m.type() === 'error' && errors.push(m.text()));
-await page.evaluateOnNewDocument(() => { try { localStorage.setItem('henehoes.datamine-unlocked', '1'); } catch {} }); // the datamine lock is tested on its own, further down
 await page.goto(BASE, { waitUntil: 'networkidle0' });
 
 // Counts come from the built catalogue, so the checks follow the data (items move from upcoming to released as boxes come out)
@@ -30,7 +29,7 @@ const settle = () => new Promise(r => setTimeout(r, 700));
 const start = await pixels();
 check('preview draws something', start.n > 500, `(${start.n} px)`);
 check('on load the Released tab is open, on Mystery Fashion and its newest box (Nov 4)', (await page.$eval('.tab[aria-selected="true"]', e => e.title)).startsWith('Released') && (await page.$eval('#content .past-tab[aria-selected="true"]', e => e.textContent)) === 'Mystery Fashion' && (await page.$eval('#content .pill[aria-pressed="true"]', e => e.textContent)) === 'Nov 4 – Nov 18');
-check('the Look Book, Released and Upcoming close the rail, below Chat Ring, and never carry a checkmark', await page.$$eval('.tab', ts => { const t = ts.map(x => x.title); const n = t.length; return t[n - 2].startsWith('Released') && t[n - 1].startsWith('Upcoming') && t[n - 3].startsWith('Look Book') && t[n - 4] === 'Chat Ring' && ![n - 3, n - 2, n - 1].some(i => ts[i].querySelector('.tick')); }));
+check('the Look Book, Released and Upcoming close the rail, below Pet, and never carry a checkmark', await page.$$eval('.tab', ts => { const t = ts.map(x => x.title); const n = t.length; return t[n - 2].startsWith('Released') && t[n - 1].startsWith('Upcoming') && t[n - 3].startsWith('Look Book') && t[n - 4] === 'Pet' && t[n - 5] === 'Chat Ring' && ![n - 3, n - 2, n - 1].some(i => ts[i].querySelector('.tick')); }));
 
 // Nothing is worn at the start: no face and no hair
 const selectedNames = async tab => { await clickTab(tab); await settle(); return page.$$eval('#content .grid .card[aria-pressed="true"] .label', els => els.map(e => e.textContent)); };
@@ -388,7 +387,7 @@ check('changing tab clears the search box', (await page.$eval('#filters .search-
 await clickTab('Hair'); await settle();
 
 // Browser tab: title and icon
-check('the page title is "classic henehoes"', (await page.title()) === 'classic henehoes');
+check(`the page title is "${DM ? 'henehoes pro' : 'classic henehoes'}"`, (await page.title()) === (DM ? 'henehoes pro' : 'classic henehoes')); // the datamine build is the "pro" one
 check('the Orange Cat Beanie icons are linked and served', await page.evaluate(async () => { const hrefs = [...document.querySelectorAll('link[rel~=icon], link[rel=apple-touch-icon]')].map(l => l.getAttribute('href')); return hrefs.length === 3 && (await Promise.all(hrefs.map(h => fetch(h).then(r => r.ok)))).every(Boolean); }));
 
 // Backdrop: the preview is drawn on the Henesys picture, so it has no transparent pixels
@@ -864,9 +863,17 @@ await page.screenshot({ path: 'tmp/ui-final.png' });
   for (let k = 0; k < 15; k++) await addCard('Oak Window');
   await settle();
   const capped = await page.evaluate(() => ({ count: document.querySelector('.house-count').textContent, full: document.querySelector('.house-count').classList.contains('full'), disabled: [...document.querySelectorAll('#content .card')].every(c => c.disabled), hint: document.querySelector('#content .hint')?.textContent ?? '' }));
-  check('Housing book: 16 pieces fills the home: the counter says so and the cards are disabled', (await layout()).length === 16 && capped.count === '16/16 pieces' && capped.full && capped.disabled && /full/.test(capped.hint), JSON.stringify(capped));
+  check('Housing book: 16 decor pieces fills the decor: the counter says so and the decor cards are disabled', (await layout()).length === 16 && capped.count === '16/16 decor · 0/1 chest · 0/1 crafting station' && capped.full && capped.disabled && /16 decor pieces, the most it holds/.test(capped.hint), JSON.stringify(capped));
   await addCard('Cherry Bed'); await settle();
-  check('Housing book: a 17th piece is refused', (await layout()).length === 16);
+  check('Housing book: a 17th decor piece is refused', (await layout()).length === 16);
+  // Chests and crafting stations have a limit of their own: one of each, on top of the 16 decor pieces
+  await tabByTitle('Chests'); await settle();
+  await addCard('Worn Wooden Chest'); await settle(); await addCard('Rusty Safe'); await settle();
+  const chestTab = await page.evaluate(() => ({ disabled: [...document.querySelectorAll('#content .card')].every(c => c.disabled), count: document.querySelector('.house-count').textContent }));
+  check('Housing book: a chest goes in even with 16 decor pieces, a second chest is refused', (await layout()).length === 17 && chestTab.disabled && chestTab.count === '16/16 decor · 1/1 chest · 0/1 crafting station', JSON.stringify(chestTab));
+  await tabByTitle('Crafting stations'); await settle();
+  await addCard('Anvil'); await settle(); await addCard('Sewing Machine'); await settle();
+  check('Housing book: one crafting station goes in on top of that (18 pieces in all), a second is refused', (await layout()).length === 18 && (await page.$eval('.house-count', e => e.textContent)) === '16/16 decor · 1/1 chest · 1/1 crafting station');
   await page.click('#stage-tools .tool'); await settle();
   check('Housing book: Clear all empties the home and frees the cards', (await layout()).length === 0 && (await page.$$eval('#content .card', c => c.every(x => !x.disabled))));
   await tabByTitle('Character book'); await settle();
@@ -917,27 +924,122 @@ await page.screenshot({ path: 'tmp/ui-final.png' });
   const shade = FULL.hair.flatMap(h => h.variants.flatMap(v => v.parts.filter(p => p.layer === 'hairShade')));
   check('hair shade: each picture lists the skin tones it is for, and every skin tone is covered', shade.length > 0 && shade.every(p => Array.isArray(p.tones)) && FULL.skins.every(sk => FULL.hair[0].variants[0].parts.filter(p => p.layer === 'hairShade').some(p => p.tones.includes(sk.tone))));
 }
-// The datamine lock, in a clean browser profile (nothing remembered)
+// Founder's Package items and the 10-day expiring equips are datamine, not part of the main lists: the Released lists and the Released tab leave them out;
+// in a datamine build (VITE_DATAMINE=1) the one All · Datamine list includes them, labelled FOUNDERS and EXPIRING NX
 {
-  const ctx = await (browser.createBrowserContext ?? browser.createIncognitoBrowserContext).call(browser);
-  const g = await ctx.newPage();
-  await g.goto(BASE, { waitUntil: 'networkidle0' });
-  await g.evaluate(() => [...document.querySelectorAll('.tab')].find(t => t.title.startsWith('Hair')).click());
-  const sw = () => g.evaluate(() => [...document.querySelectorAll('#source .seg button')].find(b => b.textContent.includes('Datamine')));
-  check('datamine lock: the All · Datamine button carries a padlock while locked', await g.evaluate(() => [...document.querySelectorAll('#source .seg button')].find(b => b.textContent.includes('Datamine')).classList.contains('locked')));
-  const click = () => g.evaluate(() => [...document.querySelectorAll('#source .seg button')].find(b => b.textContent.includes('Datamine')).click());
-  await click(); await g.waitForSelector('dialog.gate[open]');
-  const options = await g.$$eval('#gate-item option, #gate-colour option', os => os.length);
-  check('datamine lock: the question box opens with an item list (8 + blank) and a colour list (10 + blank)', options === 9 + 11, String(options));
-  const answer = async (name, item, colour) => { await g.$eval('#gate-name', (e, v) => { e.value = v; }, name); await g.select('#gate-item', item); await g.select('#gate-colour', colour); await g.click('dialog.gate button[type=submit]'); await new Promise(r => setTimeout(r, 400)); };
-  await answer('Hernz', 'Halo', 'Pastel Pink');
-  check('datamine lock: a wrong dye answer is refused and the box stays open', await g.evaluate(() => !!document.querySelector('dialog.gate[open]') && document.querySelector('.gate-msg').textContent.startsWith('Not quite')));
-  await answer('  HERNZ ', 'Angel Wand', 'Pastel Pink');
-  check('datamine lock: the right answers (any capitalisation) close the box and open the datamine view', await g.evaluate(() => !document.querySelector('dialog.gate') && [...document.querySelectorAll('#source .seg button')].find(b => b.textContent.includes('Datamine')).getAttribute('aria-pressed') === 'true'));
-  await g.reload({ waitUntil: 'networkidle0' });
-  check('datamine lock: the unlock is remembered after a reload (no padlock)', await g.evaluate(() => { [...document.querySelectorAll('.tab')].find(t => t.title.startsWith('Hair')).click(); return ![...document.querySelectorAll('#source .seg button')].find(b => b.textContent.includes('Datamine')).classList.contains('locked'); }));
-  await ctx.close();
+  const SECTIONS = JSON.parse(readFileSync('data/datamine-sections.json', 'utf8')).sections;
+  const listed = async (tab, view) => { await clickTab(tab); await settle(); if (DM) { await page.evaluate(v => [...document.querySelectorAll('#source .seg button')].find(x => x.textContent === v)?.click(), view); await settle(); } return page.$$eval('#content .card .label', l => l.map(x => x.textContent)); };
+  const everyName = SECTIONS.flatMap(sec => sec.items.map(x => x.name));
+  const released = [...(await listed('Overall', 'Released')), ...(await listed('Hat', 'Released')), ...(await listed('Cape', 'Released')), ...(await listed('Bottom', 'Released')), ...(await listed('Shoes', 'Released'))];
+  check("Founder's and 10-day items: none of them is in the Released lists (Overall, Hat, Cape, Bottom, Shoes)", !released.some(n => everyName.includes(n)));
+  await clickTab('Released'); await settle();
+  check("Released tab: no Founder's Packages group (Mystery Fashion, Mystery Styles, Aurora only)", JSON.stringify(await page.$$eval('.past-tab', t => t.map(x => x.textContent))) === JSON.stringify(['Mystery Fashion', 'Mystery Styles', 'Aurora']));
+  if (DM) {
+    // In All · Datamine the released and datamined items are one list in id order (so patterns in what was released show); Founder's Package
+    // items carry a FOUNDERS label and the 10-day equips an EXPIRING NX label instead of DATAMINE
+    const view = async tab => { await clickTab(tab); await settle(); await page.evaluate(() => [...document.querySelectorAll('#source .seg button')].find(x => x.textContent === 'All · Datamine')?.click()); await settle(); return page.evaluate(() => ({ titles: [...document.querySelectorAll('#content .group-title')].map(e => e.textContent), cards: [...document.querySelectorAll('#content .card')].map(c => ({ name: c.querySelector('.label')?.textContent, badge: c.querySelector('.unreleased-badge')?.textContent ?? null })) })); };
+    const ov = await view('Overall');
+    const byName = Object.fromEntries(ov.cards.map(c => [c.name, c.badge]));
+    const want = CAT.longcoat.items.filter(i => !SHOW_UPCOMING || !i.upcoming).sort((a, b) => a.id - b.id).map(i => i.name); // while upcoming is off, an upcoming item is just a datamined one
+    check('datamine list: Overall is one list with no group headings, released and datamined items mixed in id order', ov.titles.length === 0 && JSON.stringify(ov.cards.slice(0, want.length).map(c => c.name)) === JSON.stringify(want), JSON.stringify([ov.titles, ov.cards.length, want.length]));
+    check("datamine list: Founder's items are labelled FOUNDERS (Manji's Clothes, Founder's Thief Outfit, Well-Loved Blue Sauna Robe), none says DATAMINE", ["Manji's Clothes", "Founder's Thief Outfit", 'Well-Loved Blue Sauna Robe'].every(n => byName[n] === 'FOUNDERS'));
+    check('datamine list: the 10-day equips are labelled EXPIRING NX (Green Picnicwear, Red Raincoat, Yellow Tights)', ['Green Picnicwear', 'Red Raincoat', 'Yellow Tights'].every(n => byName[n] === 'EXPIRING NX'));
+    const plain = ov.cards.find(c => c.badge && !['FOUNDERS', 'EXPIRING NX'].includes(c.badge));
+    check('datamine list: other datamined items still say DATAMINE, and released items have no label', plain?.badge === 'DATAMINE' && ov.cards.some(c => c.badge === null));
+    const hats = await view('Hat'), capes = await view('Cape');
+    check('datamine list: Hats and Capes label their Founder\'s items too (Manji\'s Bamboo Hat, Mark of the Founder (Tan), Silent Sea of Clouds, Well-Loved Pan Lid)', hats.cards.find(c => c.name === "Manji's Bamboo Hat")?.badge === 'FOUNDERS' && hats.cards.find(c => c.name === 'Mark of the Founder (Tan)')?.badge === 'FOUNDERS' && capes.cards.find(c => c.name === 'Silent Sea of Clouds')?.badge === 'FOUNDERS' && capes.cards.find(c => c.name === 'Well-Loved Pan Lid')?.badge === 'FOUNDERS');
+  }
 }
+
+// The Equipped panel's Availability line: Frieren collab items and Founder's items say "Not available" (not "Not in any Mystery box on record")
+{
+  const availability = async (tab, name, view) => {
+    await clickTab(tab); await settle();
+    if (view) { await page.evaluate(v => [...document.querySelectorAll('#source .seg button')].find(b => b.textContent === v)?.click(), view); await settle(); }
+    await page.evaluate(n => [...document.querySelectorAll('#content .card')].find(c => c.querySelector('.label')?.textContent === n)?.click(), name); await settle();
+    const text = await page.$eval('#colour .avail', e => e.textContent).catch(() => null);
+    await page.evaluate(n => document.querySelector('#colour .slot .remove[title^="Remove ' + n.replace(/"/g, '') + '"]')?.click(), name); await settle();
+    return text;
+  };
+  check('Availability: a Frieren collab item (Frieren\'s Clothes) says "Not available"', (await availability('Overall', "Frieren's Clothes")) === 'Not available');
+  if (DM) check('Availability: a Founder\'s item (Manji\'s Clothes) says "Not available", a 10-day equip (Green Picnicwear) says "Not released yet"', (await availability('Overall', "Manji's Clothes", 'All · Datamine')) === 'Not available' && (await availability('Overall', 'Green Picnicwear', 'All · Datamine')) === 'Not released yet');
+}
+
+// Pets and pet equipment. Two tabs of their own, above the Look Book.
+{
+  const PETS = JSON.parse(readFileSync('public/catalog.json', 'utf8')).pets;
+  const releasedPets = PETS.pets.filter(x => x.released !== false).length;
+  const cards = () => page.$$eval('#content .card', c => c.length);
+  const labels = () => page.$$eval('#colour .slot .label', l => l.map(x => x.textContent).filter(x => /^Pet/.test(x))); // the pet entries only (the page has a face and hair on too)
+  const choose = l => page.evaluate(l => [...document.querySelectorAll('#content .card')].find(c => c.querySelector('.label')?.textContent === l)?.click(), l);
+  const tabClass = t => page.evaluate(t => [...document.querySelectorAll('.tab')].find(x => x.title === t)?.className ?? '', t);
+  check('Pet tab: Pet is its own section (not the clothing style), above the Look Book, and there is no Pet Equip tab', /pets/.test(await tabClass('Pet')) && !/wearable/.test(await tabClass('Pet')) && (await tabClass('Pet Equip')) === '');
+  await clickTab('Pet'); await settle();
+  await page.evaluate(() => [...document.querySelectorAll('#source .seg button')].find(b => b.textContent === 'Released')?.click()); await settle(); // the view chosen on another tab carries over
+  check('Pet tab: the Released view lists the released pets' + (releasedPets ? '' : ' (none yet: it says so)'), (await cards()) === releasedPets && (releasedPets > 0 || /No pets are listed as released/.test(await page.$eval('#content', e => e.textContent))));
+  await page.evaluate(() => [...document.querySelectorAll('#source .seg button')].find(b => b.textContent.includes('Datamine')).click()); await settle();
+  check('Pet tab: All · Datamine lists all ' + PETS.pets.length + ' pets, each badged until released', (await cards()) === PETS.pets.length && (await page.$$eval('#content .card .unreleased-badge', b => b.length)) === PETS.pets.filter(x => x.released === false).length);
+  await clickTab('Pet'); await settle();
+  const before = await pixels();
+  const fx0 = await page.$eval('#preview', c => c.dataset.focus.split(',')[0]);
+  await choose('Brown Kitty'); await settle();
+  const withPet = await pixels();
+  check('Pet tab: choosing a pet leaves the character centred in the preview (the frame stays centred on the character)', fx0 === await page.$eval('#preview', c => c.dataset.focus.split(',')[0]) && fx0 !== undefined);
+  check('Pet tab: choosing Brown Kitty puts it beside the character, in the Equipped panel, with a checkmark on the tab', withPet.h !== before.h && (await labels()).join() === 'Pet' && await page.$eval('.tab[title="Pet"] .tick', () => true).catch(() => false));
+  const gear = () => page.$$eval('#colour .pet-gear .card', c => c.map(x => ({ l: x.querySelector('.label').textContent, on: x.getAttribute('aria-pressed') === 'true' })));
+  const pickGear = l => page.evaluate(l => [...document.querySelectorAll('#colour .pet-gear .card')].find(c => c.querySelector('.label')?.textContent === l)?.click(), l);
+  const fitting = PETS.equips.filter(e => e.art[5000000]).length; // the view is still All · Datamine from the check above
+  const g0 = await gear();
+  check('Equipped panel: the pet lists its equipment, None first and selected (' + fitting + ' pieces fit Brown Kitty, datamined ones included and badged)', g0.length === fitting + 1 && g0[0].l === 'None' && g0[0].on && g0.slice(1).every(x => !x.on) && (await page.$$eval('#colour .pet-gear .unreleased-badge', b => b.length)) === PETS.equips.filter(e => e.art[5000000] && e.released === false).length && (await page.$$eval('#colour .pet-gear .card', c => c[0].querySelector('.none-icon') !== null)));
+  await pickGear('Red Ribbon'); await settle();
+  const withGear = await pixels();
+  const g1 = await gear();
+  check('Equipped panel: Red Ribbon is drawn on the pet, is the selected option, and there is still just the pet tile', withGear.h !== withPet.h && g1.find(x => x.l === 'Red Ribbon')?.on && !g1[0].on && (await labels()).join() === 'Pet');
+  await pickGear('None'); await settle();
+  check('Equipped panel: None takes the equipment off again', (await pixels()).h === withPet.h && (await gear())[0].on);
+  await pickGear('Red Ribbon'); await settle();
+  const bunny = PETS.pets.find(x => x.name === 'White Bunny');
+  const bunnyFits = PETS.equips.filter(e => e.art[bunny.id]).length;
+  await clickTab('Pet'); await settle(); await choose('White Bunny'); await settle();
+  const g2 = await gear();
+  check('Equipped panel: White Bunny (a link to Pink Bunny\'s pictures) lists all ' + bunnyFits + ' pieces, and keeps the ribbon', g2.length === bunnyFits + 1 && g2.find(x => x.l === 'Red Ribbon')?.on && (await labels()).join() === 'Pet');
+  // Posing with a pet: the frame (centre, size, zoom) must not move from frame to frame of a swing
+  await page.evaluate(() => { window.__frames = new Set(); window.__t = setInterval(() => { const d = document.getElementById('preview').dataset; window.__frames.add([d.focus, d.view, d.zoom].join('|')); window.__poses.add(d.pose); }, 20); window.__poses = new Set(); });
+  await page.evaluate(() => [...document.querySelectorAll('#pose-tools .tool:not(:disabled)')].find(b => b.dataset.pose !== 'ladder')?.click());
+  await new Promise(r => setTimeout(r, 2500));
+  const frames = await page.evaluate(() => { clearInterval(window.__t); return { f: [...window.__frames], p: [...window.__poses] }; });
+  check('Pet worn: while the character attacks the preview frame stays put (one centre, size and zoom)', frames.p.length > 2 && frames.f.length === 1, JSON.stringify(frames));
+  await settle();
+  // Copy character image leaves the pet out (the clipboard is a stub that decodes what it is given)
+  await page.evaluate(() => {
+    window.__copied = null;
+    navigator.clipboard.write = async items => { const blob = await items[0].getType('image/png'); const bmp = await createImageBitmap(blob); const c = document.createElement('canvas'); c.width = bmp.width; c.height = bmp.height; const x = c.getContext('2d'); x.drawImage(bmp, 0, 0); const d = x.getImageData(0, 0, c.width, c.height).data; let opaque = 0; for (let k = 3; k < d.length; k += 4) if (d[k]) opaque++; window.__copied = { w: c.width, h: c.height, opaque }; };
+  });
+  await page.click('button.tool[aria-label^="Copy character image"]');
+  await page.waitForFunction(() => window.__copied, { timeout: 5000 }).catch(() => {});
+  const copiedWith = await page.evaluate(() => window.__copied);
+  await page.evaluate(() => document.querySelector('#colour .slot .remove[title^="Remove White Bunny"]')?.click()); await settle();
+  check('Pet tabs: the remove button takes the pet (and its gear) off', (await labels()).length === 0 && !(await page.$('.tab[title="Pet"] .tick')));
+  await page.evaluate(() => { window.__copied = null; });
+  await page.click('button.tool[aria-label^="Copy character image"]');
+  await page.waitForFunction(() => window.__copied, { timeout: 5000 }).catch(() => {});
+  const copiedWithout = await page.evaluate(() => window.__copied);
+  check('Copy character image: the same picture with or without a pet (the pet is left out)', !!copiedWith && !!copiedWithout && copiedWith.w === copiedWithout.w && copiedWith.h === copiedWithout.h && copiedWith.opaque === copiedWithout.opaque, JSON.stringify([copiedWith, copiedWithout]));
+}
+
+// The category rail fits the book: on a short screen the tabs shrink until all of them are visible; on a tall one they keep their size
+{
+  const fit = async (w, h) => {
+    const r = await browser.newPage(); await r.setViewport({ width: w, height: h });
+    await r.goto(BASE, { waitUntil: 'networkidle0' });
+    const m = await r.evaluate(() => { const t = document.getElementById('tabs'), last = t.lastElementChild.getBoundingClientRect(), book = document.querySelector('.book').getBoundingClientRect(); return { fit: +(t.style.getPropertyValue('--fit') || 1), inside: last.bottom <= book.bottom, pageScrolls: document.documentElement.scrollHeight > innerHeight, tabs: t.children.length }; });
+    await r.close(); return m;
+  };
+  const tall = await fit(1440, 1000), short = await fit(1280, 680);
+  check('category rail: on a tall screen the tabs keep their normal size', tall.fit === 1 && tall.inside, JSON.stringify(tall));
+  check('category rail: on a short screen the tabs shrink so all of them are visible and the page does not scroll', short.fit < 1 && short.fit >= 0.6 && short.inside && !short.pageScrolls, JSON.stringify(short));
+}
+
 console.log(results.join('\n'));
 console.log('console/page errors:', errors.length ? errors : 'none');
 await browser.close();

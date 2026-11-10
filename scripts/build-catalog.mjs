@@ -139,13 +139,16 @@ for (const kind of ['face', 'hair']) catalog[kind].sort((a, b) => byId(orderOf(k
 // Datamined cash items (data/datamine/<section>.json, scripts/extract-datamine.mjs): in the game files, not released. They join their tab's
 // list with `released: false`; the app lists them only in that tab's All · Datamine view. A weapon with only the two-handed stance
 // (`stand2Only`) is drawn like the Toy Rifle: the whole body in the two-handed pose.
+// Some belong to a group (data/datamine-sections.json: Founder's Packages, 10-Day Equip Covers): they stay in the one datamine list but carry a `tag`
+// (FOUNDERS, EXPIRING NX) that the app shows instead of the DATAMINE label.
+const sections = read('data/datamine-sections.json').sections, tagOf = new Map(sections.flatMap(s => s.items.map(i => [i.id, s.badge])));
 for (const file of existsSync('data/datamine') ? readdirSync('data/datamine').filter(f => f.endsWith('.json')) : []) {
   const section = file.slice(0, -5);
   for (const d of read(`data/datamine/${file}`).items) {
     const dir = `sprites/datamine/${section}/${d.id}`, meta = read(`public/${dir}/meta.json`), parts = partsOf(meta, dir);
     if (!parts.length) { warnings.noParts.push(`${d.name} (datamine ${section})`); continue; }
     const p2 = parts2Of(dir, d.name);
-    (catalog.wearables[section] ??= { label: section, items: [] }).items.push({ id: d.id, name: d.name, classicId: d.id, released: false, vslots: meta.vslots ?? [], ...(existsSync(`public/${dir}/icon.png`) && { icon: `${dir}/icon.png` }), ...(d.weaponClass && { weaponClass: d.weaponClass }), ...(d.stand2Only && { pose: 'stand2' }), parts, ...(p2 && { parts2: p2 }) });
+    (catalog.wearables[section] ??= { label: section, items: [] }).items.push({ id: d.id, name: d.name, classicId: d.id, released: false, ...(tagOf.has(d.id) && { tag: tagOf.get(d.id) }), vslots: meta.vslots ?? [], ...(existsSync(`public/${dir}/icon.png`) && { icon: `${dir}/icon.png` }), ...(d.weaponClass && { weaponClass: d.weaponClass }), ...(d.stand2Only && { pose: 'stand2' }), parts, ...(p2 && { parts2: p2 }) });
   }
 }
 // Dyeing: the game marks the items it lets you dye (data/game-dye.json, scripts/extract-dyeable.mjs). A catalogue item the game has and
@@ -211,6 +214,7 @@ for (const it of catalog.wearables.cap?.items ?? []) if (rules.fitHelmet?.includ
 // Datamined clothing, weapons and rings (released: false) go in a file of their own, public/catalog-datamine.json: only a VITE_DATAMINE=1
 // build (the GitHub Pages test site) shows them and loads it, so the Vercel site's visitors never download ~2,000 items they cannot see.
 // Faces and hairs stay in catalog.json (their datamine views are on everywhere). Scripts read both through scripts/lib-catalog.mjs.
+catalog.pets = read('data/game-pets.json'); // pets and pet equipment (scripts/extract-pets.mjs); the unreleased ones are flagged and shown only under All · Datamine
 const datamine = { wearables: {} };
 for (const [slot, g] of Object.entries(catalog.wearables)) {
   const out = g.items.filter(i => i.released === false);
