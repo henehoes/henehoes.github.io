@@ -1,5 +1,5 @@
 {
- "_comment": "Past crates and boxes and what each held, for the Past tab. Hand-maintained: names (matched to catalogue items by name) and the listed drop rates, as supplied by the user. `items: []` with `pending: true` means the contents have not been added yet (a placeholder, not an empty box). A hair/face entry needs `kind` and `gender`. build-catalog.mjs resolves the names into catalog.boxes and warns about any it cannot find. `pill` is the short name shown on the box's pill (omit it for an unnamed box: the pill then shows just the dates); `name` is the full name shown above the contents. Sources (saved Nexon cash shop update pages, 29/10/2026 and 04/11/2026): Founder's crate, Aurora crate and the Oct 6 Mystery Styles from the Grand Launch page; Mystery Fashion Crate (Oct 21) and Halloween crate and the Oct 28 Mystery Styles from the Oct 28 page; Mystery Fashion Crate (Nov 4) from the Nov 4 page. An `end` with no time (the Nov 4 crate: \"Wednesday, November 18 (Start of Maintenance)\") counts as a whole UTC day: on sale to the end of that day, shown as a date and days left, never an hour. Only these boxes are listed: pets, packs, megaphones, 10-day equip covers, Signature coupons and other shop items are not. Rates are only known for the Halloween crate (supplied by the user); the pages link to the rates but do not print them. The post corrected the female Oct 28 hair list: Cecelia Twist, not Rockstar Hair. `match` on an item is the catalogue name to look for when the box's name differs (the game's hair names carry a colour prefix: Black Wild Tangles Hair, Black Romantic Braid Hair). `latest: true` marks the newest box, which the Released tab always opens on. A group's `tab` is the short label on its tab (the Released tab shows tabs, not the long `title`). `start` and `end` (UTC, ISO) are the times the Nexon update pages print for each box: the pages print the last minute (7:59 AM), so the box is on rotation up to and including that minute. A start with no time (2026-10-06, 2026-10-21) is a date only: the pages say \"End of Maintenance\" and \"Start of Grand Launch\" without a time. The page uses them for the On rotation / Out of rotation labels.",
+ "_comment": "Past crates and boxes and what each held, for the Past tab. Hand-maintained: names (matched to catalogue items by name) and the listed drop rates, as supplied by the user. `items: []` with `pending: true` means the contents have not been added yet (a placeholder, not an empty box). A hair/face entry needs `kind` and `gender`. build-catalog.mjs resolves the names into catalog.boxes and warns about any it cannot find. `pill` is the short name shown on the box's pill (omit it for an unnamed box: the pill then shows just the dates); `name` is the full name shown above the contents. Sources (saved Nexon cash shop update pages, 29/10/2026 and 04/11/2026): Founder's crate, Aurora crate and the Oct 6 Mystery Styles from the Grand Launch page; Mystery Fashion Crate (Oct 21) and Halloween crate and the Oct 28 Mystery Styles from the Oct 28 page; Mystery Fashion Crate (Nov 4) from the Nov 4 page. An `end` with no time (the Nov 4 crate: \"Wednesday, November 18 (Start of Maintenance)\") counts as a whole UTC day: on sale to the end of that day, shown as a date and days left, never an hour. Only these boxes are listed: pets, packs, megaphones, 10-day equip covers, Signature coupons and other shop items are not. Rates are known for the Halloween crate and the Nov 11 Mystery Styles (both supplied by the user, the latter pasted from the announcement: all 16.67%, six of each hair and face per gender); the pages link to the rates but do not print them. The post corrected the female Oct 28 hair list: Cecelia Twist, not Rockstar Hair. `match` on an item is the catalogue name to look for when the box's name differs (the game's hair names carry a colour prefix: Black Wild Tangles Hair, Black Romantic Braid Hair). `latest: true` marks the newest box, which the Released tab always opens on. A group's `tab` is the short label on its tab (the Released tab shows tabs, not the long `title`). `start` and `end` (UTC, ISO) are the times the Nexon update pages print for each box: the pages print the last minute (7:59 AM), so the box is on rotation up to and including that minute. A start with no time (2026-10-06, 2026-10-21) is a date only: the pages say \"End of Maintenance\" and \"Start of Grand Launch\" without a time. The page uses them for the On rotation / Out of rotation labels. The Nov 11 Mystery Styles runs UTC Wednesday, November 11 8:00 AM to Wednesday, November 25 7:59 AM (as supplied by the user).",
  "groups": [
   {
    "id": "mystery-crates",
@@ -540,7 +540,6 @@
      "name": "Mystery Fashion Crate",
      "dates": "Nov 4 – Nov 18",
      "start": "2026-11-04T08:00Z",
-     "latest": true,
      "items": [
       {
        "name": "Teddy Bear Headgear"
@@ -961,6 +960,162 @@
        "name": "Innocent Look"
       }
      ]
+    },
+    {
+     "id": "mystery-styles-nov11",
+     "name": "Mystery Styles",
+     "dates": "Nov 11 – Nov 25",
+     "start": "2026-11-11T08:00Z",
+     "items": [
+      {
+       "kind": "hair",
+       "gender": "male",
+       "name": "Artist Hair",
+       "rate": 16.67,
+       "match": "Black Artist Hair"
+      },
+      {
+       "kind": "hair",
+       "gender": "male",
+       "name": "Sweet Kitty Hair",
+       "rate": 16.67
+      },
+      {
+       "kind": "hair",
+       "gender": "male",
+       "name": "Slick Dean",
+       "rate": 16.67
+      },
+      {
+       "kind": "hair",
+       "gender": "male",
+       "name": "Babby Cut",
+       "rate": 16.67
+      },
+      {
+       "kind": "hair",
+       "gender": "male",
+       "name": "Romance",
+       "rate": 16.67
+      },
+      {
+       "kind": "hair",
+       "gender": "male",
+       "name": "Cabana Boy Hair",
+       "rate": 16.67
+      },
+      {
+       "kind": "hair",
+       "gender": "female",
+       "name": "Side Ponytail",
+       "rate": 16.67
+      },
+      {
+       "kind": "hair",
+       "gender": "female",
+       "name": "Kitty Hair",
+       "rate": 16.67,
+       "match": "Black Kitty Hair"
+      },
+      {
+       "kind": "hair",
+       "gender": "female",
+       "name": "Curly Stream Hair",
+       "rate": 16.67
+      },
+      {
+       "kind": "hair",
+       "gender": "female",
+       "name": "Princess Warrior",
+       "rate": 16.67
+      },
+      {
+       "kind": "hair",
+       "gender": "female",
+       "name": "Dashing Damsel",
+       "rate": 16.67
+      },
+      {
+       "kind": "hair",
+       "gender": "female",
+       "name": "Carla",
+       "rate": 16.67
+      },
+      {
+       "kind": "face",
+       "gender": "male",
+       "name": "Round-Eyed Face",
+       "rate": 16.67
+      },
+      {
+       "kind": "face",
+       "gender": "male",
+       "name": "Mysterious Face",
+       "rate": 16.67
+      },
+      {
+       "kind": "face",
+       "gender": "male",
+       "name": "Confused Look",
+       "rate": 16.67
+      },
+      {
+       "kind": "face",
+       "gender": "male",
+       "name": "Oliver Face",
+       "rate": 16.67
+      },
+      {
+       "kind": "face",
+       "gender": "male",
+       "name": "Almond Face",
+       "rate": 16.67
+      },
+      {
+       "kind": "face",
+       "gender": "male",
+       "name": "Moonlight Eyes",
+       "rate": 16.67
+      },
+      {
+       "kind": "face",
+       "gender": "female",
+       "name": "Intelligent Eyes",
+       "rate": 16.67
+      },
+      {
+       "kind": "face",
+       "gender": "female",
+       "name": "Odd Eye",
+       "rate": 16.67
+      },
+      {
+       "kind": "face",
+       "gender": "female",
+       "name": "Confused Look",
+       "rate": 16.67
+      },
+      {
+       "kind": "face",
+       "gender": "female",
+       "name": "Olivia Face",
+       "rate": 16.67
+      },
+      {
+       "kind": "face",
+       "gender": "female",
+       "name": "Soul's Window",
+       "rate": 16.67
+      },
+      {
+       "kind": "face",
+       "gender": "female",
+       "name": "Angel Glow",
+       "rate": 16.67
+      }
+     ],
+     "end": "2026-11-25T07:59Z",
+     "latest": true
     }
    ]
   },

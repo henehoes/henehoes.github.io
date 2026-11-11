@@ -837,10 +837,12 @@ function availability(target) {
   if (!item) return null;
   const same = it => kind === 'wearable' ? it.kind === 'wearable' && it.id === item.id : it.kind === kind && it.key === item.key && it.gender === item.gender;
   const found = catalog.boxes.flatMap(g => g.boxes.filter(b => b.items.some(same)).map(b => ({ b, noun: BOX_NOUN[g.id]?.(kind) ?? g.title })));
-  const line = (dot, text) => el('p', { className: `ends-line avail${dot ? '' : ' ended'}` }, el('i', { className: 'ends-dot', 'aria-hidden': 'true' }), el('span', { textContent: text }));
+  const line = (dot, text) => el('p', { className: `ends-line avail${dot === 'upcoming' ? ' upcoming' : dot ? '' : ' ended'}` }, el('i', { className: 'ends-dot', 'aria-hidden': 'true' }), el('span', { textContent: text }));
   const now = found.find(f => onSale(f.b));
   if (now) return line(true, `Available now${now.b.end ? ` · ${leftText(saleEnd(now.b) - Date.now(), isDay(now.b.end))}` : ''} · ${now.noun}`);
-  const last = found.sort((x, y) => saleEnd(y.b) - saleEnd(x.b))[0];
+  const soon = found.filter(f => isUpcoming(f.b)).sort((x, y) => startMs(x.b) - startMs(y.b))[0];
+  if (soon) return line('upcoming', `Coming ${startsText(startMs(soon.b)).replace(/^Starts /, '')} · ${soon.noun}`);
+  const last = found.filter(f => !isUpcoming(f.b)).sort((x, y) => saleEnd(y.b) - saleEnd(x.b))[0];
   if (last) return line(false, `Last available ${agoText(Date.now() - saleEnd(last.b), isDay(last.b.end))} · ${last.noun}`);
   // Frieren collab items and Founder's items (the FOUNDERS-tagged datamine ones and the two Founder rings) are simply not available
   if (item.collab || item.tag === 'FOUNDERS' || /^Founder's (Label|Chat) Ring$/.test(item.name)) return line(false, 'Not available');
@@ -998,6 +1000,9 @@ const liveStyleBoxes = () => {
   const now = Date.now();
   return (catalog.boxes.find(g => g.id === 'mystery-styles')?.boxes ?? []).filter(b => b.end && now >= Date.parse(b.start ?? b.end) && now < endMs(b));
 };
+// The Mystery Styles boxes that start later (the Mystery Rotation view lists these too, marked UPCOMING).
+const upcomingStyleBoxes = () => (catalog.boxes.find(g => g.id === 'mystery-styles')?.boxes ?? []).filter(b => b.end && b.start && Date.parse(b.start) > Date.now());
+const rotationKey = () => liveStyleBoxes().map(b => b.id).join() + '|' + upcomingStyleBoxes().map(b => b.id).join();
 // "Ends Wed 4 Nov · 4:00 PM GMT+8 · 21 hours left": when the soonest of these boxes ends, in the viewer's timezone on a 12-hour clock, and the time left. A box's end
 // is the last minute it is sold, so it runs to the end of that minute. Null when every box has already ended.
 const leftText = (left, day) => { if (day) { const days = Math.max(1, Math.ceil(left / DAY)); return `${days} day${days === 1 ? '' : 's'} left`; } const hours = Math.ceil(left / 36e5); return left <= DAY ? (hours <= 1 ? 'less than an hour left' : `${hours} hours left`) : `${Math.ceil(left / DAY)} days left`; };
@@ -1021,8 +1026,25 @@ function endedText(ends, day = false) {
 const nextAgoChange = (ends, day = false) => { const ago = Date.now() - ends, unit = day || ago >= DAY ? DAY : 36e5; return ends + (Math.floor(ago / unit) + 1) * unit; };
 // The Released tab's line under a box's title, which already gives the dates, so the short forms: "Ends in 3 days" (green), "Ended 1 day ago" (grey).
 const shortText = (ends, day = false) => { const left = ends - Date.now(); return left > 0 ? `Ends in ${leftText(left, day).replace(/ left$/, '')}` : `Ended ${agoText(-left, day)}`; };
+// "Starts Wed 11 Nov · 4:00 PM GMT+8 · in 7 hours": the Mystery Rotation view's yellow line for a box that has not started.
+function startsFull(starts) {
+  const date = new Intl.DateTimeFormat(undefined, { weekday: 'short', day: 'numeric', month: 'short' }).format(starts).replace(',', '');
+  const time = new Intl.DateTimeFormat(undefined, { hour: 'numeric', minute: '2-digit', hour12: true, timeZoneName: 'short' }).format(starts).replace(/\b([ap])m\b/i, (_, x) => `${x.toUpperCase()}M`);
+  return `Starts ${date} · ${time} · ${startsText(starts).replace(/^Starts /, '')}`;
+}
+function startsLine(box) {
+  const starts = startMs(box), line = el('p', { className: 'ends-line rotation-line upcoming' }, el('i', { className: 'ends-dot', 'aria-hidden': 'true' }), el('span', { textContent: startsFull(starts) }));
+  line.dataset.starts = starts; line.dataset.full = '1'; wakeAt(nextChange(starts));
+  return line;
+}
+const startsText = starts => `Starts in ${leftText(starts - Date.now()).replace(/ left$/, '')}`;
 function boxWhen(box) {
   if (!box.end) return null;
+  if (isUpcoming(box)) { // not started yet: a yellow line that counts down to the start
+    const starts = startMs(box), line = el('p', { className: 'ends-line past-when upcoming' }, el('i', { className: 'ends-dot', 'aria-hidden': 'true' }), el('span', { textContent: startsText(starts) }));
+    line.dataset.starts = starts; wakeAt(nextChange(starts));
+    return line;
+  }
   const ends = endMs(box), day = isDay(box.end), over = ends <= Date.now();
   const when = el('p', { className: `ends-line past-when${over ? ' ended' : ''}` }, el('i', { className: 'ends-dot', 'aria-hidden': 'true' }), el('span', { textContent: shortText(ends, day) }));
   when.dataset[over ? 'ended' : 'ends'] = ends; when.dataset.short = '1'; if (day) when.dataset.day = '1';
@@ -1051,25 +1073,33 @@ function wakeAt(ms) {
   tickTimer = setTimeout(() => { tickAt = Infinity; tickEnds(); }, Math.min(ms - Date.now(), 216e5));
 }
 const mysteryBoundary = () => Math.min(...(catalog.boxes.find(g => g.id === 'mystery-styles')?.boxes ?? []).flatMap(b => [b.start && Date.parse(b.start), b.end && endMs(b)]).filter(x => x > Date.now()));
-function paintSaleDot(dot, on) {
-  dot.classList.toggle('on', on);
-  dot.closest('.pill').title = dot.closest('.pill').title.replace(/ · (on sale|off sale)$/, '') + (on ? ' · on sale' : ' · off sale');
+// A box is upcoming (yellow) before its start, on sale (green) from the start to the end, and off sale (grey) after.
+const startMs = b => b.start ? Date.parse(b.start) : 0;
+const isUpcoming = b => startMs(b) > Date.now();
+const saleState = box => isUpcoming(box) ? 'upcoming' : onSale(box) ? 'on' : 'off';
+function paintSaleDot(dot, state) {
+  dot.classList.toggle('on', state === 'on');
+  dot.classList.toggle('upcoming', state === 'upcoming');
+  dot.closest('.pill').title = dot.closest('.pill').title.replace(/ · (on sale|off sale|upcoming)$/, '') + (state === 'on' ? ' · on sale' : state === 'upcoming' ? ' · upcoming' : ' · off sale');
 }
 function tickEnds() {
   clearTimeout(tickTimer); tickAt = Infinity; // set again below from what is on the page now, so an old wake-up can never block a new one
   if (mode === 'housing') return;
   let redraw = false;
-  for (const line of document.querySelectorAll('.ends-line[data-ends], .ends-line[data-ended]')) { // not the Availability line in the Equipped panel, which is drawn once
+  for (const line of document.querySelectorAll('.ends-line[data-ends], .ends-line[data-ended], .ends-line[data-starts]')) { // not the Availability line in the Equipped panel, which is drawn once
     const day = !!line.dataset.day, text = line.querySelector('span');
+    if (line.dataset.starts) { const starts = +line.dataset.starts; if (starts <= Date.now()) redraw = true; else { text.textContent = line.dataset.full ? startsFull(starts) : startsText(starts); wakeAt(nextChange(starts)); } continue; }
     if (line.dataset.ended) { const ended = +line.dataset.ended; text.textContent = line.dataset.short ? shortText(ended, day) : endedText(ended, day); wakeAt(nextAgoChange(ended, day)); continue; }
     const ends = +line.dataset.ends;
     if (ends <= Date.now()) redraw = true; else { text.textContent = line.dataset.short ? shortText(ends, day) : endsText(ends, day); wakeAt(nextChange(ends, day)); }
   }
   for (const dot of document.querySelectorAll('.sale-dot')) {
-    if (+dot.dataset.end <= Date.now()) { if (dot.classList.contains('on')) paintSaleDot(dot, false); } else wakeAt(+dot.dataset.end);
+    const st = +dot.dataset.start, en = +dot.dataset.end, state = st > Date.now() ? 'upcoming' : en <= Date.now() ? 'off' : 'on';
+    if ((state === 'on') !== dot.classList.contains('on') || (state === 'upcoming') !== dot.classList.contains('upcoming')) paintSaleDot(dot, state);
+    if (state === 'upcoming') wakeAt(st); else if (state === 'on') wakeAt(en);
   }
   const rotating = source === 'rotation' && (activeTab === 'hair' || activeTab === 'face');
-  if (rotating && liveStyleBoxes().map(b => b.id).join() !== rotationSeen) redraw = true;
+  if (rotating && rotationKey() !== rotationSeen) redraw = true;
   if (redraw) renderContent(true);
   else if (rotating && Number.isFinite(mysteryBoundary())) wakeAt(mysteryBoundary());
 }
@@ -1115,19 +1145,33 @@ function petGearGrid(pet) {
 function renderStyles(c, kind) {
   renderColourBar(kind);
   if (kind === 'face' && catalog.face.some(s => s.variants.some(v => v.colour === browse.face && v.label === NO_COUPON_EYES))) c.append(eyeWhiteNote()); // the list is shown in White
-  // Mystery Rotation view: only the styles a live Mystery Styles box can give right now, with the end and the time left.
-  const live = source === 'rotation' ? liveStyleBoxes() : [];
-  rotationSeen = live.map(b => b.id).join();
+  // Mystery Rotation view: the whole history of the Mystery Styles box, newest first, each rotation under its own dated heading: the upcoming one (yellow, with
+  // when it starts), the one on now (green, with when it ends), then every older one.
+  const live = source === 'rotation' ? liveStyleBoxes() : [], soon = source === 'rotation' ? upcomingStyleBoxes() : [];
+  rotationSeen = rotationKey();
   if (source === 'rotation' && Number.isFinite(mysteryBoundary())) wakeAt(mysteryBoundary());
-  const inRotation = s => live.some(b => b.items.some(it => it.kind === kind && it.key === s.key && it.gender === s.gender));
+  const holds = (box, st) => box.items.some(it => it.kind === kind && it.key === st.key && it.gender === st.gender);
   if (source === 'rotation') {
-    const line = live.length && endsLine(live, 'rotation-line');
-    if (line) c.append(line);
-    else c.append(el('p', { className: 'hint rotation-line', textContent: 'No Mystery Style Coupon rotation is running right now.' }));
+    if (!live.length && !soon.length) c.append(el('p', { className: 'hint rotation-line', textContent: 'No Mystery Style Coupon rotation is running right now.' }));
+    const boxes = [...(catalog.boxes.find(g => g.id === 'mystery-styles')?.boxes ?? [])].sort((x, y) => startMs(y) - startMs(x));
+    let any = false;
+    for (const box of boxes) {
+      const cards = [];
+      catalog[kind].forEach((st, i) => { if (forGender(st) && matches(st.style) && holds(box, st)) cards.push(styleCard(kind, st, i)); });
+      if (!cards.length) continue;
+      any = true;
+      const state = isUpcoming(box) ? 'upcoming' : live.includes(box) ? 'live' : '';
+      c.append(el('h3', { className: `group-title rotation-box ${state}`.trim(), textContent: `${box.dates ?? box.name} · ${state === 'upcoming' ? 'Upcoming' : state === 'live' ? 'On rotation' : 'Ended'}` }));
+      const line = state === 'upcoming' ? startsLine(box) : state === 'live' ? endsLine([box], 'rotation-line') : null;
+      if (line) c.append(line);
+      c.append(el('div', { className: 'grid' }, ...cards));
+    }
+    if (!any) c.append(el('p', { className: 'empty', textContent: search.trim() ? 'No styles match. Try another word.' : 'No Mystery Style rotations on record.' }));
+    return;
   }
   const grid = el('div', { className: 'grid' });
-  catalog[kind].forEach((s, i) => { if (forGender(s) && listed(s) && matches(s.style) && (source !== 'rotation' || inRotation(s))) grid.append(styleCard(kind, s, i)); });
-  if (source !== 'rotation') for (const p of catalog.placeholders[kind].filter(p => (gender === 'all' || p.gender === 'both' || p.gender === gender) && (p.released !== false || source === 'datamine') && matches(p.name))) grid.append(placeholderCard(p));
+  catalog[kind].forEach((st, i) => { if (forGender(st) && listed(st) && matches(st.style)) grid.append(styleCard(kind, st, i)); });
+  for (const p of catalog.placeholders[kind].filter(p => (gender === 'all' || p.gender === 'both' || p.gender === gender) && (p.released !== false || source === 'datamine') && matches(p.name))) grid.append(placeholderCard(p));
   c.append(grid);
 }
 
@@ -1191,8 +1235,8 @@ function renderPast(c) {
   const row = el('div', { className: 'pills', role: 'radiogroup', 'aria-label': current.title });
   for (const box of current.boxes) {
     const btn = el('button', { className: 'pill', type: 'button', role: 'radio', title: box.name + (box.dates ? ` (${box.dates})` : '') }, el('span', { className: 'sale-dot', 'aria-hidden': 'true' }), pillLabel(box));
-    const dot = btn.firstChild; dot.dataset.end = saleEnd(box); paintSaleDot(dot, onSale(box)); // grey once the box is off sale, green while it is on sale
-    if (saleEnd(box) > Date.now()) wakeAt(saleEnd(box));
+    const dot = btn.firstChild; dot.dataset.end = saleEnd(box); dot.dataset.start = startMs(box); paintSaleDot(dot, saleState(box)); // yellow before the start, green while on sale, grey once off sale
+    if (isUpcoming(box)) wakeAt(startMs(box)); else if (saleEnd(box) > Date.now()) wakeAt(saleEnd(box));
     btn.setAttribute('aria-pressed', String(box.id === pastBox)); btn.setAttribute('aria-checked', String(box.id === pastBox));
     btn.onclick = () => { pastBox = box.id; renderContent(true); };
     row.append(btn);

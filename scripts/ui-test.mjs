@@ -28,7 +28,7 @@ const settle = () => new Promise(r => setTimeout(r, 700));
 
 const start = await pixels();
 check('preview draws something', start.n > 500, `(${start.n} px)`);
-check('on load the Released tab is open, on Mystery Fashion and its newest box (Nov 4)', (await page.$eval('.tab[aria-selected="true"]', e => e.title)).startsWith('Released') && (await page.$eval('#content .past-tab[aria-selected="true"]', e => e.textContent)) === 'Mystery Fashion' && (await page.$eval('#content .pill[aria-pressed="true"]', e => e.textContent)) === 'Nov 4 – Nov 18');
+check('on load the Released tab is open, on Mystery Styles and its newest box (Nov 11 – Nov 25)', (await page.$eval('.tab[aria-selected="true"]', e => e.title)).startsWith('Released') && (await page.$eval('#content .past-tab[aria-selected="true"]', e => e.textContent)) === 'Mystery Styles' && (await page.$eval('#content .pill[aria-pressed="true"]', e => e.textContent)) === 'Nov 11 – Nov 25');
 check('the Look Book, Released and Upcoming close the rail, below Pet, and never carry a checkmark', await page.$$eval('.tab', ts => { const t = ts.map(x => x.title); const n = t.length; return t[n - 2].startsWith('Released') && t[n - 1].startsWith('Upcoming') && t[n - 3].startsWith('Look Book') && t[n - 4] === 'Pet' && t[n - 5] === 'Chat Ring' && ![n - 3, n - 2, n - 1].some(i => ts[i].querySelector('.tick')); }));
 
 // Nothing is worn at the start: no face and no hair
@@ -346,7 +346,7 @@ await page.evaluate(() => [...document.querySelectorAll('#source .seg button')].
 const dmHair = await page.$$eval('#content .card', els => els.length);
 check('Datamine + All lists every hair on henesys.gg (about 180 cards, with placeholders for those with no sprite)', dmHair >= 170, `(${dmHair})`);
 await page.evaluate(() => [...document.querySelectorAll('#filters > .seg button')].find(b => b.textContent.endsWith('Female')).click()); await settle();
-check('Datamine + Female has far more styles than the 15 released', (await page.$$('#content .card.unreleased')).length > 60);
+check('Datamine + Female has far more styles than the 15 released', (await page.$$('#content .card.unreleased')).length > 40);
 await page.evaluate(() => [...document.querySelectorAll('#source .seg button')].find(b => b.textContent === 'Released').click());
 await page.evaluate(() => [...document.querySelectorAll('#filters > .seg button')].find(b => b.textContent.endsWith('Male') && !b.textContent.endsWith('Female')).click()); await settle();
 
@@ -644,21 +644,21 @@ await page.screenshot({ path: 'tmp/ui-final.png' });
   // Past tab: every past crate and box, grouped; the Halloween crate holds its 50 items with their listed rates
   await clickTab('Released crates and boxes, and what each held'); await settle();
   const groups = await page.$$eval('#content .past-tab', g => g.map(x => x.textContent));
-  check('Released tab: category tabs Mystery Fashion, Mystery Styles and Aurora, the first selected', JSON.stringify(groups) === JSON.stringify(['Mystery Fashion', 'Mystery Styles', 'Aurora']) && (await page.$eval('#content .past-tab[aria-selected="true"]', e => e.textContent)) === 'Mystery Fashion', groups.join(' | '));
+  check('Released tab: category tabs Mystery Fashion, Mystery Styles and Aurora, Mystery Styles (the newest box) selected', JSON.stringify(groups) === JSON.stringify(['Mystery Fashion', 'Mystery Styles', 'Aurora']) && (await page.$eval('#content .past-tab[aria-selected="true"]', e => e.textContent)) === 'Mystery Styles', groups.join(' | '));
   const pillsOf = () => page.$$eval('#content .pill', p => p.map(x => x.textContent));
   const pickTab = async l => { await page.evaluate(l => [...document.querySelectorAll('#content .past-tab')].find(t => t.textContent === l).click(), l); await settle(); };
-  const pills = [await pillsOf()]; await pickTab('Mystery Styles'); pills.push(await pillsOf()); const stylesOpen = await page.$eval('#content .pill[aria-pressed="true"]', e => e.textContent);
+  await pickTab('Mystery Fashion'); const pills = [await pillsOf()]; await pickTab('Mystery Styles'); pills.push(await pillsOf()); const stylesOpen = await page.$eval('#content .pill[aria-pressed="true"]', e => e.textContent);
   await pickTab('Aurora'); pills.push(await pillsOf()); await pickTab('Mystery Fashion');
-  check('Released tab: each category shows only its own pills, date first, newest last', JSON.stringify(pills) === JSON.stringify([["Oct 6 – Oct 28 · Founder's", 'Oct 21 – Nov 4', 'Oct 28 – Nov 4 · Halloween', 'Nov 4 – Nov 18'], ['Oct 6 – Oct 28', 'Oct 28 – Nov 11'], ['Season 1']]) && stylesOpen === 'Oct 28 – Nov 11', JSON.stringify(pills));
+  check('Released tab: each category shows only its own pills, date first, newest last', JSON.stringify(pills) === JSON.stringify([["Oct 6 – Oct 28 · Founder's", 'Oct 21 – Nov 4', 'Oct 28 – Nov 4 · Halloween', 'Nov 4 – Nov 18'], ['Oct 6 – Oct 28', 'Oct 28 – Nov 11', 'Nov 11 – Nov 25'], ['Season 1']]) && stylesOpen === 'Nov 11 – Nov 25', JSON.stringify(pills));
   check('Past tab: the Nov 4 crate is selected at first and its 50 items are drawn below all the categories, with no rates (the page prints none)', (await page.$$eval('#content .pill[aria-pressed="true"]', p => p.map(x => x.textContent))).join() === 'Nov 4 – Nov 18' && (await page.$$('#content .past-title ~ .grid .card')).length === 50 && (await page.$$('#content .past-title ~ .grid .rate-badge')).length === 0 && (await page.$$eval('#content .past-title ~ .grid .card', c => c.filter(x => /\d%$/.test(x.title)).length)) === 0);
-  const catOf = { "Oct 6 – Oct 28 · Founder's": 'Mystery Fashion', 'Oct 21 – Nov 4': 'Mystery Fashion', 'Oct 6 – Oct 28': 'Mystery Styles', 'Oct 28 – Nov 11': 'Mystery Styles', 'Season 1': 'Aurora', 'Oct 28 – Nov 4 · Halloween': 'Mystery Fashion', 'Nov 4 – Nov 18': 'Mystery Fashion' };
+  const catOf = { "Oct 6 – Oct 28 · Founder's": 'Mystery Fashion', 'Oct 21 – Nov 4': 'Mystery Fashion', 'Oct 6 – Oct 28': 'Mystery Styles', 'Oct 28 – Nov 11': 'Mystery Styles', 'Nov 11 – Nov 25': 'Mystery Styles', 'Season 1': 'Aurora', 'Oct 28 – Nov 4 · Halloween': 'Mystery Fashion', 'Nov 4 – Nov 18': 'Mystery Fashion' };
   const pickPill = async label => { await pickTab(catOf[label]); await page.evaluate(l => [...document.querySelectorAll('#content .pill')].find(p => p.textContent === l).click(), label); await settle(); };
   await pickPill('Oct 28 – Nov 4 · Halloween');
   check('Past tab: the Halloween crate holds its 50 items with their listed rates', (await page.$$('#content .past-title ~ .grid .card')).length === 50 && (await page.$$eval('#content .past-title ~ .grid .card', c => c.filter(x => /\d%$/.test(x.title)).length)) === 50);
   const shown = () => page.$$('#content .past-title ~ .grid .card').then(c => c.length);
-  const expected = { "Oct 6 – Oct 28 · Founder's": 50, 'Oct 21 – Nov 4': 50, 'Oct 6 – Oct 28': 24, 'Oct 28 – Nov 11': 24, 'Season 1': 26 };
+  const expected = { "Oct 6 – Oct 28 · Founder's": 50, 'Oct 21 – Nov 4': 50, 'Oct 6 – Oct 28': 24, 'Oct 28 – Nov 11': 24, 'Nov 11 – Nov 25': 24, 'Season 1': 26 };
   const got = {}; for (const [label] of Object.entries(expected)) { await pickPill(label); got[label] = await shown(); }
-  check('Past tab: each box shows the items from the saved Nexon pages (Founder\'s 50, Oct 21 crate 50, Mystery Styles 24 and 24, Aurora 26)', JSON.stringify(got) === JSON.stringify(expected), JSON.stringify(got));
+  check('Past tab: each box shows the items from the saved Nexon pages (Founder\'s 50, Oct 21 crate 50, Mystery Styles 24, 24 and 24, Aurora 26)', JSON.stringify(got) === JSON.stringify(expected), JSON.stringify(got));
   await pickPill('Season 1');
   check('Past tab: the Aurora box carries no note line', (await page.$('#content .past-title ~ .hint')) === null);
   await pickPill('Oct 28 – Nov 11');
@@ -685,24 +685,56 @@ await page.screenshot({ path: 'tmp/ui-final.png' });
   // Mystery Rotation view on Hair and Face: only the styles in a live Mystery Styles box, with the time left; the clock is pinned
   const clock = async iso => { await page.evaluate(iso => { window.__now ??= Date.now; const t = Date.parse(iso); Date.now = () => t; }, iso); };
   const showView = async v => { await page.evaluate(v => [...document.querySelectorAll('#source .seg button')].find(b => b.textContent.includes(v)).click(), v); await settle(); };
-  const view = async (tab, v) => { await clickTab(tab); await settle(); await showView(v); return page.evaluate(() => ({ line: document.querySelector('#content .rotation-line')?.textContent ?? '', cards: document.querySelectorAll('#content .grid .card').length, headings: document.querySelectorAll('#content .group-title').length })); };
+  const view = async (tab, v) => { await clickTab(tab); await settle(); await showView(v); return page.evaluate(() => ({ line: ([...document.querySelectorAll('#content .rotation-line')].find(l => /^Ends/.test(l.textContent)) ?? document.querySelector('#content .rotation-line'))?.textContent ?? '', cards: document.querySelectorAll('#content .grid .card').length, headings: document.querySelectorAll('#content .group-title').length })); };
   await clock('2026-11-03T20:00:00Z');
   await clickTab('Hair'); await settle(); await showView('Released');
   const releasedCount = await page.$$eval('#content .grid .card', c => c.length);
   let v = await view('Hair', 'Mystery Rotation');
-  check('Hair: Mystery Rotation lists only the 12 Oct 28 styles per gender view, a clean list with no headings', v.cards >= 6 && v.cards < releasedCount && v.headings === 0, JSON.stringify(v));
+  const rotSections = () => page.$$eval('#content .group-title', hs => hs.map(h => ({ t: h.textContent, cls: h.className.replace('group-title rotation-box', '').trim() })));
+  check('Hair: Mystery Rotation is the whole history, newest first: the Nov 11 box (Upcoming), the Oct 28 box (On rotation), then the Oct 6 one, 12 hairs each', JSON.stringify(await rotSections()) === JSON.stringify([{ t: 'Nov 11 – Nov 25 · Upcoming', cls: 'upcoming' }, { t: 'Oct 28 – Nov 11 · On rotation', cls: 'live' }, { t: 'Oct 6 – Oct 28 · Ended', cls: '' }]) && v.cards === 36, JSON.stringify([v, await rotSections()]));
   check('Hair: the line gives the end (Nov 11) on a 12-hour clock, and days left', /^Ends .*11.*(AM|PM) [A-Z]*[+-−]?[\w:]*\s*·\s*[78] days left$/.test(v.line) && !/(^|\s)(1[3-9]|2\d):\d\d/.test(v.line), v.line);
   await clock('2026-11-11T05:00:00Z');
   const line2 = (await view('Hair', 'Mystery Rotation')).line;
   check('Hair: hours left on the final day (no "Last day" wording)', /^Ends .* · \d+ hours? left$/.test(line2) && !/Last day/.test(line2));
-  await clock('2026-11-11T08:00:00Z');
+  // The Nov 11 box (UTC Nov 11 8:00 AM to Nov 25 7:59 AM): upcoming before, live after
+  await clock('2026-11-03T20:00:00Z');
   v = await view('Hair', 'Mystery Rotation');
-  check('Hair: nothing on rotation says so and lists no cards', v.cards === 0 && /No Mystery Style Coupon rotation/.test(v.line), JSON.stringify(v));
+  const up = await page.evaluate(() => ({ lines: [...document.querySelectorAll('#content .rotation-line')].map(l => ({ t: l.textContent, up: l.classList.contains('upcoming'), after: l.previousElementSibling?.textContent })) }));
+  check('Hair: each current or upcoming rotation has its line beneath its own heading: Starts (yellow) under the Upcoming one, Ends (green) under On rotation', up.lines.length === 2 && up.lines[0].up && /^Starts .* · in \d+ days?$/.test(up.lines[0].t) && up.lines[0].after === 'Nov 11 – Nov 25 · Upcoming' && !up.lines[1].up && /^Ends /.test(up.lines[1].t) && up.lines[1].after === 'Oct 28 – Nov 11 · On rotation', JSON.stringify(up));
+  await clock('2026-11-11T05:00:00Z');
+  v = await view('Hair', 'Mystery Rotation');
+  const styleDots = async () => { await clickTab('Released crates and boxes, and what each held'); await settle(); await pickTab('Mystery Styles'); return page.$$eval('#content .pill', ps => ps.map(p => `${p.textContent}:${p.querySelector('.sale-dot').className.replace('sale-dot', '').trim() || 'off'}`)); };
+  const d1 = await styleDots();
+  check('Released tab: before Nov 11 8:00 AM UTC the new Mystery Styles pill has a yellow dot, the Oct 28 one green, the Oct 6 one grey', d1.join() === 'Oct 6 – Oct 28:off,Oct 28 – Nov 11:on,Nov 11 – Nov 25:upcoming', d1.join());
+  check('Released tab: the new Mystery Styles box says when it starts, in yellow', await page.evaluate(() => { document.querySelectorAll('#content .pill')[2].click(); return null; }) === null && (await settle(), await page.$eval('#content .past-when', e => e.classList.contains('upcoming') && /^Starts in \d+ hours?$/.test(e.textContent))));
+  await clock('2026-11-11T08:00:00Z');
+  const d2 = await styleDots();
+  check('Released tab: from Nov 11 8:00 AM UTC the new box is green and the Oct 28 one grey', d2.join() === 'Oct 6 – Oct 28:off,Oct 28 – Nov 11:off,Nov 11 – Nov 25:on', d2.join());
+  // The states change by themselves when the time arrives (no deploy, no reload): the page re-checks the clock when it wakes or is shown again
+  const wake = async () => { await page.evaluate(() => document.dispatchEvent(new Event('visibilitychange'))); await settle(); };
+  await clock('2026-11-11T07:59:00Z');
+  await view('Hair', 'Mystery Rotation');
+  const rotBefore = await rotSections();
+  await clock('2026-11-11T08:00:30Z'); await wake();
+  const rotAfter = await rotSections();
+  check('Mystery Rotation changes by itself at the start time: the Nov 11 box goes from Upcoming to On rotation and the Oct 28 one to Ended', rotBefore[0].t === 'Nov 11 – Nov 25 · Upcoming' && rotAfter[0].t === 'Nov 11 – Nov 25 · On rotation' && rotAfter[1].t === 'Oct 28 – Nov 11 · Ended' && (await page.$eval('#content .rotation-line', l => /^Ends /.test(l.textContent) && !l.classList.contains('upcoming'))), JSON.stringify([rotBefore, rotAfter]));
+  await clock('2026-11-25T07:59:00Z'); await wake();
+  await clock('2026-11-25T08:00:30Z'); await wake();
+  check('Mystery Rotation changes by itself at the end time: the Nov 11 box goes to Ended', (await rotSections())[0].t === 'Nov 11 – Nov 25 · Ended');
+  await clock('2026-11-11T07:59:00Z');
+  await clickTab('Released crates and boxes, and what each held'); await settle(); await pickTab('Mystery Styles');
+  const dotBefore = await page.$$eval('#content .pill .sale-dot', d => d.map(x => x.className));
+  await clock('2026-11-11T08:00:30Z'); await wake();
+  const dotAfter = await page.$$eval('#content .pill .sale-dot', d => d.map(x => x.className));
+  check('Released tab: the pill dots change by themselves at the start time (yellow to green, and the old box to grey)', dotBefore[2].includes('upcoming') && dotAfter[2].includes(' on') && !dotAfter[2].includes('upcoming') && !dotAfter[1].includes(' on'), JSON.stringify([dotBefore, dotAfter]));
+  await clock('2026-11-25T08:00:00Z');
+  v = await view('Hair', 'Mystery Rotation');
+  check('Hair: with nothing on rotation it says so, and still lists the history (newest first, none marked live or upcoming)', v.cards === 36 && /No Mystery Style Coupon rotation/.test(v.line) && JSON.stringify((await rotSections()).map(s => s.cls)) === '["","",""]' && (await rotSections())[0].t === 'Nov 11 – Nov 25 · Ended', JSON.stringify([v, await rotSections()]));
   await clock('2026-11-03T20:00:00Z');
   await showView('Released');
   check('Hair: Released is still the full list, with no section headings or labels', (await page.$$eval('#content .grid .card', c => c.length)) === releasedCount && (await page.$$eval('#content .group-title, #content .rotation-line', h => h.length)) === 0);
   v = await view('Face', 'Mystery Rotation');
-  check('Face: Mystery Rotation lists its styles too', v.cards >= 6 && /Ends/.test(v.line), JSON.stringify(v));
+  check('Face: Mystery Rotation lists its history too (12 faces in each of the three boxes)', v.cards === 36 && /Ends/.test(v.line) && (await rotSections()).length === 3, JSON.stringify(v));
   await showView('Released');
   // The Released tab (boxes) shows the same line, only for a box that has not ended
   await clickTab('Released crates and boxes, and what each held'); await settle(); await pickTab('Mystery Fashion');
@@ -908,6 +940,7 @@ await page.screenshot({ path: 'tmp/ui-final.png' });
   const ultra = await browser.newPage();
   await ultra.setViewport({ width: 3440, height: 1440, deviceScaleFactor: 1 });
   await ultra.goto(BASE, { waitUntil: 'networkidle0' }); await new Promise(r => setTimeout(r, 1200));
+  await ultra.evaluate(() => [...document.querySelectorAll('#content .past-tab')].find(t => t.textContent === 'Mystery Fashion')?.click()); await new Promise(r => setTimeout(r, 600)); // the crates: a long list in one grid
   const m = await ultra.evaluate(() => { const a = document.querySelector('.app').getBoundingClientRect(), s = document.querySelector('.stage-box').getBoundingClientRect(); return { left: Math.round(a.left), width: Math.round(a.width), right: Math.round(innerWidth - a.right), stage: Math.round(s.width), zoom: document.querySelector('#preview').dataset.zoom, scrollW: document.documentElement.scrollWidth, perRow: (() => { const c = [...document.querySelectorAll('#content .card')]; return c.length ? c.filter(x => x.offsetTop === c[0].offsetTop).length : 0; })() }; });
   check('ultrawide 3440px: the page is capped at 2400px and centred', m.width === 2400 && Math.abs(m.left - m.right) <= 1 && m.scrollW <= 3440, JSON.stringify(m));
   check('ultrawide 3440px: the preview is still drawn zoomed in (2x or more)', Number(m.zoom) >= 2, JSON.stringify(m));

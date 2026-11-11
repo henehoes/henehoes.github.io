@@ -370,6 +370,7 @@ input { font: inherit; border-radius: 0; }
 .pill { display: inline-flex; align-items: center; gap: 7px; }
 .sale-dot { flex: none; width: 8px; height: 8px; border-radius: 50%; background: #b3aca0; box-shadow: 0 0 0 1px var(--paper); }
 .sale-dot.on { background: #2fa24f; }
+.sale-dot.upcoming { background: #f0b400; } /* a box that has not started yet */
 .pill:hover { background: var(--paper-deep); }
 .pill[aria-pressed="true"] { background: var(--sepia); color: var(--paper); }
 
@@ -391,6 +392,8 @@ input { font: inherit; border-radius: 0; }
 .ends-line { display: flex; flex-wrap: nowrap; align-items: center; justify-content: center; gap: 0 8px; margin: 4px 3px 10px; font: 12px var(--font-label); letter-spacing: .04em; color: var(--ends-blue); --ends-blue: oklch(48% .16 255); }
 .ends-line > span { min-width: 0; } /* the words wrap beside the dot, never onto a line of their own under it */
 .ends-dot { flex: none; width: 8px; height: 8px; border-radius: 50%; background: #2fa24f; box-shadow: 0 0 0 2px #2fa24f40; } /* the same green as a pill's on-sale dot; the words stay blue */
+.ends-line.upcoming, .ends-line.past-when.upcoming { color: #8a6500; } /* "Starts in 7 hours": yellow dot, darker words so the small text stays readable */
+.ends-line.upcoming .ends-dot { background: #f0b400; box-shadow: 0 0 0 2px #f0b40040; }
 .ends-line.ended { color: oklch(48% .01 80); }
 .ends-line.ended .ends-dot { background: #b3aca0; box-shadow: 0 0 0 2px #b3aca040; }
 .ends-line.avail { justify-content: flex-start; margin: 4px 3px; padding: 6px 10px; background: var(--bench-deep); box-shadow: 0 -2px 0 0 var(--bench-line), 0 2px 0 0 var(--bench-line), -2px 0 0 0 var(--bench-line), 2px 0 0 0 var(--bench-line); } /* boxed like a chip, so it does not float in the panel */
@@ -413,3 +416,4 @@ input { font: inherit; border-radius: 0; }
 /* The None option's icon: a circle with a slash through it, drawn in CSS */
 .none-icon { position: relative; width: 34px; height: 34px; border: 3px solid var(--muted, #999); border-radius: 50%; opacity: .6; box-sizing: border-box; }
 .none-icon::after { content: ''; position: absolute; left: 50%; top: -3px; bottom: -3px; width: 3px; margin-left: -1.5px; background: var(--muted, #999); transform: rotate(45deg); }
+

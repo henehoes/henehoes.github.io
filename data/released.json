@@ -29,7 +29,13 @@
    30880,
    "Natural",
    "Casanova",
-   "Roving Rockstar"
+   "Roving Rockstar",
+   "Black Artist Hair",
+   "Sweet Kitty Hair",
+   "Slick Dean",
+   "Babby Cut",
+   "Romance",
+   "Cabana Boy Hair"
   ],
   "female": [
    "Cutie Hair",
@@ -59,7 +65,13 @@
    "Grace Hair",
    "Onna's Honor",
    "Francesca",
-   "Cecelia Twist"
+   "Cecelia Twist",
+   "Side Ponytail",
+   "Black Kitty Hair",
+   "Curly Stream Hair",
+   "Princess Warrior",
+   "Dashing Damsel",
+   "Carla"
   ]
  },
  "face": {
@@ -92,7 +104,13 @@
    "Curious Dog",
    "Dramatic Face",
    "Ghostface Stare",
-   "Sad Innocence"
+   "Sad Innocence",
+   "Round-Eyed Face",
+   "Mysterious Face",
+   "Confused Look",
+   "Oliver Face",
+   "Almond Face",
+   "Moonlight Eyes"
   ],
   "female": [
    "Defiant Face",
@@ -123,7 +141,13 @@
    "Bright Eyes",
    "Existentially Tired Face",
    "Lazy Look",
-   "Innocent Look"
+   "Innocent Look",
+   "Intelligent Eyes",
+   "Odd Eye",
+   "Confused Look",
+   "Olivia Face",
+   "Soul's Window",
+   "Angel Glow"
   ]
  }
 }
