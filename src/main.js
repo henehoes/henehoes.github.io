@@ -1279,7 +1279,7 @@ function renderPast(c) {
 // Plain text from the owner; the only place support (a cash shop gift to hernz) is mentioned.
 const ABOUT = [
   [null, [
-    "Welcome! henehoes is a fan-made outfit, dye and housing simulator for MapleStory Classic World. Try on faces, hair, clothes and pets, play with dyes, plan your home, and save the looks you love. Everything you see is datamined straight from the game's own files, and all MapleStory artwork belongs to Nexon."]],
+    "Hi! henehoes is a fan-made simulator for MapleStory Classic World. You can try on faces, hair, clothes and pets, play with dyes, plan your home, and save your favourite looks. Everything you see is datamined straight from the game files, and all MapleStory artwork belongs to Nexon."]],
   ['How to use it', { list: [
     ['Pick things on the right.', ' The tabs run from Body, Face and Hair through clothing to Pets, and Search finds anything across all categories.'],
     ["Manage what you're wearing on the left.", ' Select an item to dye it with Tone, Chroma and Brightness. Reset colour takes it back to normal, and the × takes the item off.'],
