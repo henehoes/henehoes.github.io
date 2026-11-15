@@ -505,6 +505,8 @@ function only(patch) {
 const note = text => { $('ph-note').textContent = text; };
 
 // Chapter tabs down the right edge of the book. Short names keep the rail narrow; the chapter title shows the full one.
+// The ♥ About tab is hidden while its wording is being finalised; open the site with ?about to preview it.
+const SHOW_ABOUT = new URLSearchParams(location.search).has('about');
 const TAB_NAMES = { about: '♥', looks: 'Look Book', search: 'All', faceAcc: 'Face Acc.', eyeAcc: 'Eye Deco', longcoat: 'Overall', nameTag: 'Name Ring', chatBalloon: 'Chat Ring', upcoming: 'Upcoming', past: 'Releases' };
 const CHAPTER_TITLES = { about: 'About henehoes ♥', pet: 'Pets', looks: 'Look Book', past: 'Released Crates & Styles', upcoming: 'Upcoming Crates', search: 'Search Everything', body: 'Body', face: 'Faces', hair: 'Hairstyles', cap: 'Hats', faceAcc: 'Face Accessories', eyeAcc: 'Eye Decorations', earrings: 'Earrings', longcoat: 'Overalls', coat: 'Tops', pants: 'Bottoms', glove: 'Gloves', shoes: 'Shoes', cape: 'Capes', weapon: 'Weapons', nameTag: 'Name Rings', chatBalloon: 'Chat Rings' };
 
@@ -559,7 +561,7 @@ function renderTabs() {
   // The Look Book, then Releases (every crate and box so far, newest first), close the rail below Chat Ring.
   add('looks', 'Look Book: your saved looks', false, 'looks');
   add('past', 'Releases: crates and boxes, and what each held', false, 'wearable past');
-  add('about', 'About & FAQ', false, 'about'); // the last tab: how it works, questions, and why there are no ads (a light blue sticky with a heart)
+  if (SHOW_ABOUT) add('about', 'About & FAQ', false, 'about'); // the last tab: how it works, questions, and why there are no ads (a light blue sticky with a heart)
   tabs.scrollLeft = scrolled;
   $('chapter').textContent = CHAPTER_TITLES[activeTab] ?? catalog.wearables[activeTab]?.label ?? '';
   fitRail();

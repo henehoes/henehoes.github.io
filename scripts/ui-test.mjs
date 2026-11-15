@@ -8,7 +8,7 @@ const DM = process.env.VITE_DATAMINE === '1'; // datamined clothing, weapons and
 mkdirSync('tmp', { recursive: true }); // screenshots go here; the folder is not shipped
 
 const browser = await puppeteer.launch({ executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome', headless: 'new', defaultViewport: { width: 1200, height: 1000 } });
-const page = await browser.newPage();
+let page = await browser.newPage();
 const errors = [];
 page.on('pageerror', e => errors.push(e.message));
 page.on('console', m => m.type() === 'error' && errors.push(m.text()));
@@ -29,7 +29,7 @@ const settle = () => new Promise(r => setTimeout(r, 700));
 const start = await pixels();
 check('preview draws something', start.n > 500, `(${start.n} px)`);
 check('on load the Released tab is open, on Mystery Styles and its newest box (Nov 11 – Nov 25)', (await page.$eval('.tab[aria-selected="true"]', e => e.title)).startsWith('Releases') && (await page.$eval('#content .past-tab[aria-selected="true"]', e => e.textContent)) === 'Mystery Styles' && (await page.$eval('#content .pill[aria-pressed="true"]', e => e.textContent)) === 'Nov 11 – Nov 25');
-check('the Look Book and Releases close the rail, then the ♥ About tab, below Pet, with no Upcoming tab, and never carry a checkmark', await page.$$eval('.tab', ts => { const t = ts.map(x => x.title); const n = t.length; return t[n - 1] === 'About & FAQ' && t[n - 2].startsWith('Releases') && t[n - 3].startsWith('Look Book') && t[n - 4] === 'Pet' && t[n - 5] === 'Chat Ring' && !t.some(x => x.startsWith('Upcoming')) && ![n - 3, n - 2, n - 1].some(i => ts[i].querySelector('.tick')); }));
+check('the Look Book and Releases close the rail, below Pet (the ♥ About tab is hidden unless the address ends ?about), with no Upcoming tab, and never carry a checkmark', await page.$$eval('.tab', ts => { const t = ts.map(x => x.title); const n = t.length; return t[n - 1].startsWith('Releases') && t[n - 2].startsWith('Look Book') && t[n - 3] === 'Pet' && t[n - 4] === 'Chat Ring' && !t.some(x => x.startsWith('Upcoming') || x === 'About & FAQ') && ![n - 2, n - 1].some(i => ts[i].querySelector('.tick')); }));
 
 // Nothing is worn at the start: no face and no hair
 const selectedNames = async tab => { await clickTab(tab); await settle(); return page.$$eval('#content .grid .card[aria-pressed="true"] .label', els => els.map(e => e.textContent)); };
@@ -935,6 +935,8 @@ await page.screenshot({ path: 'tmp/ui-final.png' });
 
 // The ♥ About tab: a light blue sticky with just a heart; the page is the owner's text; support is mentioned there and nowhere else
 {
+  const mainPage = page; page = await browser.newPage(); await page.setViewport({ width: 1200, height: 1000 }); // a separate page, so the main one keeps its state
+  await page.goto(BASE + '?about', { waitUntil: 'networkidle0' }); await new Promise(r => setTimeout(r, 1200));
   const heart = await page.$eval('.tab.about', e => ({ text: e.textContent.trim(), bg: getComputedStyle(e).backgroundColor, title: e.title }));
   check('About tab: a light blue sticky named with a filled heart (♥) and the tooltip About & FAQ', heart.text === '♥' && heart.title === 'About & FAQ' && /oklch\(0?\.82|rgba?\(/.test(heart.bg), JSON.stringify(heart));
   await clickTab('About & FAQ'); await settle();
@@ -950,6 +952,7 @@ await page.screenshot({ path: 'tmp/ui-final.png' });
   await clickTab('Hair'); await settle();
   const other = await page.evaluate(() => document.body.textContent);
   check('Support is mentioned only in the About tab (not elsewhere on the page)', !/Defense Charm|Ko-fi|Send as Gift|donat/i.test(other));
+  await page.close(); page = mainPage;
 }
 
 // An ultrawide screen: the page stops at 2400px and sits in the middle, with the checked background on both sides
