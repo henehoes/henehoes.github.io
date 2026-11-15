@@ -28,8 +28,8 @@ const settle = () => new Promise(r => setTimeout(r, 700));
 
 const start = await pixels();
 check('preview draws something', start.n > 500, `(${start.n} px)`);
-check('on load the Released tab is open, on Mystery Styles and its newest box (Nov 11 – Nov 25)', (await page.$eval('.tab[aria-selected="true"]', e => e.title)).startsWith('Released') && (await page.$eval('#content .past-tab[aria-selected="true"]', e => e.textContent)) === 'Mystery Styles' && (await page.$eval('#content .pill[aria-pressed="true"]', e => e.textContent)) === 'Nov 11 – Nov 25');
-check('the Look Book, Released and Upcoming close the rail, below Pet, and never carry a checkmark', await page.$$eval('.tab', ts => { const t = ts.map(x => x.title); const n = t.length; return t[n - 2].startsWith('Released') && t[n - 1].startsWith('Upcoming') && t[n - 3].startsWith('Look Book') && t[n - 4] === 'Pet' && t[n - 5] === 'Chat Ring' && ![n - 3, n - 2, n - 1].some(i => ts[i].querySelector('.tick')); }));
+check('on load the Released tab is open, on Mystery Styles and its newest box (Nov 11 – Nov 25)', (await page.$eval('.tab[aria-selected="true"]', e => e.title)).startsWith('Releases') && (await page.$eval('#content .past-tab[aria-selected="true"]', e => e.textContent)) === 'Mystery Styles' && (await page.$eval('#content .pill[aria-pressed="true"]', e => e.textContent)) === 'Nov 11 – Nov 25');
+check('the Look Book and Releases close the rail, then the ♥ About tab, below Pet, with no Upcoming tab, and never carry a checkmark', await page.$$eval('.tab', ts => { const t = ts.map(x => x.title); const n = t.length; return t[n - 1] === 'About & FAQ' && t[n - 2].startsWith('Releases') && t[n - 3].startsWith('Look Book') && t[n - 4] === 'Pet' && t[n - 5] === 'Chat Ring' && !t.some(x => x.startsWith('Upcoming')) && ![n - 3, n - 2, n - 1].some(i => ts[i].querySelector('.tick')); }));
 
 // Nothing is worn at the start: no face and no hair
 const selectedNames = async tab => { await clickTab(tab); await settle(); return page.$$eval('#content .grid .card[aria-pressed="true"] .label', els => els.map(e => e.textContent)); };
@@ -134,8 +134,6 @@ await clickTab('Search'); await settle(); await page.type('.search-input', 'pump
 check('and not in Search either', !(await page.$$eval('#content .card', cs => cs.some(c => c.textContent.includes('UPCOMING')))));
 await page.$eval('.search-input', e => { e.value = ''; e.dispatchEvent(new Event('input')); }); await clickTab('Body'); await settle();
 } else {
-await clickTab('Upcoming'); await settle();
-check('Upcoming tab: only the note, shown in full (no toggle), saying upcoming items can no longer be datamined', await page.evaluate(() => /can no longer be datamined/.test(document.querySelector('#content .empty-note')?.textContent) && /no way to tell/.test(document.querySelector('#content .empty-note').textContent) && !document.querySelector('#content .note-toggle, #content .card')));
 await clickTab('Hat'); await settle();
 check('no Released | Upcoming switch and no UPCOMING cards on the Hat tab', !(await page.$$eval('#source .seg button', b => b.some(x => x.textContent === 'Upcoming'))) && !(await page.$$eval('#content .card', cs => cs.some(c => c.textContent.includes('UPCOMING')))));
 await clickTab('Body'); await settle();
@@ -338,7 +336,7 @@ await clickTab('Hair'); await settle();
 // The Equipped panel and the book end on the same line; the credits sit in the top bar, level with the book tabs
 const ends = await page.evaluate(() => { const r = s => document.querySelector(s).getBoundingClientRect(); const n = r('.note'), b = r('.books'); return { equippedBottom: r('#colour').bottom, coverBottom: r('.cover').bottom, noteTop: n.top, noteBottom: n.bottom, tabsBottom: b.bottom, noteText: document.querySelector('.note').textContent, sideTop: r('.side').top }; });
 check('Equipped and catalogue panels end on the same line', Math.abs(ends.equippedBottom - ends.coverBottom) < 0.6, JSON.stringify(ends));
-check('the credits are in the top bar, above the panels, with the shortened wording', ends.noteBottom <= ends.sideTop + 1 && ends.noteText === 'Sprites © Nexon. Dye behaviour from meaegi.com.', JSON.stringify(ends));
+check('the credits are in the top bar, above the panels, with the shortened wording', ends.noteBottom <= ends.sideTop + 1 && ends.noteText === 'Sprites © Nexon. Dye behaviour from meaegi.com. Created by hernz.', JSON.stringify(ends));
 
 // Datamine view lists the whole henesys.gg salon (male, female and collab styles)
 await page.evaluate(() => [...document.querySelectorAll('#filters > .seg button')].find(b => b.textContent.endsWith('All')).click());
@@ -642,7 +640,7 @@ await page.screenshot({ path: 'tmp/ui-final.png' });
   check('the Demon Goblin does not hide earrings (it does not declare Ae)', goblinEarrings.h !== goblinAlone.h && earringsAlone.h !== maskAlone.h);
   await wearByName('Hat', 'Demon Goblin');
   // Past tab: every past crate and box, grouped; the Halloween crate holds its 50 items with their listed rates
-  await clickTab('Released crates and boxes, and what each held'); await settle();
+  await clickTab('Releases: crates and boxes, and what each held'); await settle();
   const groups = await page.$$eval('#content .past-tab', g => g.map(x => x.textContent));
   check('Released tab: category tabs Mystery Fashion, Mystery Styles and Aurora, Mystery Styles (the newest box) selected', JSON.stringify(groups) === JSON.stringify(['Mystery Fashion', 'Mystery Styles', 'Aurora']) && (await page.$eval('#content .past-tab[aria-selected="true"]', e => e.textContent)) === 'Mystery Styles', groups.join(' | '));
   const pillsOf = () => page.$$eval('#content .pill', p => p.map(x => x.textContent));
@@ -703,10 +701,10 @@ await page.screenshot({ path: 'tmp/ui-final.png' });
   check('Hair: each current or upcoming rotation has its line beneath its own heading: Starts (yellow) under the Upcoming one, Ends (green) under On rotation', up.lines.length === 2 && up.lines[0].up && /^Starts .* · in \d+ days?$/.test(up.lines[0].t) && up.lines[0].after === 'Nov 11 – Nov 25 · Upcoming' && !up.lines[1].up && /^Ends /.test(up.lines[1].t) && up.lines[1].after === 'Oct 28 – Nov 11 · On rotation', JSON.stringify(up));
   await clock('2026-11-11T05:00:00Z');
   v = await view('Hair', 'Mystery Rotation');
-  const styleDots = async () => { await clickTab('Released crates and boxes, and what each held'); await settle(); await pickTab('Mystery Styles'); return page.$$eval('#content .pill', ps => ps.map(p => `${p.textContent}:${p.querySelector('.sale-dot').className.replace('sale-dot', '').trim() || 'off'}`)); };
+  const styleDots = async () => { await clickTab('Releases: crates and boxes, and what each held'); await settle(); await pickTab('Mystery Styles'); return page.$$eval('#content .pill', ps => ps.map(p => `${p.textContent}:${p.querySelector('.sale-dot').className.replace('sale-dot', '').trim() || 'off'}`)); };
   const d1 = await styleDots();
   check('Released tab: before Nov 11 8:00 AM UTC the new Mystery Styles pill has a yellow dot, the Oct 28 one green, the Oct 6 one grey', d1.join() === 'Oct 6 – Oct 28:off,Oct 28 – Nov 11:on,Nov 11 – Nov 25:upcoming', d1.join());
-  check('Released tab: the new Mystery Styles box says when it starts, in yellow', await page.evaluate(() => { document.querySelectorAll('#content .pill')[2].click(); return null; }) === null && (await settle(), await page.$eval('#content .past-when', e => e.classList.contains('upcoming') && /^Starts in \d+ hours?$/.test(e.textContent))));
+  check('Released tab: the new Mystery Styles box says when it starts, in yellow', await page.evaluate(() => { document.querySelectorAll('#content .pill')[2].click(); return null; }) === null && (await settle(), await page.$eval('#content .past-when', e => e.classList.contains('upcoming') && /^Starts \w{3} \d+ \w{3} · \d+:\d\d (AM|PM) \S+ · in \d+ hours?$/.test(e.textContent))));
   await clock('2026-11-11T08:00:00Z');
   const d2 = await styleDots();
   check('Released tab: from Nov 11 8:00 AM UTC the new box is green and the Oct 28 one grey', d2.join() === 'Oct 6 – Oct 28:off,Oct 28 – Nov 11:off,Nov 11 – Nov 25:on', d2.join());
@@ -722,7 +720,7 @@ await page.screenshot({ path: 'tmp/ui-final.png' });
   await clock('2026-11-25T08:00:30Z'); await wake();
   check('Mystery Rotation changes by itself at the end time: the Nov 11 box goes to Ended', (await rotSections())[0].t === 'Nov 11 – Nov 25 · Ended');
   await clock('2026-11-11T07:59:00Z');
-  await clickTab('Released crates and boxes, and what each held'); await settle(); await pickTab('Mystery Styles');
+  await clickTab('Releases: crates and boxes, and what each held'); await settle(); await pickTab('Mystery Styles');
   const dotBefore = await page.$$eval('#content .pill .sale-dot', d => d.map(x => x.className));
   await clock('2026-11-11T08:00:30Z'); await wake();
   const dotAfter = await page.$$eval('#content .pill .sale-dot', d => d.map(x => x.className));
@@ -737,23 +735,23 @@ await page.screenshot({ path: 'tmp/ui-final.png' });
   check('Face: Mystery Rotation lists its history too (12 faces in each of the three boxes)', v.cards === 36 && /Ends/.test(v.line) && (await rotSections()).length === 3, JSON.stringify(v));
   await showView('Released');
   // The Released tab (boxes) shows the same line, only for a box that has not ended
-  await clickTab('Released crates and boxes, and what each held'); await settle(); await pickTab('Mystery Fashion');
+  await clickTab('Releases: crates and boxes, and what each held'); await settle(); await pickTab('Mystery Fashion');
   const endsOf = async pill => { await page.evaluate(l => [...document.querySelectorAll('#content .pill')].find(p => p.textContent.includes(l)).click(), pill); await settle(); return page.$eval('#content .past-when', e => e.textContent).catch(() => null); };
   const halloween = await endsOf('Halloween'), founders = await endsOf("Founder's");
-  check('Released tab: a box that is on rotation says, on the line under its dates (with its dot), how long is left', /^Ends in (\d+ hours?|less than an hour)$/.test(halloween ?? '') && (await page.$eval('#content .past-when', e => !!e.querySelector('.ends-dot'))), String(halloween));
+  check('Released tab: a box that is on rotation says, on the line under its dates (with its dot), its full end (day, time and time left), as the Equipped panel says it', /^Ends \w{3} \d+ \w{3} · \d+:\d\d (AM|PM) \S+ · (\d+ hours? left|less than an hour left)$/.test(halloween ?? '') && (await page.$eval('#content .past-when', e => !!e.querySelector('.ends-dot'))), String(halloween));
   check('Released tab: a box that has ended says how long ago, in grey', /^Ended \d+ days? ago$/.test(founders ?? '') && await page.$eval('#content .past-when', e => e.classList.contains('ended')), String(founders));
   // A dot on each pill: green while the box is on sale, grey when it is off sale (ended, or not started); a box without an end stays green
-  const dots = async iso => { await clock(iso); await clickTab('Released crates and boxes, and what each held'); await settle(); await pickTab('Mystery Fashion'); return page.$$eval('#content .pill', p => p.map(x => x.querySelector('.sale-dot').classList.contains('on') ? 'on' : 'off').join()); };
+  const dots = async iso => { await clock(iso); await clickTab('Releases: crates and boxes, and what each held'); await settle(); await pickTab('Mystery Fashion'); return page.$$eval('#content .pill', p => p.map(x => x.querySelector('.sale-dot').classList.contains('on') ? 'on' : 'off').join()); };
   check('Released tab: pill dots, Nov 3 evening (Halloween and Oct 21 on sale)', (await dots('2026-11-03T20:00:00Z')) === 'off,on,on,off');
   check('Released tab: pill dots, Nov 5 (only the Nov 4 crate, which has no end, is on sale)', (await dots('2026-11-05T00:00:00Z')) === 'off,off,off,on');
   const lineOf = () => page.$eval('#content .past-when', e => `${e.textContent}|${e.classList.contains('ended')}`).catch(() => null);
   const novLine = iso => dots(iso).then(lineOf);
-  check('Released tab: the Nov 4 crate (end is a date, no time) says days left, no hour', (await novLine('2026-11-05T00:00:00Z')) === 'Ends in 14 days|false', String(await lineOf()));
-  check('Released tab: the Nov 4 crate is on sale to the end of the UTC day (1 day left on the 18th)', (await novLine('2026-11-18T23:00:00Z')) === 'Ends in 1 day|false', String(await lineOf()));
+  check('Released tab: the Nov 4 crate (end is a date, no time) says days left, no hour', /^Ends \w{3} 18 Nov · 14 days left\|false$/.test(await novLine('2026-11-05T00:00:00Z')), String(await lineOf()));
+  check('Released tab: the Nov 4 crate is on sale to the end of the UTC day (1 day left on the 18th)', /^Ends \w{3} 18 Nov · 1 day left\|false$/.test(await novLine('2026-11-18T23:00:00Z')), String(await lineOf()));
   check('Released tab: after that day it is grey, Ended 1 day ago, and its pill dot is grey', (await dots('2026-11-20T10:00:00Z')) === 'off,off,off,off' && (await lineOf()) === 'Ended 1 day ago|true', String(await lineOf()));
   // The countdown ticks by itself (every 30 s and when the page is shown again): move the clock and fire the page-shown event, with no re-render for a live box
   await clock('2026-11-03T20:00:00Z');
-  await clickTab('Released crates and boxes, and what each held'); await settle(); await pickTab('Mystery Fashion');
+  await clickTab('Releases: crates and boxes, and what each held'); await settle(); await pickTab('Mystery Fashion');
   await page.evaluate(() => [...document.querySelectorAll('#content .pill')].find(p => p.textContent.includes('Halloween')).click()); await settle();
   // It sleeps until the words would change: 12.5 hours left (13 hours) wakes in 30 minutes, when it turns to 12 hours, not every 30 seconds
   await clock('2026-11-03T19:30:00Z');
@@ -769,7 +767,7 @@ await page.screenshot({ path: 'tmp/ui-final.png' });
   await page.$eval('#content .past-when', e => { e.dataset.same = '1'; });
   await clock('2026-11-04T05:00:00Z'); await page.evaluate(() => document.dispatchEvent(new Event('visibilitychange')));
   const during = await endsText();
-  check('the countdown updates itself when the clock moves (12 hours, then 3 hours left), in the same element', /^Ends in 12 hours$/.test(before ?? '') && /^Ends in 3 hours$/.test(during ?? '') && (await page.$eval('#content .past-when', e => e.dataset.same)) === '1', `${before} -> ${during}`);
+  check('the countdown updates itself when the clock moves (12 hours, then 3 hours left), in the same element', /^Ends .* · 12 hours left$/.test(before ?? '') && /^Ends .* · 3 hours left$/.test(during ?? '') && (await page.$eval('#content .past-when', e => e.dataset.same)) === '1', `${before} -> ${during}`);
   await clock('2026-11-04T08:00:00Z'); await page.evaluate(() => document.dispatchEvent(new Event('visibilitychange'))); await settle();
   check('...and turns into the grey "Ended" words by itself once the box has ended', /^Ended less than an hour ago$/.test((await endsText()) ?? '') && (await page.$eval('#content .past-when', e => e.classList.contains('ended'))));
   await clock('2026-11-04T11:00:00Z'); await page.evaluate(() => document.dispatchEvent(new Event('visibilitychange')));
@@ -935,6 +933,25 @@ await page.screenshot({ path: 'tmp/ui-final.png' });
   await wide.close();
 }
 
+// The ♥ About tab: a light blue sticky with just a heart; the page is the owner's text; support is mentioned there and nowhere else
+{
+  const heart = await page.$eval('.tab.about', e => ({ text: e.textContent.trim(), bg: getComputedStyle(e).backgroundColor, title: e.title }));
+  check('About tab: a light blue sticky named with a filled heart (♥) and the tooltip About & FAQ', heart.text === '♥' && heart.title === 'About & FAQ' && /oklch\(0?\.82|rgba?\(/.test(heart.bg), JSON.stringify(heart));
+  await clickTab('About & FAQ'); await settle();
+  const info = await page.evaluate(() => ({ chapter: document.getElementById('chapter').textContent, text: document.getElementById('content').textContent, heads: [...document.querySelectorAll('#content .group-title')].map(h => h.textContent), search: !!document.querySelector('#filters .search-input'), cards: document.querySelectorAll('#content .card').length, qs: document.querySelectorAll('#content .about-q').length }));
+  check('About tab: titled "About henehoes ♥", the intro with no heading, then How to use it and Questions, four questions, no search box and no cards', info.chapter === 'About henehoes ♥' && info.heads.join('|') === 'How to use it|Questions' && info.qs === 4 && !info.search && info.cards === 0, JSON.stringify(info.heads));
+  check('About tab: meaegi.com is a link to https://meaegi.com, opening in a new tab', await page.$$eval('#content a', as => as.length >= 1 && as.every(a => a.textContent === 'meaegi.com' && a.href === 'https://meaegi.com/' && a.target === '_blank' && a.rel.includes('noopener'))));
+  check('About tab: the "Hi, I\'m hernz" heading is gone', !/Hi, I.m hernz/.test(info.text));
+  check('About tab: carries the ad-free answer and the gift to "hernz"', /ad-free/.test(info.text) && /Cash Shop gift to player hernz/.test(info.text) && /Defense Charm/.test(info.text) && /Mystery Box/.test(info.text) && /ad-free/.test(info.text));
+  check('About tab: every mention of henehoes is bold', await page.evaluate(() => { const all = (document.getElementById('content').textContent.match(/henehoes/g) || []).length; const bold = [...document.querySelectorAll('#content strong')].filter(s => s.textContent === 'henehoes').length; return all >= 1 && all === bold; }));
+  check('credit line ends with "Created by hernz" (hernz bold), and the ♥ sticky is narrower than the other stickies', await page.evaluate(() => { const n = document.querySelector('.note'); const b = n.querySelector('b'); const w = s => document.querySelector(s).getBoundingClientRect().width; return /Created by hernz\.$/.test(n.textContent) && b && b.textContent === 'hernz' && w('.tab.about') < w('.tab.looks') - 20; }));
+  check('About tab: every mention of hernz is bold', await page.evaluate(() => { const all = (document.getElementById('content').textContent.match(/hernz/g) || []).length; const bold = [...document.querySelectorAll('#content strong')].filter(s => s.textContent === 'hernz').length; return all >= 1 && all === bold; }));
+  check('About tab: the tab is selected and clears on switching, and nothing else on the page mentions the gift or Ko-fi', await page.$eval('.tab.about', e => e.getAttribute('aria-selected') === 'true'));
+  await clickTab('Hair'); await settle();
+  const other = await page.evaluate(() => document.body.textContent);
+  check('Support is mentioned only in the About tab (not elsewhere on the page)', !/Defense Charm|Ko-fi|Send as Gift|donat/i.test(other));
+}
+
 // An ultrawide screen: the page stops at 2400px and sits in the middle, with the checked background on both sides
 {
   const ultra = await browser.newPage();
@@ -965,7 +982,7 @@ await page.screenshot({ path: 'tmp/ui-final.png' });
   const everyName = SECTIONS.flatMap(sec => sec.items.map(x => x.name));
   const released = [...(await listed('Overall', 'Released')), ...(await listed('Hat', 'Released')), ...(await listed('Cape', 'Released')), ...(await listed('Bottom', 'Released')), ...(await listed('Shoes', 'Released'))];
   check("Founder's and 10-day items: none of them is in the Released lists (Overall, Hat, Cape, Bottom, Shoes)", !released.some(n => everyName.includes(n)));
-  await clickTab('Released'); await settle();
+  await clickTab('Releases'); await settle();
   check("Released tab: no Founder's Packages group (Mystery Fashion, Mystery Styles, Aurora only)", JSON.stringify(await page.$$eval('.past-tab', t => t.map(x => x.textContent))) === JSON.stringify(['Mystery Fashion', 'Mystery Styles', 'Aurora']));
   if (DM) {
     // In All · Datamine the released and datamined items are one list in id order (so patterns in what was released show); Founder's Package

@@ -204,8 +204,8 @@ A tab shows a check (`.tick`) when something in it is worn (never on Look Book, 
 - Opening the tab never changes the character; clicking a card wears it.
 - Hover x deletes at once, with no confirm.
 
-**Released tab (`renderPast`).**
-- Category file tabs (`.past-tab`, from `data/boxes.json` groups), date-first pills with sale dots (`onSale`, `.sale-dot`), then the selected box's title (under its date line, `boxWhen`: a dot and "Ends in 14 days" in green, or "Ended 1 day ago" in grey; the short form because the dates are already on the line above) and cards grouped by slot (Mystery Styles: Hairstyles/Faces sections with their colour bar, split Male/Female).
+**Releases tab (`renderPast`; the sticky says "Releases", the page title is still "Released Crates & Styles").**
+- Category file tabs (`.past-tab`, from `data/boxes.json` groups), date-first pills with sale dots (`onSale`, `.sale-dot`), then the selected box's title (under its date line, `boxWhen`: a dot and the full end in green, e.g. "Ends Wed 25 Nov · 4:00 PM GMT+8 · 14 days left" (date and days only when the page prints no time, as for the Nov 4 crate), or "Ended 1 day ago" in grey; the short form because the dates are already on the line above) and cards grouped by slot (Mystery Styles: Hairstyles/Faces sections with their colour bar, split Male/Female).
 - Opens on the `latest` box (currently the Nov 4 crate).
 - Rates appear only in card tooltips.
 - Timing:
@@ -214,7 +214,7 @@ A tab shows a check (`.tick`) when something in it is worn (never on Look Book, 
   - No `end` means still on sale, with no ends line.
   - `tickEnds`/`wakeAt` update lines and dots only when their words change.
 
-**Upcoming tab (`renderUpcoming`).** Shows only `unconfirmedNote()`, always fully expanded: upcoming items can no longer be datamined (Nexon now changes boxes during maintenance and no longer flags coming items as dyeable ahead of launch).
+**Upcoming tab (`renderUpcoming`): removed from the rail by the user (Nov 15); the render function and its note remain in the code but nothing opens it.** Shows only `unconfirmedNote()`, always fully expanded: upcoming items can no longer be datamined (Nexon now changes boxes during maintenance and no longer flags coming items as dyeable ahead of launch).
 - With `SHOW_UPCOMING = false`, the possible-upcoming items (`upcoming: true` in the catalogue) are not listed anywhere, not randomised, not searchable and not restored from saves.
 - Their code (`renderCrateSwitch`, `hasUpcoming`, `inView`, `regular`, UPCOMING badge) and data (`data/upcoming.json`, `public/sprites/upcoming/`) stay.
 - Items from a released box are marked `released: true` in `data/upcoming.json` and become ordinary items.
@@ -279,3 +279,8 @@ A tab shows a check (`.tick`) when something in it is worn (never on Look Book, 
 - The saved Founders page has no article (see `reference/cash-shop/founders-access-cash-shop.md`).
 
 - Nov 11 Mystery Styles (UTC Nov 11 8:00 AM to Nov 25 7:59 AM, 24 styles at 16.67% each, supplied by the user): box `mystery-styles-nov11` in `data/boxes.json` (`latest: true`, so the Released tab opens on it; `Artist Hair` and `Kitty Hair` carry `match` for the game's "Black Artist Hair" / "Black Kitty Hair"). Its styles are in `data/released.json` and flagged `released: true` in `data/items.json` (edited by hand, which is what `add-styles.mjs` would do, without calling the sprite API), so they are ordinary released styles with no DATAMINE label.
+
+## The ♥ About tab
+- The last tab in the rail, a light blue sticky (`.tab.about`, `oklch(82% .09 215 / .85)`, the colour that used to be Pet's) named just ♥ (U+2665, tooltip "About & FAQ", page title "About henehoes ♥"). `renderAbout` in `src/main.js` draws it from the `ABOUT` array (the owner's own copy, kept verbatim: an intro paragraph with no heading, then "How to use it" and "Questions"; meaegi.com is linked by `aboutText`); no search box, no cards.
+- It is the only place support is mentioned (the ad-free answer and the cash shop gift to recipient "hernz"): nowhere else on the page, and a test checks it. Do not add a Ko-fi, donate button or ads elsewhere. If a feature changes (housing quotas, dye source, where looks are saved), update the matching line in `ABOUT`.
+- The copy deliberately gives no visitor numbers (an earlier draft said "thousands every day" while Vercel showed 933 visitors a week). Do not add figures unless they are real and current.

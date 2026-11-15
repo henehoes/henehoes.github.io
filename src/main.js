@@ -505,8 +505,8 @@ function only(patch) {
 const note = text => { $('ph-note').textContent = text; };
 
 // Chapter tabs down the right edge of the book. Short names keep the rail narrow; the chapter title shows the full one.
-const TAB_NAMES = { looks: 'Look Book', search: 'All', faceAcc: 'Face Acc.', eyeAcc: 'Eye Deco', longcoat: 'Overall', nameTag: 'Name Ring', chatBalloon: 'Chat Ring', upcoming: 'Upcoming', past: 'Released' };
-const CHAPTER_TITLES = { pet: 'Pets', looks: 'Look Book', past: 'Released Crates & Styles', upcoming: 'Upcoming Crates', search: 'Search Everything', body: 'Body', face: 'Faces', hair: 'Hairstyles', cap: 'Hats', faceAcc: 'Face Accessories', eyeAcc: 'Eye Decorations', earrings: 'Earrings', longcoat: 'Overalls', coat: 'Tops', pants: 'Bottoms', glove: 'Gloves', shoes: 'Shoes', cape: 'Capes', weapon: 'Weapons', nameTag: 'Name Rings', chatBalloon: 'Chat Rings' };
+const TAB_NAMES = { about: '♥', looks: 'Look Book', search: 'All', faceAcc: 'Face Acc.', eyeAcc: 'Eye Deco', longcoat: 'Overall', nameTag: 'Name Ring', chatBalloon: 'Chat Ring', upcoming: 'Upcoming', past: 'Releases' };
+const CHAPTER_TITLES = { about: 'About henehoes ♥', pet: 'Pets', looks: 'Look Book', past: 'Released Crates & Styles', upcoming: 'Upcoming Crates', search: 'Search Everything', body: 'Body', face: 'Faces', hair: 'Hairstyles', cap: 'Hats', faceAcc: 'Face Accessories', eyeAcc: 'Eye Decorations', earrings: 'Earrings', longcoat: 'Overalls', coat: 'Tops', pants: 'Bottoms', glove: 'Gloves', shoes: 'Shoes', cape: 'Capes', weapon: 'Weapons', nameTag: 'Name Rings', chatBalloon: 'Chat Rings' };
 
 // The category rail fits the book: when its tabs would run past the bottom (a short screen, or more tabs), they shrink together (their
 // height, gaps and text) until every one is visible, down to a floor. Tall screens keep the normal size. The sprites and cards are not touched.
@@ -556,10 +556,10 @@ function renderTabs() {
   if (catalog.pets) { // pets and pet equipment: a section of their own above the Look Book, not part of WEAR_ORDER
     add('pet', 'Pet', state.pet.id != null, 'pets pets-first');
   }
-  // The Look Book, then Released (every crate and box so far, newest first) and Upcoming (a guess), close the rail below Chat Ring.
+  // The Look Book, then Releases (every crate and box so far, newest first), close the rail below Chat Ring.
   add('looks', 'Look Book: your saved looks', false, 'looks');
-  add('past', 'Released crates and boxes, and what each held', false, 'wearable past');
-  add('upcoming', 'Upcoming: why the next boxes can no longer be predicted', false, 'wearable upcoming'); // never a checkmark: it is not something you wear
+  add('past', 'Releases: crates and boxes, and what each held', false, 'wearable past');
+  add('about', 'About & FAQ', false, 'about'); // the last tab: how it works, questions, and why there are no ads (a light blue sticky with a heart)
   tabs.scrollLeft = scrolled;
   $('chapter').textContent = CHAPTER_TITLES[activeTab] ?? catalog.wearables[activeTab]?.label ?? '';
   fitRail();
@@ -571,7 +571,7 @@ function renderFilters() {
   const box = $('filters');
   box.replaceChildren();
   $('source').replaceChildren();
-  if (activeTab === 'past' || activeTab === 'upcoming' || activeTab === 'looks') return; // browsed by category, box or date, so no search bar
+  if (activeTab === 'past' || activeTab === 'upcoming' || activeTab === 'looks' || activeTab === 'about') return; // browsed by category, box or date, so no search bar
   const everything = activeTab === 'search';
   const input = el('input', { type: 'search', className: 'search-input', placeholder: everything ? 'Search everything…' : 'Search entries…', value: search, autocomplete: 'off', spellcheck: false });
   input.setAttribute('aria-label', everything ? 'Search body, faces, hairs and clothing' : 'Search this list');
@@ -917,6 +917,7 @@ function renderContent(keepScroll = false) {
   else if (activeTab === 'looks') renderLooks(c);
   else if (activeTab === 'body') renderBody(c)
   else if (activeTab === 'upcoming') renderUpcoming(c)
+  else if (activeTab === 'about') renderAbout(c);
   else if (activeTab === 'past') renderPast(c);
   else if (activeTab === 'face' || activeTab === 'hair') renderStyles(c, activeTab);
   else if (activeTab === 'pet') renderPets(c);
@@ -1024,7 +1025,7 @@ function endedText(ends, day = false) {
   return `Ended ${date} · ${when}`;
 }
 const nextAgoChange = (ends, day = false) => { const ago = Date.now() - ends, unit = day || ago >= DAY ? DAY : 36e5; return ends + (Math.floor(ago / unit) + 1) * unit; };
-// The Released tab's line under a box's title, which already gives the dates, so the short forms: "Ends in 3 days" (green), "Ended 1 day ago" (grey).
+// The Released tab's line for a box that is over: "Ended 1 day ago" (grey). (One still on sale gives its full end, endsText.)
 const shortText = (ends, day = false) => { const left = ends - Date.now(); return left > 0 ? `Ends in ${leftText(left, day).replace(/ left$/, '')}` : `Ended ${agoText(-left, day)}`; };
 // "Starts Wed 11 Nov · 4:00 PM GMT+8 · in 7 hours": the Mystery Rotation view's yellow line for a box that has not started.
 function startsFull(starts) {
@@ -1041,13 +1042,14 @@ const startsText = starts => `Starts in ${leftText(starts - Date.now()).replace(
 function boxWhen(box) {
   if (!box.end) return null;
   if (isUpcoming(box)) { // not started yet: a yellow line that counts down to the start
-    const starts = startMs(box), line = el('p', { className: 'ends-line past-when upcoming' }, el('i', { className: 'ends-dot', 'aria-hidden': 'true' }), el('span', { textContent: startsText(starts) }));
-    line.dataset.starts = starts; wakeAt(nextChange(starts));
+    const starts = startMs(box), line = el('p', { className: 'ends-line past-when upcoming' }, el('i', { className: 'ends-dot', 'aria-hidden': 'true' }), el('span', { textContent: startsFull(starts) }));
+    line.dataset.starts = starts; line.dataset.full = '1'; wakeAt(nextChange(starts));
     return line;
   }
   const ends = endMs(box), day = isDay(box.end), over = ends <= Date.now();
-  const when = el('p', { className: `ends-line past-when${over ? ' ended' : ''}` }, el('i', { className: 'ends-dot', 'aria-hidden': 'true' }), el('span', { textContent: shortText(ends, day) }));
-  when.dataset[over ? 'ended' : 'ends'] = ends; when.dataset.short = '1'; if (day) when.dataset.day = '1';
+  const when = el('p', { className: `ends-line past-when${over ? ' ended' : ''}` }, el('i', { className: 'ends-dot', 'aria-hidden': 'true' }), el('span', { textContent: over ? shortText(ends, day) : endsText(ends, day) }));
+  // A box still on sale gives its end in full ("Ends Wed 25 Nov · 4:00 PM GMT+8 · 14 days left", the date only when the page prints no time); one that is over says how long ago
+  when.dataset[over ? 'ended' : 'ends'] = ends; if (over) when.dataset.short = '1'; if (day) when.dataset.day = '1';
   wakeAt(over ? nextAgoChange(ends, day) : nextChange(ends, day));
   return when;
 }
@@ -1271,6 +1273,40 @@ function renderPast(c) {
       c.append(grid);
     }
   }
+}
+
+// ---------- the ♥ tab: about the site, how to use it, questions, and why there are no ads ----------
+// Plain text from the owner; the only place support (a cash shop gift to hernz) is mentioned.
+const ABOUT = [
+  [null, [
+    "Welcome! henehoes is a fan-made outfit, dye and housing simulator for MapleStory Classic World. Try on faces, hair, clothes and pets, play with dyes, plan your home, and save the looks you love. Everything you see is datamined straight from the game's own files, and all MapleStory artwork belongs to Nexon."]],
+  ['How to use it', { list: [
+    ['Pick things on the right.', ' The tabs run from Body, Face and Hair through clothing to Pets, and Search finds anything across all categories.'],
+    ["Manage what you're wearing on the left.", ' Select an item to dye it with Tone, Chroma and Brightness. Reset colour takes it back to normal, and the × takes the item off.'],
+    ['Pose buttons', ' in the preview show your character attacking or climbing.'],
+    ['The copy button', ' copies your character, on a transparent background, to your clipboard.'],
+    ['The save button', ' keeps your look in the Look Book so you can come back to it later.'],
+    ['Housing', ' lets you try out a home with up to 16 decor items, plus 1 chest and 1 crafting station.']] }],
+  ['Questions', { qa: [
+    ['Is this website monetized?', [
+    "henehoes will always be ad-free. I originally made this for my friends and myself, but word of mouth took it much further than expected. Friends have suggested putting up ads to cover hosting costs, but ads are neither pretty nor enjoyable, and making this a pretty and enjoyable website is my singular goal."]],
+    ['How can I support henehoes?', [
+    "If you'd like to say thanks, feel free to say hi in-game or send a Cash Shop gift to player hernz. Something small like a Defense Charm would make my day, or a Mystery Box if you're feeling extra generous :)"]],
+    ['Where does the data come from, and how quickly is it updated?', "Sprites are mined directly from the game's files. I update the site whenever new boxes or Mystery Styles are announced, usually before they go on sale. If life gets in the way, it might be up to a day late."],
+    ['Are the dye colours exact?', "As far as I can tell, yes! Though I can't take any credit for it: the dye behaviour comes from meaegi.com, a simulator made by a KMS player. I'm not sure how they reverse-engineered it, but from what I've seen, the in-game dye values match theirs exactly. A big thank you to them."]
+] }],
+];
+// Text for the page: meaegi.com becomes a link (it opens in a new tab, like the one in the page footer).
+const aboutText = t => t.split(/(meaegi\.com|hernz|henehoes)/).map(x => x === 'meaegi.com' ? el('a', { href: 'https://meaegi.com', target: '_blank', rel: 'noopener', textContent: x }) : (x === 'hernz' || x === 'henehoes') ? el('strong', { textContent: x }) : x);
+function renderAbout(c) {
+  const page = el('div', { className: 'about-page' });
+  for (const [title, body] of ABOUT) {
+    if (title) page.append(el('h3', { className: 'group-title', textContent: title }));
+    if (Array.isArray(body)) for (const t of body) page.append(el('p', {}, ...aboutText(t)));
+    else if (body.list) page.append(el('ul', {}, ...body.list.map(([b, t]) => el('li', {}, el('strong', { textContent: b }), t))));
+    else for (const [q, a] of body.qa) page.append(el('h4', { className: 'about-q' }, ...aboutText(q)), ...[].concat(a).map(t => el('p', {}, ...aboutText(t))));
+  }
+  c.append(page);
 }
 
 function renderUpcoming(c) {
