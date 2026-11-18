@@ -692,13 +692,13 @@
        "name": "Red Hooded Coat"
       }
      ],
-     "end": "2026-11-18"
+     "end": "2026-11-18T12:59Z"
     },
     {
      "id": "mystery-crate-nov18",
      "name": "Mystery Fashion Crate",
      "dates": "Nov 18 – Dec 2",
-     "start": "2026-11-18",
+     "start": "2026-11-18T18:00Z",
      "end": "2026-12-02T07:59Z",
      "latest": true,
      "items": [
