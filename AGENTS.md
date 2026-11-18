@@ -206,7 +206,7 @@ A tab shows a check (`.tick`) when something in it is worn (never on Look Book, 
 
 **Releases tab (`renderPast`; the sticky says "Releases", the page title is still "Released Crates & Styles").**
 - Category file tabs (`.past-tab`, from `data/boxes.json` groups), date-first pills with sale dots (`onSale`, `.sale-dot`), then the selected box's title (under its date line, `boxWhen`: a dot and the full end in green, e.g. "Ends Wed 25 Nov · 4:00 PM GMT+8 · 14 days left" (date and days only when the page prints no time, as for the Nov 4 crate), or "Ended 1 day ago" in grey; the short form because the dates are already on the line above) and cards grouped by slot (Mystery Styles: Hairstyles/Faces sections with their colour bar, split Male/Female).
-- Opens on the `latest` box (currently the Nov 4 crate).
+- Opens on the `latest` box (currently the Nov 18 Mystery Fashion Crate, so the page opens on the Mystery Fashion tab).
 - Rates appear only in card tooltips.
 - Timing:
   - `start`/`end` are UTC. A timed `end` is the last minute sold (on sale to the end of that minute).
@@ -279,6 +279,12 @@ A tab shows a check (`.tick`) when something in it is worn (never on Look Book, 
 - The saved Founders page has no article (see `reference/cash-shop/founders-access-cash-shop.md`).
 
 - Nov 11 Mystery Styles (UTC Nov 11 8:00 AM to Nov 25 7:59 AM, 24 styles at 16.67% each, supplied by the user): box `mystery-styles-nov11` in `data/boxes.json` (`latest: true`, so the Released tab opens on it; `Artist Hair` and `Kitty Hair` carry `match` for the game's "Black Artist Hair" / "Black Kitty Hair"). Its styles are in `data/released.json` and flagged `released: true` in `data/items.json` (edited by hand, which is what `add-styles.mjs` would do, without calling the sprite API), so they are ordinary released styles with no DATAMINE label.
+
+## Nov 18 Mystery Fashion Crate and `data/released-datamine.json` (added 2026-11-18)
+- Box `mystery-crate-nov18` in `data/boxes.json` (UTC Nov 18 End of Maintenance, a date-only start, to Dec 2 7:59 AM; `latest: true`; 50 items with the rates the user pasted, summing to 100%). Source: the saved Nov 18 Cash Shop Update page (notes in `reference/cash-shop/update-nov-18.md`; the saved page itself is git-ignored).
+- **Moving a datamined item to released:** list its id in `data/released-datamine.json`. `build-catalog.mjs` then leaves off `released: false`, so the item sits in `catalog.json` as an ordinary released item on every tab (pictures stay under `public/sprites/datamine/`), and it skips the game's dye flag for those ids (the announcement says dyeable; the client flag is not set until its update). An item from `data/upcoming.json` is released by `released: true` there instead (Strawberry Milk Dress).
+- **Open:** Moon and Sun Cape (1% in the box) is not in the game files here (client not updated). The box lists it, so it shows a `boxUnresolved` warning and 49 of 50 cards. Once the client has it: `extract-datamine.mjs cape`, add its id to `released-datamine.json`, rebuild, then `extract-poses.mjs`.
+- The Nov 4 crate's `end` is date-only (2026-11-18, "Start of Maintenance"), so it still counts as on sale to the end of that UTC day and overlaps the Nov 18 crate for that day. Set a timed end if the maintenance time is known.
 
 ## The ♥ About tab
 

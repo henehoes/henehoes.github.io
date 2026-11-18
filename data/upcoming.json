@@ -1,5 +1,5 @@
 {
- "_comment": "Dyeable equipment in the game files that is not in the catalogue (the possible-upcoming list). UNCONFIRMED: dyeable may hint at items for an upcoming release, nothing more. `released: true` marks items that have since come out (the Halloween box, 28/10/2026, and the Nov 4 Mystery Fashion Crate, 04/11/2026): build-catalog.mjs lists them as ordinary released items. Written by scripts/extract-upcoming.mjs, which keeps the `released` flags.",
+ "_comment": "Dyeable equipment in the game files that is not in the catalogue (the possible-upcoming list). UNCONFIRMED: dyeable may hint at items for an upcoming release, nothing more. `released: true` marks items that have since come out (the Halloween box, 28/10/2026, the Nov 4 Mystery Fashion Crate, 04/11/2026, and the Nov 18 one: Strawberry Milk Dress): build-catalog.mjs lists them as ordinary released items. Written by scripts/extract-upcoming.mjs, which keeps the `released` flags.",
  "items": [
   {
    "id": 1007013,
@@ -388,7 +388,8 @@
   {
    "id": 1057203,
    "name": "Strawberry Milk Dress",
-   "folder": "Longcoat"
+   "folder": "Longcoat",
+   "released": true
   },
   {
    "id": 1057261,

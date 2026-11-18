@@ -1,5 +1,5 @@
 {
- "_comment": "Past crates and boxes and what each held, for the Past tab. Hand-maintained: names (matched to catalogue items by name) and the listed drop rates, as supplied by the user. `items: []` with `pending: true` means the contents have not been added yet (a placeholder, not an empty box). A hair/face entry needs `kind` and `gender`. build-catalog.mjs resolves the names into catalog.boxes and warns about any it cannot find. `pill` is the short name shown on the box's pill (omit it for an unnamed box: the pill then shows just the dates); `name` is the full name shown above the contents. Sources (saved Nexon cash shop update pages, 29/10/2026 and 04/11/2026): Founder's crate, Aurora crate and the Oct 6 Mystery Styles from the Grand Launch page; Mystery Fashion Crate (Oct 21) and Halloween crate and the Oct 28 Mystery Styles from the Oct 28 page; Mystery Fashion Crate (Nov 4) from the Nov 4 page. An `end` with no time (the Nov 4 crate: \"Wednesday, November 18 (Start of Maintenance)\") counts as a whole UTC day: on sale to the end of that day, shown as a date and days left, never an hour. Only these boxes are listed: pets, packs, megaphones, 10-day equip covers, Signature coupons and other shop items are not. Rates are known for the Halloween crate and the Nov 11 Mystery Styles (both supplied by the user, the latter pasted from the announcement: all 16.67%, six of each hair and face per gender); the pages link to the rates but do not print them. The post corrected the female Oct 28 hair list: Cecelia Twist, not Rockstar Hair. `match` on an item is the catalogue name to look for when the box's name differs (the game's hair names carry a colour prefix: Black Wild Tangles Hair, Black Romantic Braid Hair). `latest: true` marks the newest box, which the Released tab always opens on. A group's `tab` is the short label on its tab (the Released tab shows tabs, not the long `title`). `start` and `end` (UTC, ISO) are the times the Nexon update pages print for each box: the pages print the last minute (7:59 AM), so the box is on rotation up to and including that minute. A start with no time (2026-10-06, 2026-10-21) is a date only: the pages say \"End of Maintenance\" and \"Start of Grand Launch\" without a time. The page uses them for the On rotation / Out of rotation labels. The Nov 11 Mystery Styles runs UTC Wednesday, November 11 8:00 AM to Wednesday, November 25 7:59 AM (as supplied by the user).",
+ "_comment": "Past crates and boxes and what each held, for the Past tab. Hand-maintained: names (matched to catalogue items by name) and the listed drop rates, as supplied by the user. `items: []` with `pending: true` means the contents have not been added yet (a placeholder, not an empty box). A hair/face entry needs `kind` and `gender`. build-catalog.mjs resolves the names into catalog.boxes and warns about any it cannot find. `pill` is the short name shown on the box's pill (omit it for an unnamed box: the pill then shows just the dates); `name` is the full name shown above the contents. Sources (saved Nexon cash shop update pages, 29/10/2026 and 04/11/2026): Founder's crate, Aurora crate and the Oct 6 Mystery Styles from the Grand Launch page; Mystery Fashion Crate (Oct 21) and Halloween crate and the Oct 28 Mystery Styles from the Oct 28 page; Mystery Fashion Crate (Nov 4) from the Nov 4 page. An `end` with no time (the Nov 4 crate: \"Wednesday, November 18 (Start of Maintenance)\") counts as a whole UTC day: on sale to the end of that day, shown as a date and days left, never an hour. Only these boxes are listed: pets, packs, megaphones, 10-day equip covers, Signature coupons and other shop items are not. Rates are known for the Halloween crate and the Nov 11 Mystery Styles (both supplied by the user, the latter pasted from the announcement: all 16.67%, six of each hair and face per gender); the pages link to the rates but do not print them. The post corrected the female Oct 28 hair list: Cecelia Twist, not Rockstar Hair. `match` on an item is the catalogue name to look for when the box's name differs (the game's hair names carry a colour prefix: Black Wild Tangles Hair, Black Romantic Braid Hair). `latest: true` marks the newest box, which the Released tab always opens on. A group's `tab` is the short label on its tab (the Released tab shows tabs, not the long `title`). `start` and `end` (UTC, ISO) are the times the Nexon update pages print for each box: the pages print the last minute (7:59 AM), so the box is on rotation up to and including that minute. A start with no time (2026-10-06, 2026-10-21) is a date only: the pages say \"End of Maintenance\" and \"Start of Grand Launch\" without a time. The page uses them for the On rotation / Out of rotation labels. The Nov 11 Mystery Styles runs UTC Wednesday, November 11 8:00 AM to Wednesday, November 25 7:59 AM (as supplied by the user). The Nov 18 Mystery Fashion Crate (UTC Wednesday, November 18 End of Maintenance to Wednesday, December 2 7:59 AM; start is a date only, as for Oct 21; 49 of its 50 pieces are in the game files, Moon and Sun Cape is not yet) comes from the Nov 18 Cash Shop Update page. Its rates (50 items, summing to 100%) were supplied by the user, as the page only links to them; its items were moved out of the datamine list through data/released-datamine.json. It is now the `latest` box (the Released tab opens on it).",
  "groups": [
   {
    "id": "mystery-crates",
@@ -693,6 +693,216 @@
       }
      ],
      "end": "2026-11-18"
+    },
+    {
+     "id": "mystery-crate-nov18",
+     "name": "Mystery Fashion Crate",
+     "dates": "Nov 18 – Dec 2",
+     "start": "2026-11-18",
+     "end": "2026-12-02T07:59Z",
+     "latest": true,
+     "items": [
+      {
+       "name": "Tania Tailored Jacket",
+       "rate": 2.0
+      },
+      {
+       "name": "Tania Tartan Pants",
+       "rate": 2.0
+      },
+      {
+       "name": "Tania Gloves",
+       "rate": 1.0
+      },
+      {
+       "name": "Tania En Fuego",
+       "rate": 2.0
+      },
+      {
+       "name": "Tania Cloak",
+       "rate": 1.0
+      },
+      {
+       "name": "Tania Sword",
+       "rate": 1.0
+      },
+      {
+       "name": "Tania Bolero",
+       "rate": 2.0
+      },
+      {
+       "name": "Tania Tartan Skirt",
+       "rate": 2.0
+      },
+      {
+       "name": "Sky Rider Jacket",
+       "rate": 3.0
+      },
+      {
+       "name": "Denim Cargos",
+       "rate": 3.0
+      },
+      {
+       "name": "White Toy Shades",
+       "rate": 1.5
+      },
+      {
+       "name": "Beaded Cross Earrings",
+       "rate": 1.5
+      },
+      {
+       "name": "Yo Yo",
+       "rate": 1.0
+      },
+      {
+       "name": "Pink Sweater",
+       "rate": 3.0
+      },
+      {
+       "name": "Pink Layered Skirt",
+       "rate": 3.0
+      },
+      {
+       "name": "Winged Cap",
+       "rate": 2.0
+      },
+      {
+       "name": "Orange Hooded Zip-Up",
+       "rate": 2.0
+      },
+      {
+       "name": "Light Blue Ripped Jeans",
+       "rate": 2.0
+      },
+      {
+       "name": "Penguin Slippers",
+       "rate": 1.0
+      },
+      {
+       "name": "Dragonfly Wings",
+       "rate": 1.0
+      },
+      {
+       "name": "Man's Shirts",
+       "rate": 2.0
+      },
+      {
+       "name": "Tweed Headband",
+       "rate": 2.0
+      },
+      {
+       "name": "Prep School Uniform",
+       "rate": 2.0
+      },
+      {
+       "name": "Prep School Uniform Pants",
+       "rate": 2.0
+      },
+      {
+       "name": "Blue Book Bag",
+       "rate": 1.0
+      },
+      {
+       "name": "Prep Uniform",
+       "rate": 2.0
+      },
+      {
+       "name": "Moon Bunny Headgear",
+       "rate": 2.0
+      },
+      {
+       "name": "Moon Bunny Costume",
+       "rate": 2.0
+      },
+      {
+       "name": "Moon Bunny Gloves",
+       "rate": 2.0
+      },
+      {
+       "name": "Moon Bunny Paws",
+       "rate": 2.0
+      },
+      {
+       "name": "White Tiger Hat",
+       "rate": 2.0
+      },
+      {
+       "name": "Monotone Jacket",
+       "rate": 2.0
+      },
+      {
+       "name": "Pre-School Pants",
+       "rate": 2.0
+      },
+      {
+       "name": "Red Hip Hop",
+       "rate": 3.0
+      },
+      {
+       "name": "5 O'Clock Shadow",
+       "rate": 1.5
+      },
+      {
+       "name": "Blue Aviator Shades",
+       "rate": 1.0
+      },
+      {
+       "name": "Skull Shirt",
+       "rate": 2.0
+      },
+      {
+       "name": "Jewel Chain Jeans",
+       "rate": 3.0
+      },
+      {
+       "name": "Angelic Ribbon",
+       "rate": 1.5
+      },
+      {
+       "name": "Strawberry Milk Dress",
+       "rate": 2.0
+      },
+      {
+       "name": "Strawberry Shoes",
+       "rate": 2.0
+      },
+      {
+       "name": "Strawberry Milk Frill Bonnet",
+       "rate": 2.0
+      },
+      {
+       "name": "Leopard Print Hat",
+       "rate": 3.0
+      },
+      {
+       "name": "Leopard Print Coat",
+       "rate": 3.0
+      },
+      {
+       "name": "Leopard Print Shoes",
+       "rate": 3.0
+      },
+      {
+       "name": "Red Loose-Fit Beanie",
+       "rate": 2.0
+      },
+      {
+       "name": "Rising Star Baggy Digs",
+       "rate": 3.0
+      },
+      {
+       "name": "Booster Shoes",
+       "rate": 3.0
+      },
+      {
+       "name": "Moon and Sun Cape",
+       "rate": 1.0
+      },
+      {
+       "name": "Muscle Man T",
+       "rate": 2.0
+      }
+     ]
     }
    ]
   },
@@ -1114,8 +1324,7 @@
        "rate": 16.67
       }
      ],
-     "end": "2026-11-25T07:59Z",
-     "latest": true
+     "end": "2026-11-25T07:59Z"
     }
    ]
   },

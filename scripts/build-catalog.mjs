@@ -141,6 +141,7 @@ for (const kind of ['face', 'hair']) catalog[kind].sort((a, b) => byId(orderOf(k
 // (`stand2Only`) is drawn like the Toy Rifle: the whole body in the two-handed pose.
 // Some belong to a group (data/datamine-sections.json: Founder's Packages, 10-Day Equip Covers): they stay in the one datamine list but carry a `tag`
 // (FOUNDERS, EXPIRING NX) that the app shows instead of the DATAMINE label.
+const releasedDatamine = new Set(read('data/released-datamine.json').ids); // datamined items a cash shop update has since put in a box: ordinary released items
 const sections = read('data/datamine-sections.json').sections, tagOf = new Map(sections.flatMap(s => s.items.map(i => [i.id, s.badge])));
 for (const file of existsSync('data/datamine') ? readdirSync('data/datamine').filter(f => f.endsWith('.json')) : []) {
   const section = file.slice(0, -5);
@@ -148,7 +149,7 @@ for (const file of existsSync('data/datamine') ? readdirSync('data/datamine').fi
     const dir = `sprites/datamine/${section}/${d.id}`, meta = read(`public/${dir}/meta.json`), parts = partsOf(meta, dir);
     if (!parts.length) { warnings.noParts.push(`${d.name} (datamine ${section})`); continue; }
     const p2 = parts2Of(dir, d.name);
-    (catalog.wearables[section] ??= { label: section, items: [] }).items.push({ id: d.id, name: d.name, classicId: d.id, released: false, ...(tagOf.has(d.id) && { tag: tagOf.get(d.id) }), vslots: meta.vslots ?? [], ...(existsSync(`public/${dir}/icon.png`) && { icon: `${dir}/icon.png` }), ...(d.weaponClass && { weaponClass: d.weaponClass }), ...(d.stand2Only && { pose: 'stand2' }), parts, ...(p2 && { parts2: p2 }) });
+    (catalog.wearables[section] ??= { label: section, items: [] }).items.push({ id: d.id, name: d.name, classicId: d.id, ...(!releasedDatamine.has(d.id) && { released: false }), ...(tagOf.has(d.id) && { tag: tagOf.get(d.id) }), vslots: meta.vslots ?? [], ...(existsSync(`public/${dir}/icon.png`) && { icon: `${dir}/icon.png` }), ...(d.weaponClass && { weaponClass: d.weaponClass }), ...(d.stand2Only && { pose: 'stand2' }), parts, ...(p2 && { parts2: p2 }) });
   }
 }
 // Dyeing: the game marks the items it lets you dye (data/game-dye.json, scripts/extract-dyeable.mjs). A catalogue item the game has and
@@ -158,6 +159,7 @@ warnings.dyeUnknown = [];
 for (const [slotKey, slot] of Object.entries(catalog.wearables)) for (const it of slot.items) {
   if (it.effect) continue; // rings have no colour settings at all
   if (it.released === false) continue; // datamined items can always be dyed: their flags may not be set before release
+  if (releasedDatamine.has(it.id)) continue; // released from the datamine list: the announcement says they are dyeable, though the client's flag is not set until its update
   const cid = it.classicId ?? it.id;
   if (!knownIds.has(cid)) warnings.dyeUnknown.push(`${it.name} (${slotKey} ${cid})`);
   else if (!dyeIds.has(cid)) it.dyeable = false;

@@ -28,7 +28,7 @@ const settle = () => new Promise(r => setTimeout(r, 700));
 
 const start = await pixels();
 check('preview draws something', start.n > 500, `(${start.n} px)`);
-check('on load the Released tab is open, on Mystery Styles and its newest box (Nov 11 – Nov 25)', (await page.$eval('.tab[aria-selected="true"]', e => e.title)).startsWith('Releases') && (await page.$eval('#content .past-tab[aria-selected="true"]', e => e.textContent)) === 'Mystery Styles' && (await page.$eval('#content .pill[aria-pressed="true"]', e => e.textContent)) === 'Nov 11 – Nov 25');
+check('on load the Released tab is open, on Mystery Fashion and its newest box (Nov 18 – Dec 2)', (await page.$eval('.tab[aria-selected="true"]', e => e.title)).startsWith('Releases') && (await page.$eval('#content .past-tab[aria-selected="true"]', e => e.textContent)) === 'Mystery Fashion' && (await page.$eval('#content .pill[aria-pressed="true"]', e => e.textContent)) === 'Nov 18 – Dec 2');
 check('the Look Book and Releases close the rail, below Pet (the ♥ About tab is hidden unless the address ends ?about), with no Upcoming tab, and never carry a checkmark', await page.$$eval('.tab', ts => { const t = ts.map(x => x.title); const n = t.length; return t[n - 1].startsWith('Releases') && t[n - 2].startsWith('Look Book') && t[n - 3] === 'Pet' && t[n - 4] === 'Chat Ring' && !t.some(x => x.startsWith('Upcoming') || x === 'About & FAQ') && ![n - 2, n - 1].some(i => ts[i].querySelector('.tick')); }));
 
 // Nothing is worn at the start: no face and no hair
@@ -642,17 +642,19 @@ await page.screenshot({ path: 'tmp/ui-final.png' });
   // Past tab: every past crate and box, grouped; the Halloween crate holds its 50 items with their listed rates
   await clickTab('Releases: crates and boxes, and what each held'); await settle();
   const groups = await page.$$eval('#content .past-tab', g => g.map(x => x.textContent));
-  check('Released tab: category tabs Mystery Fashion, Mystery Styles and Aurora, Mystery Styles (the newest box) selected', JSON.stringify(groups) === JSON.stringify(['Mystery Fashion', 'Mystery Styles', 'Aurora']) && (await page.$eval('#content .past-tab[aria-selected="true"]', e => e.textContent)) === 'Mystery Styles', groups.join(' | '));
+  check('Released tab: category tabs Mystery Fashion, Mystery Styles and Aurora, Mystery Fashion (the newest box) selected', JSON.stringify(groups) === JSON.stringify(['Mystery Fashion', 'Mystery Styles', 'Aurora']) && (await page.$eval('#content .past-tab[aria-selected="true"]', e => e.textContent)) === 'Mystery Fashion', groups.join(' | '));
   const pillsOf = () => page.$$eval('#content .pill', p => p.map(x => x.textContent));
   const pickTab = async l => { await page.evaluate(l => [...document.querySelectorAll('#content .past-tab')].find(t => t.textContent === l).click(), l); await settle(); };
   await pickTab('Mystery Fashion'); const pills = [await pillsOf()]; await pickTab('Mystery Styles'); pills.push(await pillsOf()); const stylesOpen = await page.$eval('#content .pill[aria-pressed="true"]', e => e.textContent);
   await pickTab('Aurora'); pills.push(await pillsOf()); await pickTab('Mystery Fashion');
-  check('Released tab: each category shows only its own pills, date first, newest last', JSON.stringify(pills) === JSON.stringify([["Oct 6 – Oct 28 · Founder's", 'Oct 21 – Nov 4', 'Oct 28 – Nov 4 · Halloween', 'Nov 4 – Nov 18'], ['Oct 6 – Oct 28', 'Oct 28 – Nov 11', 'Nov 11 – Nov 25'], ['Season 1']]) && stylesOpen === 'Nov 11 – Nov 25', JSON.stringify(pills));
-  check('Past tab: the Nov 4 crate is selected at first and its 50 items are drawn below all the categories, with no rates (the page prints none)', (await page.$$eval('#content .pill[aria-pressed="true"]', p => p.map(x => x.textContent))).join() === 'Nov 4 – Nov 18' && (await page.$$('#content .past-title ~ .grid .card')).length === 50 && (await page.$$('#content .past-title ~ .grid .rate-badge')).length === 0 && (await page.$$eval('#content .past-title ~ .grid .card', c => c.filter(x => /\d%$/.test(x.title)).length)) === 0);
-  const catOf = { "Oct 6 – Oct 28 · Founder's": 'Mystery Fashion', 'Oct 21 – Nov 4': 'Mystery Fashion', 'Oct 6 – Oct 28': 'Mystery Styles', 'Oct 28 – Nov 11': 'Mystery Styles', 'Nov 11 – Nov 25': 'Mystery Styles', 'Season 1': 'Aurora', 'Oct 28 – Nov 4 · Halloween': 'Mystery Fashion', 'Nov 4 – Nov 18': 'Mystery Fashion' };
+  check('Released tab: each category shows only its own pills, date first, newest last', JSON.stringify(pills) === JSON.stringify([["Oct 6 – Oct 28 · Founder's", 'Oct 21 – Nov 4', 'Oct 28 – Nov 4 · Halloween', 'Nov 4 – Nov 18', 'Nov 18 – Dec 2'], ['Oct 6 – Oct 28', 'Oct 28 – Nov 11', 'Nov 11 – Nov 25'], ['Season 1']]) && stylesOpen === 'Nov 11 – Nov 25', JSON.stringify(pills));
+  check('Past tab: the Nov 18 crate is selected at first and its pieces are drawn below all the categories with their listed rates (49 of its 50 items: Moon and Sun Cape is not in the game files yet)', (await page.$$eval('#content .pill[aria-pressed="true"]', p => p.map(x => x.textContent))).join() === 'Nov 18 – Dec 2' && (await page.$$('#content .past-title ~ .grid .card')).length === 49 && (await page.$$eval('#content .past-title ~ .grid .card', c => c.filter(x => /\d%$/.test(x.title)).length)) === 49);
+  const catOf = { "Oct 6 – Oct 28 · Founder's": 'Mystery Fashion', 'Oct 21 – Nov 4': 'Mystery Fashion', 'Oct 6 – Oct 28': 'Mystery Styles', 'Oct 28 – Nov 11': 'Mystery Styles', 'Nov 11 – Nov 25': 'Mystery Styles', 'Season 1': 'Aurora', 'Oct 28 – Nov 4 · Halloween': 'Mystery Fashion', 'Nov 4 – Nov 18': 'Mystery Fashion', 'Nov 18 – Dec 2': 'Mystery Fashion' };
   const pickPill = async label => { await pickTab(catOf[label]); await page.evaluate(l => [...document.querySelectorAll('#content .pill')].find(p => p.textContent === l).click(), label); await settle(); };
   await pickPill('Oct 28 – Nov 4 · Halloween');
   check('Past tab: the Halloween crate holds its 50 items with their listed rates', (await page.$$('#content .past-title ~ .grid .card')).length === 50 && (await page.$$eval('#content .past-title ~ .grid .card', c => c.filter(x => /\d%$/.test(x.title)).length)) === 50);
+  await pickPill('Nov 4 – Nov 18');
+  check('Past tab: the Nov 4 crate holds its 50 items, with no rates (the page printed none)', (await page.$$('#content .past-title ~ .grid .card')).length === 50 && (await page.$$('#content .past-title ~ .grid .rate-badge')).length === 0 && (await page.$$eval('#content .past-title ~ .grid .card', c => c.filter(x => /\d%$/.test(x.title)).length)) === 0);
   const shown = () => page.$$('#content .past-title ~ .grid .card').then(c => c.length);
   const expected = { "Oct 6 – Oct 28 · Founder's": 50, 'Oct 21 – Nov 4': 50, 'Oct 6 – Oct 28': 24, 'Oct 28 – Nov 11': 24, 'Nov 11 – Nov 25': 24, 'Season 1': 26 };
   const got = {}; for (const [label] of Object.entries(expected)) { await pickPill(label); got[label] = await shown(); }
@@ -742,13 +744,15 @@ await page.screenshot({ path: 'tmp/ui-final.png' });
   check('Released tab: a box that has ended says how long ago, in grey', /^Ended \d+ days? ago$/.test(founders ?? '') && await page.$eval('#content .past-when', e => e.classList.contains('ended')), String(founders));
   // A dot on each pill: green while the box is on sale, grey when it is off sale (ended, or not started); a box without an end stays green
   const dots = async iso => { await clock(iso); await clickTab('Releases: crates and boxes, and what each held'); await settle(); await pickTab('Mystery Fashion'); return page.$$eval('#content .pill', p => p.map(x => x.querySelector('.sale-dot').classList.contains('on') ? 'on' : 'off').join()); };
-  check('Released tab: pill dots, Nov 3 evening (Halloween and Oct 21 on sale)', (await dots('2026-11-03T20:00:00Z')) === 'off,on,on,off');
-  check('Released tab: pill dots, Nov 5 (only the Nov 4 crate, which has no end, is on sale)', (await dots('2026-11-05T00:00:00Z')) === 'off,off,off,on');
+  check('Released tab: pill dots, Nov 3 evening (Halloween and Oct 21 on sale; the Nov 4 and Nov 18 crates not yet)', (await dots('2026-11-03T20:00:00Z')) === 'off,on,on,off,off');
+  check('Released tab: pill dots, Nov 5 (only the Nov 4 crate is on sale, to the end of Nov 18; the Nov 18 crate has not started)', (await dots('2026-11-05T00:00:00Z')) === 'off,off,off,on,off');
   const lineOf = () => page.$eval('#content .past-when', e => `${e.textContent}|${e.classList.contains('ended')}`).catch(() => null);
-  const novLine = iso => dots(iso).then(lineOf);
+  const pickNov4 = async () => { await page.evaluate(() => [...document.querySelectorAll('#content .pill')].find(p => p.textContent === 'Nov 4 – Nov 18').click()); await settle(); };
+  const novLine = async iso => { await dots(iso); await pickNov4(); return lineOf(); };
   check('Released tab: the Nov 4 crate (end is a date, no time) says days left, no hour', /^Ends \w{3} 18 Nov · 14 days left\|false$/.test(await novLine('2026-11-05T00:00:00Z')), String(await lineOf()));
   check('Released tab: the Nov 4 crate is on sale to the end of the UTC day (1 day left on the 18th)', /^Ends \w{3} 18 Nov · 1 day left\|false$/.test(await novLine('2026-11-18T23:00:00Z')), String(await lineOf()));
-  check('Released tab: after that day it is grey, Ended 1 day ago, and its pill dot is grey', (await dots('2026-11-20T10:00:00Z')) === 'off,off,off,off' && (await lineOf()) === 'Ended 1 day ago|true', String(await lineOf()));
+  const afterDots = await dots('2026-11-20T10:00:00Z'), nov18Line = await lineOf(); await pickNov4();
+  check('Released tab: after that day the Nov 4 crate is grey, Ended 1 day ago, with a grey pill dot; the Nov 18 crate (the newest, opened first) is green and says when it ends', afterDots === 'off,off,off,off,on' && (await lineOf()) === 'Ended 1 day ago|true' && /^Ends \w{3} 2 Dec · .* days? left\|false$/.test(nov18Line ?? ''), `${afterDots} | ${nov18Line} | ${await lineOf()}`);
   // The countdown ticks by itself (every 30 s and when the page is shown again): move the clock and fire the page-shown event, with no re-render for a live box
   await clock('2026-11-03T20:00:00Z');
   await clickTab('Releases: crates and boxes, and what each held'); await settle(); await pickTab('Mystery Fashion');
@@ -961,11 +965,11 @@ await page.screenshot({ path: 'tmp/ui-final.png' });
   await ultra.setViewport({ width: 3440, height: 1440, deviceScaleFactor: 1 });
   await ultra.goto(BASE, { waitUntil: 'networkidle0' }); await new Promise(r => setTimeout(r, 1200));
   await ultra.evaluate(() => [...document.querySelectorAll('#content .past-tab')].find(t => t.textContent === 'Mystery Fashion')?.click()); await new Promise(r => setTimeout(r, 600)); // the crates: a long list in one grid
-  const m = await ultra.evaluate(() => { const a = document.querySelector('.app').getBoundingClientRect(), s = document.querySelector('.stage-box').getBoundingClientRect(); return { left: Math.round(a.left), width: Math.round(a.width), right: Math.round(innerWidth - a.right), stage: Math.round(s.width), zoom: document.querySelector('#preview').dataset.zoom, scrollW: document.documentElement.scrollWidth, perRow: (() => { const c = [...document.querySelectorAll('#content .card')]; return c.length ? c.filter(x => x.offsetTop === c[0].offsetTop).length : 0; })() }; });
+  const m = await ultra.evaluate(() => { const a = document.querySelector('.app').getBoundingClientRect(), s = document.querySelector('.stage-box').getBoundingClientRect(); return { left: Math.round(a.left), width: Math.round(a.width), right: Math.round(innerWidth - a.right), stage: Math.round(s.width), zoom: document.querySelector('#preview').dataset.zoom, scrollW: document.documentElement.scrollWidth, perRow: (() => { const c = [...document.querySelectorAll('#content .card')]; const n = {}; for (const x of c) n[x.offsetTop] = (n[x.offsetTop] ?? 0) + 1; return Math.max(0, ...Object.values(n)); })() }; });
   check('ultrawide 3440px: the page is capped at 2400px and centred', m.width === 2400 && Math.abs(m.left - m.right) <= 1 && m.scrollW <= 3440, JSON.stringify(m));
   check('ultrawide 3440px: the preview is still drawn zoomed in (2x or more)', Number(m.zoom) >= 2, JSON.stringify(m));
   check('ultrawide 3440px: at most 10 cards per row', m.perRow >= 9 && m.perRow <= 10, JSON.stringify(m));
-  await ultra.screenshot({ path: '/private/tmp/claude-501/-Users-hannah-Projects/cc6e1d70-a595-4f36-be81-e85faff457f1/scratchpad/ultra.png' });
+  mkdirSync('tmp', { recursive: true }); await ultra.screenshot({ path: 'tmp/ultra.png' }); // tmp/ is git-ignored
   await ultra.close();
 }
 
