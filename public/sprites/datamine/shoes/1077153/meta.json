@@ -1,0 +1,32 @@
+{
+ "id": 1077153,
+ "name": "Chained Princess Shoes",
+ "source": "game files",
+ "kind": "wearable",
+ "vslots": [
+  "So"
+ ],
+ "islots": [
+  "So"
+ ],
+ "parts": [
+  {
+   "key": "shoes",
+   "w": 43,
+   "h": 14,
+   "origin": {
+    "x": 7,
+    "y": -9,
+    "isEmpty": false
+   },
+   "maps": {
+    "navel": {
+     "x": 0,
+     "y": 0,
+     "isEmpty": false
+    }
+   },
+   "position": "shoes"
+  }
+ ]
+}

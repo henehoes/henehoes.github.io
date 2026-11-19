@@ -57,6 +57,13 @@ const report = read('data/report.json');
 
 // Items that could not be drawn. Shown in the app as flagged placeholders so they get fixed by hand.
 const placeholders = { wearables: {}, hair: [], face: [] };
+// Items the latest scrape found that were not there before (labelled DATAMINE · NEW in the datamine views) and the items the game newly marked dyeable that are in no box yet (the Upcoming tab): see data/mined-versions.json and data/newly-dyeable.json.
+// minedIn(kind, id): the version (data/mined-versions.json, newest first) whose update added the item to the game files; only the newest version's items get the DATAMINE · NEW label.
+const minedVersions = read('data/mined-versions.json').versions, newestMined = minedVersions[0]?.name;
+const minedOf = new Map(minedVersions.flatMap(v => [...v.wearables.map(i => [`w${i}`, v.name]), ...v.pets.map(i => [`p${i}`, v.name]), ...v.styles.map(i => [`s${i}`, v.name])]));
+const minedIn = (kind, id) => minedOf.get(`${kind}${id}`);
+// dyeVersionOf: the version whose update newly marked an item dyeable (data/newly-dyeable.json); any other unreleased dyeable item is of the baseline version.
+const newlyDyeable = read('data/newly-dyeable.json'), dyeVersionOf = new Map(Object.entries(newlyDyeable.versions).flatMap(([v, ids]) => ids.map(i => [i, v])));
 const slotLabel = key => SLOTS.find(([, k]) => k === key)[2];
 const addWearablePlaceholder = (slotKey, name, reason) => {
   const list = (placeholders.wearables[slotKey] ??= []);
@@ -117,7 +124,7 @@ for (const s of styles) {
     const parts = partsOf(read(`public/${dir}/meta.json`), dir);
     if (parts.length) variants.push({ id: c.id, colour: c.colour, label, parts, ...(parts2Of(dir, label) && { parts2: parts2Of(dir, label) }) });
   }
-  if (variants.length) catalog[s.kind].push({ style: s.style, gender: s.gender, key: s.key, ...(s.classicId && { classicId: s.classicId }), released: s.released !== false, ...(s.collab && { collab: 'Frieren' }), ...(s.note && { check: s.note }), variants });
+  if (variants.length) catalog[s.kind].push({ style: s.style, gender: s.gender, key: s.key, ...(s.classicId && { classicId: s.classicId }), released: s.released !== false, ...(minedIn('s', s.classicId) && { mined: minedIn('s', s.classicId) }), ...(minedIn('s', s.classicId) === newestMined && s.released === false && { tag: 'DATAMINE · NEW' }), ...(s.collab && { collab: 'Frieren' }), ...(s.note && { check: s.note }), variants });
 }
 
 for (const u of report.styleUnresolved) placeholders[u.kind].push({ name: u.style, gender: u.gender, reason: 'Name not found in the item database' });
@@ -127,7 +134,7 @@ for (const [slotKey, list] of Object.entries(placeholders.wearables)) {
   catalog.wearables[slotKey].placeholders = list;
 }
 // Styles on henesys.gg that have no sprite we can draw (scripts/add-datamine.mjs): shown only under the Datamine switch.
-for (const p of read('data/datamine-placeholders.json').items) placeholders[p.kind].push({ name: p.style, gender: p.gender, classicId: p.classicId, released: false, reason: p.reason });
+for (const p of read('data/datamine-placeholders.json').items) placeholders[p.kind].push({ name: p.style, gender: p.gender, classicId: p.classicId, released: false, ...(minedIn('s', p.classicId) === newestMined && { tag: 'DATAMINE · NEW' }), reason: p.reason });
 catalog.placeholders = { hair: placeholders.hair, face: placeholders.face };
 
 // Every list is shown lowest id first. Hair and face follow the Classic ids on henesys.gg (matched by name); styles it does not
@@ -149,7 +156,7 @@ for (const file of existsSync('data/datamine') ? readdirSync('data/datamine').fi
     const dir = `sprites/datamine/${section}/${d.id}`, meta = read(`public/${dir}/meta.json`), parts = partsOf(meta, dir);
     if (!parts.length) { warnings.noParts.push(`${d.name} (datamine ${section})`); continue; }
     const p2 = parts2Of(dir, d.name);
-    (catalog.wearables[section] ??= { label: section, items: [] }).items.push({ id: d.id, name: d.name, classicId: d.id, ...(!releasedDatamine.has(d.id) && { released: false }), ...(tagOf.has(d.id) && { tag: tagOf.get(d.id) }), vslots: meta.vslots ?? [], ...(existsSync(`public/${dir}/icon.png`) && { icon: `${dir}/icon.png` }), ...(d.weaponClass && { weaponClass: d.weaponClass }), ...(d.stand2Only && { pose: 'stand2' }), parts, ...(p2 && { parts2: p2 }) });
+    (catalog.wearables[section] ??= { label: section, items: [] }).items.push({ id: d.id, name: d.name, classicId: d.id, ...(!releasedDatamine.has(d.id) && { released: false }), ...(tagOf.has(d.id) && { tag: tagOf.get(d.id) }), ...(minedIn('w', d.id) && { mined: minedIn('w', d.id) }), ...(minedIn('w', d.id) === newestMined && !releasedDatamine.has(d.id) && { tag: 'DATAMINE · NEW' }), vslots: meta.vslots ?? [], ...(existsSync(`public/${dir}/icon.png`) && { icon: `${dir}/icon.png` }), ...(d.weaponClass && { weaponClass: d.weaponClass }), ...(d.stand2Only && { pose: 'stand2' }), parts, ...(p2 && { parts2: p2 }) });
   }
 }
 // Dyeing: the game marks the items it lets you dye (data/game-dye.json, scripts/extract-dyeable.mjs). A catalogue item the game has and
@@ -175,6 +182,10 @@ for (const u of read('data/upcoming.json').items) {
   const p2 = parts2Of(dir, u.name);
   (catalog.wearables[slot[1]] ??= { label: slot[2], items: [] }).items.push({ id: u.id, name: u.name, classicId: u.id, ...(!u.released && { upcoming: true, released: false }), vslots: meta.vslots ?? [], ...(existsSync(`public/${dir}/icon.png`) && { icon: `${dir}/icon.png` }), ...(u.weaponClass && { weaponClass: u.weaponClass }), parts, ...(p2 && { parts2: p2 }) });
 }
+// The Upcoming tab (henehoes pro): every unreleased item the game marks dyeable, labelled with the version whose update newly marked it (data/newly-dyeable.json), else the baseline.
+for (const slot of Object.values(catalog.wearables)) for (const it of slot.items) if (it.released === false && !it.effect && dyeIds.has(it.classicId ?? it.id)) it.dyeVersion = dyeVersionOf.get(it.classicId ?? it.id) ?? newlyDyeable.baseline;
+catalog.versions = minedVersions.map(v => ({ name: v.name, released: v.released })); // the game versions the Datamine category lists, newest first
+catalog.dyeVersions = [newlyDyeable.baseline, ...Object.keys(newlyDyeable.versions)]; // the Upcoming tab's version tabs, oldest first
 // Which weapon types a cash weapon goes over, from the game's own descriptions (data/weapon-types.json, scripts/extract-weapon-types.mjs).
 const weaponTypes = read('data/weapon-types.json').types;
 // Only Classic World's weapon types are kept (main-game ones such as katana or knuckle are dropped); a weapon left with none is warned about.
@@ -216,7 +227,7 @@ for (const it of catalog.wearables.cap?.items ?? []) if (rules.fitHelmet?.includ
 // Datamined clothing, weapons and rings (released: false) go in a file of their own, public/catalog-datamine.json: only a VITE_DATAMINE=1
 // build (the GitHub Pages test site) shows them and loads it, so the Vercel site's visitors never download ~2,000 items they cannot see.
 // Faces and hairs stay in catalog.json (their datamine views are on everywhere). Scripts read both through scripts/lib-catalog.mjs.
-catalog.pets = read('data/game-pets.json'); // pets and pet equipment (scripts/extract-pets.mjs); the unreleased ones are flagged and shown only under All · Datamine
+catalog.pets = read('data/game-pets.json'); for (const x of [...catalog.pets.pets, ...catalog.pets.equips]) if (minedIn('p', x.id)) { x.mined = minedIn('p', x.id); if (x.released === false && x.mined === newestMined) x.tag = 'DATAMINE · NEW'; } // pets and pet equipment (scripts/extract-pets.mjs); the unreleased ones are flagged and shown only under All · Datamine
 const datamine = { wearables: {} };
 for (const [slot, g] of Object.entries(catalog.wearables)) {
   const out = g.items.filter(i => i.released === false);

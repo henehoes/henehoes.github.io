@@ -1,5 +1,5 @@
 {
- "_comment": "Datamined items that have been released (a Nexon cash shop update put them in a box): build-catalog.mjs lists them as ordinary released items instead of datamine ones. Nov 18 Mystery Fashion Crate (18/11/2026). Their pictures stay under public/sprites/datamine/. Strawberry Milk Dress (1057203) is released through data/upcoming.json. Moon and Sun Cape is not in the game files here yet (client not updated): extract it with extract-datamine.mjs cape, then add its id.",
+ "_comment": "Datamined items that have been released (a Nexon cash shop update put them in a box): build-catalog.mjs lists them as ordinary released items instead of datamine ones. Nov 18 Mystery Fashion Crate (18/11/2026). Their pictures stay under public/sprites/datamine/. Strawberry Milk Dress (1057203) is released through data/upcoming.json. Moon and Sun Cape (1107026) arrived with the Nov 18 client update.",
  "ids": [
   1047108,
   1067085,
@@ -48,6 +48,7 @@
   1007522,
   1057400,
   1077125,
-  1047107
+  1047107,
+  1107026
  ]
 }

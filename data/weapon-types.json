@@ -167,8 +167,7 @@
    "weapon"
   ],
   "1702053": [
-   "claw",
-   "psy-limiter"
+   "claw"
   ],
   "1702054": [
    "one-handed sword",
@@ -182,11 +181,7 @@
    "one-handed blunt weapon",
    "dagger",
    "wand",
-   "staff",
-   "katana",
-   "ritual fan",
-   "spirit walker fan",
-   "memorial staff"
+   "staff"
   ],
   "1702056": [
    "one-handed sword",
@@ -194,11 +189,7 @@
    "one-handed blunt weapon",
    "dagger",
    "wand",
-   "staff",
-   "katana",
-   "ritual fan",
-   "spirit walker fan",
-   "memorial staff"
+   "staff"
   ],
   "1702057": [
    "one-handed sword",
@@ -206,11 +197,7 @@
    "one-handed blunt weapon",
    "dagger",
    "wand",
-   "staff",
-   "katana",
-   "ritual fan",
-   "spirit walker fan",
-   "memorial staff"
+   "staff"
   ],
   "1702058": [
    "claw"
@@ -229,27 +216,22 @@
    "two-handed blunt weapon"
   ],
   "1702062": [
-   "claw",
-   "psy-limiter"
+   "claw"
   ],
   "1702063": [
    "one-handed sword",
    "one-handed axe",
    "one-handed blunt weapon",
-   "dagger",
-   "ritual fan",
-   "bladecaster"
+   "dagger"
   ],
   "1702064": [
    "bow"
   ],
   "1702065": [
-   "claw",
-   "psy-limiter"
+   "claw"
   ],
   "1702066": [
-   "claw",
-   "psy-limiter"
+   "claw"
   ],
   "1702067": [
    "two-handed sword",
@@ -288,8 +270,7 @@
    "dagger"
   ],
   "1702074": [
-   "claw",
-   "psy-limiter"
+   "claw"
   ],
   "1702075": [
    "one-handed sword",
@@ -297,11 +278,7 @@
    "one-handed blunt weapon",
    "dagger",
    "wand",
-   "staff",
-   "katana",
-   "ritual fan",
-   "spirit walker fan",
-   "memorial staff"
+   "staff"
   ],
   "1702076": [
    "weapon"
@@ -318,12 +295,7 @@
    "one-handed blunt weapon",
    "dagger",
    "wand",
-   "staff",
-   "chain sword",
-   "katana",
-   "ritual fan",
-   "spirit walker fan",
-   "memorial staff"
+   "staff"
   ],
   "1702080": [
    "one-handed sword",
@@ -331,11 +303,7 @@
    "one-handed blunt weapon",
    "dagger",
    "wand",
-   "staff",
-   "katana",
-   "ritual fan",
-   "spirit walker fan",
-   "memorial staff"
+   "staff"
   ],
   "1702081": [
    "one-handed sword",
@@ -343,11 +311,7 @@
    "one-handed blunt weapon",
    "dagger",
    "wand",
-   "staff",
-   "katana",
-   "ritual fan",
-   "spirit walker fan",
-   "memorial staff"
+   "staff"
   ],
   "1702082": [
    "one-handed sword",
@@ -355,9 +319,7 @@
    "one-handed blunt weapon",
    "dagger",
    "wand",
-   "staff",
-   "ritual fan",
-   "bladecaster"
+   "staff"
   ],
   "1702083": [
    "one-handed sword",
@@ -368,9 +330,7 @@
    "two-handed axe",
    "two-handed blunt weapon",
    "wand",
-   "staff",
-   "ritual fan",
-   "bladecaster"
+   "staff"
   ],
   "1702084": [
    "one-handed sword",
@@ -381,9 +341,7 @@
    "two-handed axe",
    "two-handed blunt weapon",
    "wand",
-   "staff",
-   "ritual fan",
-   "bladecaster"
+   "staff"
   ],
   "1702085": [
    "one-handed sword",
@@ -394,40 +352,19 @@
    "two-handed axe",
    "two-handed blunt weapon",
    "wand",
-   "staff",
-   "ritual fan",
-   "bladecaster"
+   "staff"
   ],
   "1702086": [
    "bow"
   ],
   "1702087": [
-   "one-handed sword",
-   "one-handed axe",
-   "one-handed blunt weapon",
-   "dagger",
-   "two-handed sword",
-   "two-handed axe",
-   "two-handed blunt weapon",
-   "spear",
-   "polearm",
-   "wand",
-   "staff",
-   "bow",
-   "crossbow",
-   "claw",
-   "arm cannon",
-   "ancient bow",
-   "ritual fan",
-   "bladecaster",
-   "whispershot"
+   "weapon"
   ],
   "1702088": [
    "weapon"
   ],
   "1702089": [
-   "claw",
-   "psy-limiter"
+   "claw"
   ],
   "1702090": [
    "weapon"
@@ -442,10 +379,7 @@
    "dagger",
    "wand",
    "staff",
-   "claw",
-   "psy-limiter",
-   "ritual fan",
-   "bladecaster"
+   "claw"
   ],
   "1702093": [
    "one-handed sword",
@@ -453,14 +387,7 @@
    "one-handed blunt weapon",
    "dagger",
    "wand",
-   "staff",
-   "cane",
-   "shining rod",
-   "psy-limiter",
-   "katana",
-   "ritual fan",
-   "spirit walker fan",
-   "memorial staff"
+   "staff"
   ],
   "1702094": [
    "one-handed sword",
@@ -468,9 +395,7 @@
    "one-handed blunt weapon",
    "dagger",
    "wand",
-   "staff",
-   "ritual fan",
-   "bladecaster"
+   "staff"
   ],
   "1702095": [
    "two-handed sword",
@@ -511,25 +436,17 @@
    "dagger",
    "wand",
    "staff",
-   "claw",
-   "psy-limiter",
-   "ritual fan",
-   "bladecaster"
+   "claw"
   ],
   "1702101": [
    "one-handed sword",
-   "two-handed sword",
-   "katana",
-   "ritual fan",
-   "spirit walker fan",
-   "memorial staff"
+   "two-handed sword"
   ],
   "1702102": [
    "crossbow"
   ],
   "1702103": [
-   "claw",
-   "psy-limiter"
+   "claw"
   ],
   "1702104": [
    "one-handed sword",
@@ -545,12 +462,7 @@
    "staff",
    "bow",
    "crossbow",
-   "claw",
-   "arm cannon",
-   "ancient bow",
-   "ritual fan",
-   "bladecaster",
-   "whispershot"
+   "claw"
   ],
   "1702105": [
    "crossbow"
@@ -561,11 +473,7 @@
    "one-handed blunt weapon",
    "dagger",
    "wand",
-   "staff",
-   "katana",
-   "ritual fan",
-   "spirit walker fan",
-   "memorial staff"
+   "staff"
   ],
   "1702107": [
    "bow"
@@ -579,19 +487,11 @@
    "staff",
    "two-handed sword",
    "two-handed axe",
-   "two-handed blunt weapon",
-   "katana",
-   "ritual fan",
-   "spirit walker fan",
-   "memorial staff"
+   "two-handed blunt weapon"
   ],
   "1702109": [
    "wand",
-   "staff",
-   "katana",
-   "ritual fan",
-   "spirit walker fan",
-   "memorial staff"
+   "staff"
   ],
   "1702110": [
    "one-handed sword",
@@ -600,10 +500,7 @@
    "dagger",
    "wand",
    "staff",
-   "claw",
-   "psy-limiter",
-   "ritual fan",
-   "bladecaster"
+   "claw"
   ],
   "1702111": [
    "two-handed sword",
@@ -627,15 +524,7 @@
    "staff",
    "bow",
    "crossbow",
-   "claw",
-   "arm cannon",
-   "chain",
-   "lucent gauntlet",
-   "ancient bow",
-   "ritual fan",
-   "spirit walker fan",
-   "bladecaster",
-   "whispershot"
+   "claw"
   ],
   "1702115": [
    "weapon"
@@ -673,15 +562,7 @@
    "staff",
    "bow",
    "crossbow",
-   "claw",
-   "arm cannon",
-   "chain",
-   "lucent gauntlet",
-   "ancient bow",
-   "ritual fan",
-   "spirit walker fan",
-   "bladecaster",
-   "whispershot"
+   "claw"
   ],
   "1702122": [
    "weapon"
@@ -692,9 +573,7 @@
    "one-handed blunt weapon",
    "dagger",
    "wand",
-   "staff",
-   "ritual fan",
-   "bladecaster"
+   "staff"
   ],
   "1702124": [
    "bow"
@@ -718,8 +597,7 @@
    "weapon"
   ],
   "1702131": [
-   "claw",
-   "psy-limiter"
+   "claw"
   ],
   "1702132": [
    "wand",
@@ -742,12 +620,7 @@
    "staff",
    "bow",
    "crossbow",
-   "claw",
-   "arm cannon",
-   "ancient bow",
-   "ritual fan",
-   "bladecaster",
-   "whispershot"
+   "claw"
   ],
   "1702135": [
    "one-handed blunt weapon"
@@ -772,12 +645,7 @@
    "staff",
    "bow",
    "crossbow",
-   "claw",
-   "arm cannon",
-   "ancient bow",
-   "ritual fan",
-   "bladecaster",
-   "whispershot"
+   "claw"
   ],
   "1702139": [
    "one-handed sword",
@@ -793,12 +661,7 @@
    "staff",
    "bow",
    "crossbow",
-   "claw",
-   "arm cannon",
-   "ancient bow",
-   "ritual fan",
-   "bladecaster",
-   "whispershot"
+   "claw"
   ],
   "1702140": [
    "weapon"
@@ -807,18 +670,14 @@
    "one-handed sword",
    "one-handed axe",
    "one-handed blunt weapon",
-   "dagger",
-   "ritual fan",
-   "bladecaster"
+   "dagger"
   ],
   "1702142": [
-   "claw",
-   "psy-limiter"
+   "claw"
   ],
   "1702143": [
    "wand",
-   "staff",
-   "scepter"
+   "staff"
   ],
   "1702144": [
    "two-handed axe"
@@ -844,13 +703,7 @@
    "staff",
    "bow",
    "crossbow",
-   "claw",
-   "arm cannon",
-   "ancient bow",
-   "katana",
-   "ritual fan",
-   "bladecaster",
-   "whispershot"
+   "claw"
   ],
   "1702147": [
    "one-handed sword",
@@ -866,12 +719,7 @@
    "staff",
    "bow",
    "crossbow",
-   "claw",
-   "arm cannon",
-   "ancient bow",
-   "ritual fan",
-   "bladecaster",
-   "whispershot"
+   "claw"
   ],
   "1702148": [
    "two-handed sword",
@@ -903,12 +751,7 @@
    "staff",
    "bow",
    "crossbow",
-   "claw",
-   "arm cannon",
-   "ancient bow",
-   "ritual fan",
-   "bladecaster",
-   "whispershot"
+   "claw"
   ],
   "1702152": [
    "weapon"
@@ -926,11 +769,7 @@
    "one-handed axe",
    "one-handed blunt weapon",
    "dagger",
-   "wand",
-   "katana",
-   "ritual fan",
-   "spirit walker fan",
-   "memorial staff"
+   "wand"
   ],
   "1702155": [
    "weapon"
@@ -958,13 +797,7 @@
    "staff",
    "bow",
    "crossbow",
-   "claw",
-   "arm cannon",
-   "ancient bow",
-   "ritual fan",
-   "spirit walker fan",
-   "bladecaster",
-   "whispershot"
+   "claw"
   ],
   "1702160": [
    "two-handed sword",
@@ -978,11 +811,7 @@
    "one-handed axe",
    "one-handed blunt weapon",
    "wand",
-   "staff",
-   "katana",
-   "ritual fan",
-   "spirit walker fan",
-   "memorial staff"
+   "staff"
   ],
   "1702162": [
    "weapon"
@@ -1027,12 +856,7 @@
    "staff",
    "bow",
    "crossbow",
-   "claw",
-   "arm cannon",
-   "ancient bow",
-   "ritual fan",
-   "bladecaster",
-   "whispershot"
+   "claw"
   ],
   "1702171": [
    "weapon"
@@ -1043,11 +867,7 @@
    "one-handed blunt weapon",
    "dagger",
    "wand",
-   "staff",
-   "katana",
-   "ritual fan",
-   "spirit walker fan",
-   "memorial staff"
+   "staff"
   ],
   "1702173": [
    "gun"
@@ -1066,12 +886,7 @@
    "staff",
    "bow",
    "crossbow",
-   "claw",
-   "arm cannon",
-   "ancient bow",
-   "ritual fan",
-   "bladecaster",
-   "whispershot"
+   "claw"
   ],
   "1702175": [
    "weapon"
@@ -1090,12 +905,7 @@
    "staff",
    "bow",
    "crossbow",
-   "claw",
-   "arm cannon",
-   "ancient bow",
-   "ritual fan",
-   "bladecaster",
-   "whispershot"
+   "claw"
   ],
   "1702177": [
    "weapon"
@@ -1135,23 +945,13 @@
    "staff",
    "bow",
    "crossbow",
-   "claw",
-   "arm cannon",
-   "ancient bow",
-   "ritual fan",
-   "bladecaster",
-   "whispershot"
+   "claw"
   ],
   "1702186": [
    "one-handed sword",
    "one-handed axe",
    "one-handed blunt weapon",
-   "dagger",
-   "wand",
-   "staff",
-   "katana",
-   "spirit walker fan",
-   "memorial staff"
+   "dagger"
   ],
   "1702187": [
    "one-handed sword",
@@ -1167,14 +967,7 @@
    "staff",
    "bow",
    "crossbow",
-   "claw",
-   "knuckle",
-   "gun",
-   "arm cannon",
-   "ancient bow",
-   "ritual fan",
-   "bladecaster",
-   "whispershot"
+   "claw"
   ],
   "1702188": [
    "polearm"
@@ -1186,12 +979,7 @@
    "one-handed sword",
    "one-handed axe",
    "one-handed blunt weapon",
-   "dagger",
-   "cane",
-   "memorial staff",
-   "ritual fan",
-   "spirit walker fan",
-   "katana"
+   "dagger"
   ],
   "1702191": [
    "one-handed sword",
@@ -1207,24 +995,13 @@
    "staff",
    "bow",
    "crossbow",
-   "claw",
-   "knuckle",
-   "gun",
-   "arm cannon",
-   "ancient bow",
-   "ritual fan",
-   "bladecaster",
-   "whispershot"
+   "claw"
   ],
   "1702192": [
    "weapon"
   ],
   "1702193": [
-   "one-handed sword",
-   "katana",
-   "ritual fan",
-   "spirit walker fan",
-   "memorial staff"
+   "one-handed sword"
   ],
   "1702194": [
    "one-handed sword",
@@ -1240,14 +1017,7 @@
    "staff",
    "bow",
    "crossbow",
-   "claw",
-   "knuckle",
-   "gun",
-   "arm cannon",
-   "ancient bow",
-   "ritual fan",
-   "bladecaster",
-   "whispershot"
+   "claw"
   ],
   "1702195": [
    "weapon"
@@ -1275,14 +1045,7 @@
    "staff",
    "bow",
    "crossbow",
-   "claw",
-   "knuckle",
-   "gun",
-   "arm cannon",
-   "ancient bow",
-   "ritual fan",
-   "bladecaster",
-   "whispershot"
+   "claw"
   ],
   "1702200": [
    "wand",
@@ -1302,11 +1065,7 @@
    "one-handed sword",
    "one-handed axe",
    "one-handed blunt weapon",
-   "dagger",
-   "katana",
-   "ritual fan",
-   "spirit walker fan",
-   "memorial staff"
+   "dagger"
   ],
   "1702204": [
    "claw"
@@ -1372,14 +1131,7 @@
    "staff",
    "bow",
    "crossbow",
-   "claw",
-   "knuckle",
-   "gun",
-   "arm cannon",
-   "ancient bow",
-   "ritual fan",
-   "bladecaster",
-   "whispershot"
+   "claw"
   ],
   "1702215": [
    "weapon"
@@ -1398,13 +1150,7 @@
    "staff",
    "bow",
    "crossbow",
-   "claw",
-   "arm cannon",
-   "ancient bow",
-   "ritual fan",
-   "spirit walker fan",
-   "bladecaster",
-   "whispershot"
+   "claw"
   ],
   "1702217": [
    "weapon"
@@ -1561,11 +1307,7 @@
    "one-handed sword",
    "one-handed axe",
    "one-handed blunt weapon",
-   "dagger",
-   "katana",
-   "ritual fan",
-   "spirit walker fan",
-   "memorial staff"
+   "dagger"
   ],
   "1702264": [
    "weapon"
@@ -1636,11 +1378,7 @@
   "1702287": [
    "one-handed sword",
    "one-handed axe",
-   "one-handed blunt weapon",
-   "katana",
-   "ritual fan",
-   "spirit walker fan",
-   "memorial staff"
+   "one-handed blunt weapon"
   ],
   "1702288": [
    "weapon"
@@ -1648,13 +1386,7 @@
   "1702289": [
    "one-handed sword",
    "one-handed axe",
-   "one-handed blunt weapon",
-   "ritual fan",
-   "spirit walker fan",
-   "desperado",
-   "chain sword",
-   "memorial staff",
-   "katana"
+   "pr one-handed blunt weapon"
   ],
   "1702290": [
    "weapon"

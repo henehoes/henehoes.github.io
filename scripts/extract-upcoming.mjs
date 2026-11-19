@@ -5,7 +5,7 @@
 //   WZ_DATA=".../maplestorycw/appdata/Data" node scripts/extract-upcoming.mjs
 // Needs the game files: see scripts/lib-wz.mjs. "In the catalogue" means a catalogue item's Classic id (or sprite id) is the same.
 import { readCatalog } from './lib-catalog.mjs';
-import { readFileSync, writeFileSync, rmSync, existsSync } from 'node:fs';
+import { readFileSync, writeFileSync, rmSync, existsSync, readdirSync } from 'node:fs';
 import { drawItem } from './lib-draw.mjs';
 
 const read = f => JSON.parse(readFileSync(f, 'utf8'));
@@ -14,6 +14,8 @@ const catalogue = readCatalog();
 const before = existsSync('data/upcoming.json') ? read('data/upcoming.json').items : []; // the last run: its items (released or not) are not "already in the catalogue"
 const mine = new Set(before.map(i => i.id)), releasedBefore = new Set(before.filter(i => i.released).map(i => i.id));
 const have = new Set(Object.values(catalogue.wearables).flatMap(s => s.items.filter(i => !mine.has(i.classicId ?? i.id)).flatMap(i => [i.id, i.classicId])));
+// Datamined items (data/datamine/<section>.json, scripts/extract-datamine.mjs) are in the app already, even if the last build has not picked up a new one yet.
+for (const f of existsSync('data/datamine') ? readdirSync('data/datamine').filter(n => n.endsWith('.json')) : []) for (const i of read(`data/datamine/${f}`).items) have.add(i.id);
 const skip = new Set(read('data/rules.json').upcomingExclude ?? []); // left out on purpose (data/rules.json)
 const todo = dye.items.filter(i => !have.has(i.id) && !skip.has(i.id));
 

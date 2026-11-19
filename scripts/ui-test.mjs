@@ -29,7 +29,7 @@ const settle = () => new Promise(r => setTimeout(r, 700));
 const start = await pixels();
 check('preview draws something', start.n > 500, `(${start.n} px)`);
 check('on load the Released tab is open, on Mystery Fashion and its newest box (Nov 18 – Dec 2)', (await page.$eval('.tab[aria-selected="true"]', e => e.title)).startsWith('Releases') && (await page.$eval('#content .past-tab[aria-selected="true"]', e => e.textContent)) === 'Mystery Fashion' && (await page.$eval('#content .pill[aria-pressed="true"]', e => e.textContent)) === 'Nov 18 – Dec 2');
-check('the Look Book and Releases close the rail, below Pet (the ♥ About tab is hidden unless the address ends ?about), with no Upcoming tab, and never carry a checkmark', await page.$$eval('.tab', ts => { const t = ts.map(x => x.title); const n = t.length; return t[n - 1].startsWith('Releases') && t[n - 2].startsWith('Look Book') && t[n - 3] === 'Pet' && t[n - 4] === 'Chat Ring' && !t.some(x => x.startsWith('Upcoming') || x === 'About & FAQ') && ![n - 2, n - 1].some(i => ts[i].querySelector('.tick')); }));
+check('the Look Book and Releases close the rail, below Pet; the Upcoming tab follows them in the pro build only; the ♥ About tab is hidden unless the address ends ?about; none carries a checkmark', await page.$$eval('.tab', (ts, dm) => { const t = ts.map(x => x.title), up = dm ? 1 : 0; const n = t.length - up; return (!dm || t[n].startsWith('Possible items')) && t.filter(x => x.startsWith('Possible items')).length === up && t[n - 1].startsWith('Releases') && t[n - 2].startsWith('Look Book') && t[n - 3] === 'Pet' && t[n - 4] === 'Chat Ring' && !t.includes('About & FAQ') && ![n - 2, n - 1, n].some(i => ts[i]?.querySelector('.tick')); }, DM));
 
 // Nothing is worn at the start: no face and no hair
 const selectedNames = async tab => { await clickTab(tab); await settle(); return page.$$eval('#content .grid .card[aria-pressed="true"] .label', els => els.map(e => e.textContent)); };
@@ -642,13 +642,13 @@ await page.screenshot({ path: 'tmp/ui-final.png' });
   // Past tab: every past crate and box, grouped; the Halloween crate holds its 50 items with their listed rates
   await clickTab('Releases: crates and boxes, and what each held'); await settle();
   const groups = await page.$$eval('#content .past-tab', g => g.map(x => x.textContent));
-  check('Released tab: category tabs Mystery Fashion, Mystery Styles and Aurora, Mystery Fashion (the newest box) selected', JSON.stringify(groups) === JSON.stringify(['Mystery Fashion', 'Mystery Styles', 'Aurora']) && (await page.$eval('#content .past-tab[aria-selected="true"]', e => e.textContent)) === 'Mystery Fashion', groups.join(' | '));
+  check('Released tab: category tabs Mystery Fashion, Mystery Styles and Aurora, Mystery Fashion (the newest box) selected', JSON.stringify(groups) === JSON.stringify(['Mystery Fashion', 'Mystery Styles', 'Aurora', ...(DM ? ['Datamine'] : [])]) && (await page.$eval('#content .past-tab[aria-selected="true"]', e => e.textContent)) === 'Mystery Fashion', groups.join(' | '));
   const pillsOf = () => page.$$eval('#content .pill', p => p.map(x => x.textContent));
   const pickTab = async l => { await page.evaluate(l => [...document.querySelectorAll('#content .past-tab')].find(t => t.textContent === l).click(), l); await settle(); };
   await pickTab('Mystery Fashion'); const pills = [await pillsOf()]; await pickTab('Mystery Styles'); pills.push(await pillsOf()); const stylesOpen = await page.$eval('#content .pill[aria-pressed="true"]', e => e.textContent);
   await pickTab('Aurora'); pills.push(await pillsOf()); await pickTab('Mystery Fashion');
   check('Released tab: each category shows only its own pills, date first, newest last', JSON.stringify(pills) === JSON.stringify([["Oct 6 – Oct 28 · Founder's", 'Oct 21 – Nov 4', 'Oct 28 – Nov 4 · Halloween', 'Nov 4 – Nov 18', 'Nov 18 – Dec 2'], ['Oct 6 – Oct 28', 'Oct 28 – Nov 11', 'Nov 11 – Nov 25'], ['Season 1']]) && stylesOpen === 'Nov 11 – Nov 25', JSON.stringify(pills));
-  check('Past tab: the Nov 18 crate is selected at first and its pieces are drawn below all the categories with their listed rates (49 of its 50 items: Moon and Sun Cape is not in the game files yet)', (await page.$$eval('#content .pill[aria-pressed="true"]', p => p.map(x => x.textContent))).join() === 'Nov 18 – Dec 2' && (await page.$$('#content .past-title ~ .grid .card')).length === 49 && (await page.$$eval('#content .past-title ~ .grid .card', c => c.filter(x => /\d%$/.test(x.title)).length)) === 49);
+  check('Past tab: the Nov 18 crate is selected at first and its pieces are drawn below all the categories with their listed rates (all 50 items)', (await page.$$eval('#content .pill[aria-pressed="true"]', p => p.map(x => x.textContent))).join() === 'Nov 18 – Dec 2' && (await page.$$('#content .past-title ~ .grid .card')).length === 50 && (await page.$$eval('#content .past-title ~ .grid .card', c => c.filter(x => /\d%$/.test(x.title)).length)) === 50);
   const catOf = { "Oct 6 – Oct 28 · Founder's": 'Mystery Fashion', 'Oct 21 – Nov 4': 'Mystery Fashion', 'Oct 6 – Oct 28': 'Mystery Styles', 'Oct 28 – Nov 11': 'Mystery Styles', 'Nov 11 – Nov 25': 'Mystery Styles', 'Season 1': 'Aurora', 'Oct 28 – Nov 4 · Halloween': 'Mystery Fashion', 'Nov 4 – Nov 18': 'Mystery Fashion', 'Nov 18 – Dec 2': 'Mystery Fashion' };
   const pickPill = async label => { await pickTab(catOf[label]); await page.evaluate(l => [...document.querySelectorAll('#content .pill')].find(p => p.textContent === l).click(), label); await settle(); };
   await pickPill('Oct 28 – Nov 4 · Halloween');
@@ -749,8 +749,9 @@ await page.screenshot({ path: 'tmp/ui-final.png' });
   const lineOf = () => page.$eval('#content .past-when', e => `${e.textContent}|${e.classList.contains('ended')}`).catch(() => null);
   const pickNov4 = async () => { await page.evaluate(() => [...document.querySelectorAll('#content .pill')].find(p => p.textContent === 'Nov 4 – Nov 18').click()); await settle(); };
   const novLine = async iso => { await dots(iso); await pickNov4(); return lineOf(); };
-  check('Released tab: the Nov 4 crate (end is a date, no time) says days left, no hour', /^Ends \w{3} 18 Nov · 14 days left\|false$/.test(await novLine('2026-11-05T00:00:00Z')), String(await lineOf()));
-  check('Released tab: the Nov 4 crate is on sale to the end of the UTC day (1 day left on the 18th)', /^Ends \w{3} 18 Nov · 1 day left\|false$/.test(await novLine('2026-11-18T23:00:00Z')), String(await lineOf()));
+  check('Released tab: the Nov 4 crate ends at a set time (9:00 PM GMT+8 on 18 Nov, so 12:59 UTC) and says it, with the days left', /^Ends \w{3} 18 Nov · \d+:\d\d (AM|PM) \S+ · 14 days left\|false$/.test(await novLine('2026-11-05T00:00:00Z')), String(await lineOf()));
+  check('Released tab: the Nov 4 crate is on sale up to 12:59 UTC on the 18th, then grey with "Ended 10 hours ago" at 23:00 UTC', /^Ends \w{3} 18 Nov · .* hours? left\|false$/.test(await novLine('2026-11-18T08:00:00Z')) && (await novLine('2026-11-18T23:00:00Z')) === 'Ended 10 hours ago|true', String(await lineOf()));
+  check('Released tab: the Nov 18 crate starts at 2:00 AM GMT+8 on 19 Nov (18:00 UTC on the 18th): yellow, off sale until then, then green with the Nov 4 crate grey', (await dots('2026-11-18T12:00:00Z')) === 'off,off,off,on,off' && (await dots('2026-11-18T19:00:00Z')) === 'off,off,off,off,on');
   const afterDots = await dots('2026-11-20T10:00:00Z'), nov18Line = await lineOf(); await pickNov4();
   check('Released tab: after that day the Nov 4 crate is grey, Ended 1 day ago, with a grey pill dot; the Nov 18 crate (the newest, opened first) is green and says when it ends', afterDots === 'off,off,off,off,on' && (await lineOf()) === 'Ended 1 day ago|true' && /^Ends \w{3} 2 Dec · .* days? left\|false$/.test(nov18Line ?? ''), `${afterDots} | ${nov18Line} | ${await lineOf()}`);
   // The countdown ticks by itself (every 30 s and when the page is shown again): move the clock and fire the page-shown event, with no re-render for a live box
@@ -990,7 +991,7 @@ await page.screenshot({ path: 'tmp/ui-final.png' });
   const released = [...(await listed('Overall', 'Released')), ...(await listed('Hat', 'Released')), ...(await listed('Cape', 'Released')), ...(await listed('Bottom', 'Released')), ...(await listed('Shoes', 'Released'))];
   check("Founder's and 10-day items: none of them is in the Released lists (Overall, Hat, Cape, Bottom, Shoes)", !released.some(n => everyName.includes(n)));
   await clickTab('Releases'); await settle();
-  check("Released tab: no Founder's Packages group (Mystery Fashion, Mystery Styles, Aurora only)", JSON.stringify(await page.$$eval('.past-tab', t => t.map(x => x.textContent))) === JSON.stringify(['Mystery Fashion', 'Mystery Styles', 'Aurora']));
+  check("Released tab: no Founder's Packages group (Mystery Fashion, Mystery Styles, Aurora only)", JSON.stringify(await page.$$eval('.past-tab', t => t.map(x => x.textContent))) === JSON.stringify(['Mystery Fashion', 'Mystery Styles', 'Aurora', ...(DM ? ['Datamine'] : [])])); // pro adds the Datamine category
   if (DM) {
     // In All · Datamine the released and datamined items are one list in id order (so patterns in what was released show); Founder's Package
     // items carry a FOUNDERS label and the 10-day equips an EXPIRING NX label instead of DATAMINE
@@ -1082,6 +1083,61 @@ await page.screenshot({ path: 'tmp/ui-final.png' });
   await page.waitForFunction(() => window.__copied, { timeout: 5000 }).catch(() => {});
   const copiedWithout = await page.evaluate(() => window.__copied);
   check('Copy character image: the same picture with or without a pet (the pet is left out)', !!copiedWith && !!copiedWithout && copiedWith.w === copiedWithout.w && copiedWith.h === copiedWithout.h && copiedWith.opaque === copiedWithout.opaque, JSON.stringify([copiedWith, copiedWithout]));
+}
+
+// DATAMINE · NEW and versions: the newest version's unreleased items are labelled DATAMINE · NEW (not DATAMINE) in the datamine views; in the pro build the Releases tab has a Datamine
+// category with a pill per game version, and the Upcoming tab lists every unreleased dyeable item with version tabs
+{
+  const MV = JSON.parse(readFileSync('data/mined-versions.json', 'utf8')).versions[0], ND = JSON.parse(readFileSync('data/newly-dyeable.json', 'utf8'));
+  const CATD = readCatalog(), unreleasedDyeable = Object.values(CATD.wearables).flatMap(g => g.items).filter(i => i.dyeVersion);
+  const seg = t => page.evaluate(t => [...document.querySelectorAll('#source .seg button')].find(b => b.textContent.includes(t))?.click(), t);
+  await clickTab('Pet'); await settle(); await seg('Datamine'); await settle();
+  check('DATAMINE · NEW: exactly one pet (the new Snail) is badged DATAMINE · NEW in the Pet datamine view, and the other unreleased pets still DATAMINE', (await page.$$eval('#content .card .unreleased-badge[data-tag="DATAMINE · NEW"]', b => b.length)) === 1 && (await page.$$eval('#content .card .unreleased-badge', b => b.some(x => x.textContent === 'DATAMINE'))));
+  if (DM) {
+    await clickTab('Hat'); await settle(); await seg('Datamine'); await settle();
+    const hat = await page.$$eval('#content .card', cs => cs.filter(c => /Dark Musician Headphones|Chained Princess Ribbon/.test(c.title)).map(c => c.querySelector('.unreleased-badge')?.textContent));
+    check('DATAMINE · NEW: the new hats (Dark Musician Headphones, Chained Princess Ribbon) are badged DATAMINE · NEW in All · Datamine', hat.length === 2 && hat.every(x => x === 'DATAMINE · NEW'), JSON.stringify(hat));
+    await seg('Released'); await settle();
+
+    // The Upcoming tab: the old layout (title, overall count, version tabs, the speculative note, headings with counts), every unreleased dyeable item
+    await clickTab('Possible items'); await settle();
+    const snap = () => page.evaluate(() => ({ chapter: document.getElementById('chapter').textContent, total: document.querySelector('#content .upcoming-total')?.textContent, tabs: [...document.querySelectorAll('#content .past-tab')].map(t => t.textContent), selected: [...document.querySelectorAll('#content .past-tab[aria-selected="true"]')].map(t => t.textContent), cards: document.querySelectorAll('#content .card').length, badges: [...new Set([...document.querySelectorAll('#content .card .upcoming-badge')].map(b => b.textContent))].sort(), badged: document.querySelectorAll('#content .card .upcoming-badge').length, heads: [...document.querySelectorAll('#content .group-title')].map(h => h.textContent), search: !!document.querySelector('#filters .search-input'), note: document.querySelector('#content .empty-note .note-text')?.textContent ?? '', collapsed: !!document.querySelector('#content .note-text.collapsed'), toggle: document.querySelector('#content .note-toggle')?.textContent, newMine: document.querySelectorAll('#content .unreleased-badge[data-tag="DATAMINE · NEW"]').length }));
+    const all = await snap(), n1 = unreleasedDyeable.filter(i => i.dyeVersion === 'v.1.0.0').length, n2 = ND.versions['v.2.0.0'].length;
+    check('Upcoming tab (pro): titled "Possible Upcoming Crates", opens with nothing selected on v.1.0.0 | v.2.0.0 and lists every unreleased dyeable item (' + (n1 + n2) + '), each badged UPCOMING', all.chapter === 'Possible Upcoming Crates' && all.tabs.join('|') === 'v.1.0.0|v.2.0.0' && all.selected.length === 0 && all.cards === n1 + n2 && all.badged === all.cards && all.badges.join() === 'UPCOMING' && !all.search, JSON.stringify(all));
+    check('Upcoming tab (pro): an overall count sits under the title, and every heading carries its count (Hats · 12 style)', all.total === `${n1 + n2} items` && all.heads.length >= 8 && all.heads.every(h => / · \d+$/.test(h)) && all.heads.reduce((n, h) => n + Number(h.match(/(\d+)$/)[1]), 0) === n1 + n2, JSON.stringify([all.total, all.heads]));
+    check('Upcoming tab (pro): the old explanation, three lines until Read more, without the Halloween, winter or Aurora talk', /speculative and based on datamined info/.test(all.note) && /not in the shop yet/.test(all.note) && /no guarantee/.test(all.note) && !/Halloween|winter|Aurora/.test(all.note) && all.collapsed && all.toggle === 'Read more');
+    await page.evaluate(() => [...document.querySelectorAll('#content .past-tab')].find(t => t.textContent === 'v.2.0.0').click()); await settle();
+    const v2 = await snap();
+    check('Upcoming tab (pro): v.2.0.0 shows what that update newly marked dyeable (' + n2 + '), the count follows, and the other tab stays unselected', v2.selected.join() === 'v.2.0.0' && v2.cards === n2 && v2.badges.join() === 'UPCOMING' && v2.total === `${n2} items in v.2.0.0` && v2.newMine === MV.wearables.length - 1, JSON.stringify(v2));
+    await page.evaluate(() => [...document.querySelectorAll('#content .past-tab')].find(t => t.textContent === 'v.1.0.0').click()); await settle();
+    const v1 = await snap();
+    check('Upcoming tab (pro): v.1.0.0 shows the rest, the unreleased dyeable items from before (' + n1 + ')', v1.selected.join() === 'v.1.0.0' && v1.cards === n1 && v1.badges.join() === 'UPCOMING' && n1 > 0, JSON.stringify(v1));
+    await page.evaluate(() => [...document.querySelectorAll('#content .past-tab')].find(t => t.textContent === 'v.1.0.0').click()); await settle();
+    check('Upcoming tab (pro): clicking the selected version again clears it and shows all', (await snap()).cards === n1 + n2);
+    await (await page.$$('#content .card'))[0].click(); await settle();
+    check('Upcoming tab (pro): clicking a card tries the item on, like any card', (await page.$$('#colour .slot')).length >= 1);
+    await (await page.$$('#content .card'))[0].click(); await settle();
+
+    // The Releases tab's Datamine category: its own category, with the versions as pills, each with its release date
+    await clickTab('Releases'); await settle();
+    await page.evaluate(() => [...document.querySelectorAll('#content .past-tab')].find(t => t.textContent === 'Datamine').click()); await settle();
+    const dm = await page.evaluate(() => ({ sel: [...document.querySelectorAll('#content .past-tab[aria-selected="true"]')].map(t => t.textContent), tabs: [...document.querySelectorAll('#content .past-tab')].map(t => t.textContent), pills: [...document.querySelectorAll('#content .pill')].map(p => p.textContent), pressed: [...document.querySelectorAll('#content .pill[aria-pressed="true"]')].map(p => p.textContent), cards: document.querySelectorAll('#content .card').length, heads: [...document.querySelectorAll('#content .group-title')].map(h => h.textContent), newMine: document.querySelectorAll('#content .unreleased-badge[data-tag="DATAMINE · NEW"]').length, plain: [...document.querySelectorAll('#content .card')].filter(c => !c.querySelector('.badge')).map(c => c.title.split(' · ')[0]), note: document.querySelector('#content .empty-note')?.textContent ?? '', title: document.querySelector('#content .past-title h2')?.textContent, meta: document.querySelector('#content .past-meta')?.textContent }));
+    const mineTotal = MV.wearables.length + MV.pets.length + MV.styles.length, nFaces = MV.styles.filter(i => i < 30000).length, nHair = MV.styles.length - nFaces;
+    check('Releases tab (pro): Datamine is its own category, with one version pill, v.2.0.0 · 18 Nov 2026, selected', dm.sel.join() === 'Datamine' && dm.tabs.join('|') === 'Mystery Fashion|Mystery Styles|Aurora|Datamine' && dm.pills.join() === 'v.2.0.0 · 18 Nov 2026' && dm.pressed.length === 1, JSON.stringify(dm));
+    check('Releases tab (pro): the version page is titled v.2.0.0 Datamine, says Released 18 November 2026 with its size, and lists every item it added (' + mineTotal + ': clothing by slot, pets, hairstyles and faces) under headings with counts', dm.title === 'v.2.0.0 Datamine' && dm.meta === 'Released 18 November 2026·' + mineTotal + ' items' && dm.cards === mineTotal && dm.heads.every(h => / · \d+$/.test(h)) && dm.heads.includes('Pets · 2') && /Newly mined/.test(dm.note), JSON.stringify(dm));
+    check('Releases tab (pro): hairstyles and faces are split Male and Female (Hairstyles, Faces and their Male / Female headings with counts)', await page.evaluate((nFaces, nHair) => { const t = [...document.querySelectorAll('#content .past-section, #content .group-title.sub')].map(h => h.textContent); return t.includes('Hairstyles') && t.includes('Faces') && t.filter(x => /^(Male|Female) · \d+$/.test(x)).length === 4 && t.some(x => /^Male · \d+$/.test(x)); }, nFaces, nHair));
+    check('Releases tab (pro): the unreleased ones are badged DATAMINE · NEW (' + (mineTotal - 1) + ') and the released Moon and Sun Cape is a plain card', dm.newMine === mineTotal - 1 && dm.plain.join() === 'Moon and Sun Cape', JSON.stringify(dm.plain));
+    await page.evaluate(() => [...document.querySelectorAll('#content .past-tab')].find(t => t.textContent === 'Mystery Styles').click()); await settle();
+    check('Releases tab (pro): picking another category leaves Datamine and shows that category\'s pills', (await page.$$('#content .pill')).length > 1 && !(await page.$$eval('#content .past-tab[aria-selected="true"]', t => t.some(x => x.textContent === 'Datamine'))));
+  } else {
+    // Everything about Upcoming and Datamine is pro-only, except the body items (faces, hairs) and pets, whose Datamine views show everywhere
+    await clickTab('Releases'); await settle();
+    check('Standard build: no Upcoming tab and no Datamine category in Releases (pro only)', !(await page.$('.tab[title^="Possible items"]')) && !(await page.$$eval('#content .past-tab', t => t.some(x => x.textContent === 'Datamine'))));
+    await clickTab('Hair'); await settle(); await seg('Datamine'); await settle();
+    check('Standard build: faces and hairs still show their Datamine view, with the DATAMINE · NEW label on the newest version\'s styles', await page.$$eval('#content .card .unreleased-badge', b => b.some(x => x.textContent === 'DATAMINE · NEW') && b.some(x => x.textContent === 'DATAMINE')));
+    check('Standard build: a DATAMINE · NEW card has its own teal frame, apart from the blue of DATAMINE cards', await page.evaluate(() => { const bg = c => getComputedStyle(c).backgroundColor, a = document.querySelector('#content .card.datamine-new'), b = document.querySelector('#content .card.unreleased:not(.datamine-new)'); return !!a && !!b && bg(a) !== bg(b) && getComputedStyle(a).getPropertyValue('--c').trim() !== getComputedStyle(b).getPropertyValue('--c').trim(); }));
+    await seg('Released'); await settle();
+  }
 }
 
 // The category rail fits the book: on a short screen the tabs shrink until all of them are visible; on a tall one they keep their size

@@ -508,7 +508,7 @@ const note = text => { $('ph-note').textContent = text; };
 // The ♥ About tab is hidden while its wording is being finalised; open the site with ?about to preview it.
 const SHOW_ABOUT = new URLSearchParams(location.search).has('about');
 const TAB_NAMES = { about: '♥', looks: 'Look Book', search: 'All', faceAcc: 'Face Acc.', eyeAcc: 'Eye Deco', longcoat: 'Overall', nameTag: 'Name Ring', chatBalloon: 'Chat Ring', upcoming: 'Upcoming', past: 'Releases' };
-const CHAPTER_TITLES = { about: 'About henehoes ♥', pet: 'Pets', looks: 'Look Book', past: 'Released Crates & Styles', upcoming: 'Upcoming Crates', search: 'Search Everything', body: 'Body', face: 'Faces', hair: 'Hairstyles', cap: 'Hats', faceAcc: 'Face Accessories', eyeAcc: 'Eye Decorations', earrings: 'Earrings', longcoat: 'Overalls', coat: 'Tops', pants: 'Bottoms', glove: 'Gloves', shoes: 'Shoes', cape: 'Capes', weapon: 'Weapons', nameTag: 'Name Rings', chatBalloon: 'Chat Rings' };
+const CHAPTER_TITLES = { about: 'About henehoes ♥', pet: 'Pets', looks: 'Look Book', past: 'Released Crates & Styles', upcoming: 'Possible Upcoming Crates', search: 'Search Everything', body: 'Body', face: 'Faces', hair: 'Hairstyles', cap: 'Hats', faceAcc: 'Face Accessories', eyeAcc: 'Eye Decorations', earrings: 'Earrings', longcoat: 'Overalls', coat: 'Tops', pants: 'Bottoms', glove: 'Gloves', shoes: 'Shoes', cape: 'Capes', weapon: 'Weapons', nameTag: 'Name Rings', chatBalloon: 'Chat Rings' };
 
 // The category rail fits the book: when its tabs would run past the bottom (a short screen, or more tabs), they shrink together (their
 // height, gaps and text) until every one is visible, down to a floor. Tall screens keep the normal size. The sprites and cards are not touched.
@@ -547,7 +547,7 @@ function renderTabs() {
     t.title = label;
     if (active) t.append(el('span', { className: 'tick', title: 'Equipped' }));
     if (needsFix.has(key)) t.append(el('span', { className: 'fix', title: 'Has placeholders to fix', textContent: '!' }));
-    t.onclick = () => { activeTab = key; if (key === 'past') pastBox = latestBox().id; search = ''; note(''); renderTabs(); renderFilters(); renderContent(); };
+    t.onclick = () => { activeTab = key; if (key === 'past') { pastBox = latestBox().id; pastDatamine = false; } search = ''; note(''); renderTabs(); renderFilters(); renderContent(); };
     tabs.append(t);
   };
   add('search', 'Search', false, 'lookup');
@@ -561,6 +561,7 @@ function renderTabs() {
   // The Look Book, then Releases (every crate and box so far, newest first), close the rail below Chat Ring.
   add('looks', 'Look Book: your saved looks', false, 'looks');
   add('past', 'Releases: crates and boxes, and what each held', false, 'wearable past');
+  if (SHOW_DATAMINE_WEARABLES) add('upcoming', 'Possible items for the next Mystery Fashion Crates (unconfirmed)', false, 'wearable upcoming'); // pro build only: the items are datamined ones; never a checkmark
   if (SHOW_ABOUT) add('about', 'About & FAQ', false, 'about'); // the last tab: how it works, questions, and why there are no ads (a light blue sticky with a heart)
   tabs.scrollLeft = scrolled;
   $('chapter').textContent = CHAPTER_TITLES[activeTab] ?? catalog.wearables[activeTab]?.label ?? '';
@@ -956,6 +957,7 @@ function skinCard(s) {
 }
 
 // The label on an item that is not released: DATAMINE, or its own where it belongs to a group (FOUNDERS for Founder's Package items, EXPIRING NX for 10-day equips).
+const NEW_TAG = 'DATAMINE · NEW'; // the label on what the newest game version added (data/mined-versions.json); its cards get their own frame colour (teal)
 const unreleasedBadge = item => { const b = el('span', { className: 'badge unreleased-badge', textContent: item.tag ?? 'DATAMINE' }); if (item.tag) b.dataset.tag = item.tag; return b; };
 function styleCard(kind, s, i) {
   const first = s.variants.find(v => v.colour === browse[kind]) ?? s.variants[0];
@@ -972,7 +974,7 @@ function styleCard(kind, s, i) {
     }, s.check);
   if (s.classicId) card.title = `${card.title} · Classic ${s.classicId}`;
   if (s.collab) card.append(el('span', { className: 'badge collab-badge', textContent: `${s.collab.toUpperCase()} COLLAB` }));
-  if (s.released === false) { card.classList.add('unreleased'); card.append(el('span', { className: 'badge unreleased-badge', textContent: 'DATAMINE' })); }
+  if (s.released === false) { card.classList.add('unreleased'); if (s.tag === NEW_TAG) card.classList.add('datamine-new'); card.append(unreleasedBadge(s)); }
   return card;
 }
 
@@ -981,9 +983,10 @@ function wearableCard(slot, item) {
   const card = item.effect ? ringCard(item, selected, slot) : optionCard(item.name, selected, null, null, () => select(slot, item.id), item.check, item.icon);
   if (item.classicId) card.title = `${card.title} · Classic ${item.classicId}`;
   if (item.collab) card.append(el('span', { className: 'badge collab-badge', textContent: `${item.collab.toUpperCase()} COLLAB` }));
-  if (item.released === false) { card.classList.add('unreleased'); card.append(unreleasedBadge(item)); }
+  if (item.released === false) { card.classList.add('unreleased'); if (item.tag === NEW_TAG) card.classList.add('datamine-new'); card.append(unreleasedBadge(item)); }
   // A possible upcoming item has its own violet look (the Next Crate tab's colour), apart from the blue DATAMINE one, so a card can carry both.
-  if (item.upcoming && SHOW_UPCOMING) { card.classList.add('upcoming-card'); card.append(el('span', { className: 'badge upcoming-badge', title: 'Possible item for a coming Mystery Fashion Crate (unconfirmed)' }, 'UPCOMING', el('i', { className: 'q-icon', 'aria-hidden': 'true' }))); }
+  // The Upcoming tab's cards (unreleased dyeable items) carry the same violet UPCOMING label; the version (whose update newly marked the item dyeable) is in the hover text and the tabs.
+  if ((item.upcoming && SHOW_UPCOMING) || (item.dyeVersion && activeTab === 'upcoming')) { card.classList.add('upcoming-card'); card.append(el('span', { className: 'badge upcoming-badge', title: item.dyeVersion ? `Marked dyeable in the game files, not in the shop yet (unconfirmed) · ${item.dyeVersion}` : 'Possible item for a coming Mystery Fashion Crate (unconfirmed)' }, 'UPCOMING', el('i', { className: 'q-icon', 'aria-hidden': 'true' }))); }
   return card;
 }
 
@@ -1113,7 +1116,7 @@ document.addEventListener('visibilitychange', () => { if (!document.hidden) tick
 function petCard(x, selected, onClick, title) {
   const b = optionCard(x.name, selected, null, null, onClick, undefined, x.icon);
   b.title = x.released === false ? `${title} · datamine` : title;
-  if (x.released === false) { b.classList.add('unreleased'); b.append(el('span', { className: 'badge unreleased-badge', textContent: 'DATAMINE' })); }
+  if (x.released === false) { b.classList.add('unreleased'); if (x.tag === NEW_TAG) b.classList.add('datamine-new'); b.append(unreleasedBadge(x)); }
   return b;
 }
 function petNote(c) {
@@ -1179,13 +1182,18 @@ function renderStyles(c, kind) {
   c.append(grid);
 }
 
-// The Upcoming tab: only a note saying why the possible upcoming items are no longer listed (always shown in full).
+// The Upcoming tab: equipment the game files mark as dyeable that is not in the shop yet. UNCONFIRMED, and the page says so (the old explanation, without the seasons).
+let noteOpen = false; // whether the explanation is expanded (kept while the lists redraw)
 const unconfirmedNote = () => {
-  const text = el('p', { className: 'note-text' },
-    el('strong', { textContent: 'Upcoming items can no longer be datamined.' }),
-    el('span', { className: 'note-para', textContent: "This tab used to list items that were marked as dyeable in the game files but weren't in the shop yet. Those dyeable items would be the contents of the next boxes." }),
-    el('span', { className: 'note-para', textContent: "Nexon now seems to update Mystery boxes during maintenance instead of on a fixed schedule, and new items are no longer marked dyeable before they launch. Without that list, there's no way to tell what the next boxes will hold." }));
-  return el('div', { className: 'empty-note unconfirmed', role: 'note' }, el('span', { className: 'empty-badge', textContent: '!', 'aria-hidden': 'true' }), el('div', { className: 'note-main' }, text));
+  // Three lines when collapsed (Read more opens the rest); one paragraph of inline text so the line clamp counts the whole thing.
+  const text = el('p', { className: `note-text${noteOpen ? '' : ' collapsed'}` },
+    el('strong', { textContent: 'Upcoming items are speculative and based on datamined info. ' }),
+    el('span', { className: 'note-para', textContent: 'These are the only datamined items marked as dyeable that are not in the shop yet. ' }),
+    el('span', { className: 'note-para', textContent: 'Dyeable items have turned up in boxes before, but there is no guarantee that these will.' }));
+  const toggle = el('button', { className: 'note-toggle', type: 'button', textContent: noteOpen ? 'Show less' : 'Read more' });
+  toggle.setAttribute('aria-expanded', String(noteOpen));
+  toggle.onclick = () => { noteOpen = !noteOpen; text.classList.toggle('collapsed', !noteOpen); toggle.textContent = noteOpen ? 'Show less' : 'Read more'; toggle.setAttribute('aria-expanded', String(noteOpen)); };
+  return el('div', { className: 'empty-note unconfirmed', role: 'note' }, el('span', { className: 'empty-badge', textContent: '?', 'aria-hidden': 'true' }), el('div', { className: 'note-main' }, text, toggle));
 };
 // ---------- Past tab: every past crate and box and what it held ----------
 const pct = r => `${+r.toFixed(2)}%`; // 2 -> "2%", 2.5 -> "2.5%", 16.67 -> "16.67%"
@@ -1215,6 +1223,9 @@ function boxCards(box) {
   return { groups, styles };
 }
 let pastBox = null; // the box shown below the pills; set to the latest box whenever the Released tab is opened
+let pastDatamine = false; // pro build: the Releases tab's Datamine category is open (the items each game version added) instead of a box
+let datamineVersion = null; // the version open in the Datamine category (catalog.versions, newest first; the newest opens first)
+const versionDate = (iso, month = 'long') => new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month, year: 'numeric', timeZone: 'UTC' }); // '18 November 2026'
 const pillLabel = b => b.pill && b.dates ? `${b.dates} · ${b.pill}` : (b.dates ?? b.pill); // date first, then the name where there is one
 const allBoxes = () => catalog.boxes.flatMap(g => g.boxes);
 const latestBox = () => allBoxes().find(b => b.latest) ?? allBoxes()[0]; // the Released tab always opens on the newest box
@@ -1222,6 +1233,55 @@ const groupOf = box => catalog.boxes.find(g => g.boxes.some(x => x.id === box.id
 // A box is on sale from its start until the end of its last minute; no `end` means it has not been given one, so it still is.
 const saleEnd = endMs;
 const onSale = box => Date.now() >= Date.parse(box.start ?? 0) && Date.now() < saleEnd(box);
+// The Releases tab's Datamine category (pro build only): a pill per game version (data/mined-versions.json), each with the date it was released. A version lists
+// everything its update added to the game files: a note, then a heading per slot with its count and a grid of the usual cards (clothing and weapons by slot, then
+// pets and pet equipment, then faces and hairs split Male and Female). The newest version's unreleased items carry the DATAMINE · NEW badge; a released one is a normal card.
+function renderNewMine(c) {
+  const versions = catalog.versions ?? [];
+  if (!versions.some(v => v.name === datamineVersion)) datamineVersion = versions[0]?.name;
+  const ver = versions.find(v => v.name === datamineVersion);
+  if (!ver) return;
+  const mined = [];
+  for (const slot of WEAR_ORDER) {
+    const items = (catalog.wearables[slot]?.items ?? []).filter(i => i.mined === ver.name);
+    if (items.length) mined.push([TAB_NAMES[slot] ?? catalog.wearables[slot].label, items.map(i => wearableCard(slot, i))]);
+  }
+  const pets = (catalog.pets?.pets ?? []).filter(p => p.mined === ver.name), gear = (catalog.pets?.equips ?? []).filter(e => e.mined === ver.name);
+  const choosePet = p => () => { const on = state.pet.id === p.id; state.pet = on ? { id: null, equip: null } : { id: p.id, equip: null }; if (!on) configTarget = 'pet'; afterChange(); };
+  const chooseGear = e => () => { const id = state.pet.id != null && e.art[state.pet.id] ? state.pet.id : +Object.keys(e.art)[0]; state.pet = { id, equip: e.id }; configTarget = 'pet'; afterChange(); };
+  if (pets.length || gear.length) mined.push(['Pets', [...pets.map(p => petCard(p, state.pet.id === p.id, choosePet(p), `${p.name} · Classic ${p.id}`)), ...gear.map(e => petCard(e, state.pet.equip === e.id, chooseGear(e), `${e.name} · Classic ${e.id}`))]]);
+  // Hairstyles and faces come out as sections like a Mystery Styles box does (a big heading, the colour bar, then the Male and Female lists).
+  const styleSecs = [];
+  for (const [kind, title] of [['hair', 'Hairstyles'], ['face', 'Faces']]) {
+    const subs = [];
+    for (const [sex, label] of [['male', 'Male'], ['female', 'Female']]) {
+      const cards = []; catalog[kind].forEach((st, i) => { if (st.mined === ver.name && (st.gender === sex || st.gender === 'both')) cards.push(() => styleCard(kind, st, i)); }); // drawn after the colour bar, as in a box
+      if (cards.length) subs.push({ title: label, cards });
+    }
+    if (subs.length) styleSecs.push({ kind, title, subs });
+  }
+  const total = mined.reduce((n, [, l]) => n + l.length, 0) + catalog.hair.filter(s => s.mined === ver.name).length + catalog.face.filter(s => s.mined === ver.name).length;
+  // Like a box in the other categories: a pill per version (with its release date), then the title with the date and size, then the groups.
+  const row = el('div', { className: 'pills', role: 'radiogroup', 'aria-label': 'Game versions' });
+  for (const v of versions) {
+    const pill = el('button', { className: 'pill', type: 'button', role: 'radio', title: `${v.name}, released ${versionDate(v.released)}` }, `${v.name} · ${versionDate(v.released, 'short')}`);
+    pill.setAttribute('aria-pressed', String(v.name === ver.name)); pill.setAttribute('aria-checked', String(v.name === ver.name));
+    pill.onclick = () => { datamineVersion = v.name; renderContent(true); };
+    row.append(pill);
+  }
+  c.append(row);
+  c.append(el('div', { className: 'past-title' }, el('h2', { textContent: `${ver.name} Datamine` }),
+    el('p', { className: 'past-meta' }, `Released ${versionDate(ver.released)}`, el('span', { className: 'dot', textContent: '·', 'aria-hidden': 'true' }), `${total} item${total === 1 ? '' : 's'}`)));
+  c.append(infoNote(el('strong', { textContent: 'Newly mined: ' }), 'what the game files gained with this version. In the newest one, items not released yet are badged DATAMINE · NEW. Nothing here is confirmed for a box or a date.'));
+  for (const [title, cards] of mined) c.append(el('h3', { className: 'group-title', textContent: `${title} · ${cards.length}` }), el('div', { className: 'grid' }, ...cards));
+  for (const sec of styleSecs) {
+    c.append(el('h3', { className: 'past-section', textContent: sec.title }));
+    renderColourBar(sec.kind);
+    c.append(...$('toolbar').children); // the colour bar draws into the toolbar above the list: move it down under its heading
+    if (sec.kind === 'face' && catalog.face.some(st => st.variants.some(v => v.colour === browse.face && v.label === NO_COUPON_EYES))) c.append(eyeWhiteNote());
+    for (const sub of sec.subs) c.append(el('h4', { className: 'group-title sub', textContent: `${sub.title} · ${sub.cards.length}` }), el('div', { className: 'grid' }, ...sub.cards.map(build => build())));
+  }
+}
 function renderPast(c) {
   // A tab per category (Mystery Fashion Crates, Mystery Styles, Aurora Stamp Shop); the selected category's boxes are pills, in date order,
   // and the selected box's title and items are drawn below. Picking a category opens its newest box (the last pill).
@@ -1231,11 +1291,18 @@ function renderPast(c) {
   const tabs = el('div', { className: 'past-tabs', role: 'tablist' });
   for (const g of catalog.boxes) {
     const t = el('button', { className: 'past-tab', type: 'button', role: 'tab', textContent: g.tab ?? g.title, title: g.title });
-    t.setAttribute('aria-selected', String(g.id === current.id));
-    t.onclick = () => { pastBox = (g.boxes.find(b => b.latest) ?? g.boxes[g.boxes.length - 1]).id; renderContent(true); };
+    t.setAttribute('aria-selected', String(!pastDatamine && g.id === current.id));
+    t.onclick = () => { pastDatamine = false; pastBox = (g.boxes.find(b => b.latest) ?? g.boxes[g.boxes.length - 1]).id; renderContent(true); };
+    tabs.append(t);
+  }
+  if (SHOW_DATAMINE_WEARABLES) { // henehoes pro: a last category, Datamine, lists everything the latest patch's files newly added
+    const t = el('button', { className: 'past-tab', type: 'button', role: 'tab', textContent: 'Datamine', title: 'Datamine: what each game version added to the game files' });
+    t.setAttribute('aria-selected', String(pastDatamine));
+    t.onclick = () => { pastDatamine = true; datamineVersion = null; renderContent(true); }; // opens on the newest version
     tabs.append(t);
   }
   c.append(tabs);
+  if (pastDatamine && SHOW_DATAMINE_WEARABLES) return renderNewMine(c);
   const row = el('div', { className: 'pills', role: 'radiogroup', 'aria-label': current.title });
   for (const box of current.boxes) {
     const btn = el('button', { className: 'pill', type: 'button', role: 'radio', title: box.name + (box.dates ? ` (${box.dates})` : '') }, el('span', { className: 'sale-dot', 'aria-hidden': 'true' }), pillLabel(box));
@@ -1311,8 +1378,27 @@ function renderAbout(c) {
   c.append(page);
 }
 
+// The Upcoming tab (henehoes pro only), laid out like the old one: every unreleased item the game files mark as dyeable, with the unconfirmed note, a heading per slot and its count.
+// Version tabs filter by the version whose update newly marked an item dyeable (none selected: all of them; v.1.0.0 = marked before the first version listed in data/newly-dyeable.json).
+let upcomingVersion = null;
 function renderUpcoming(c) {
-  c.append(unconfirmedNote());
+  const sections = [];
+  for (const slot of WEAR_ORDER) {
+    const items = (catalog.wearables[slot]?.items ?? []).filter(i => i.dyeVersion && (upcomingVersion == null || i.dyeVersion === upcomingVersion));
+    if (items.length) sections.push([slot, items]);
+  }
+  const total = sections.reduce((n, [, l]) => n + l.length, 0);
+  c.append(el('p', { className: 'upcoming-total', textContent: `${total} item${total === 1 ? '' : 's'}${upcomingVersion ? ` in ${upcomingVersion}` : ''}` })); // the overall count, under the title
+  const tabs = el('div', { className: 'past-tabs', role: 'tablist', 'aria-label': 'Version' });
+  for (const v of catalog.dyeVersions ?? []) {
+    const t = el('button', { className: 'past-tab', type: 'button', role: 'tab', textContent: v, title: v === catalog.dyeVersions[0] ? `${v}: marked dyeable before the later versions` : `${v}: newly marked dyeable by that version's update` });
+    t.setAttribute('aria-selected', String(upcomingVersion === v));
+    t.onclick = () => { upcomingVersion = upcomingVersion === v ? null : v; renderContent(true); }; // click again to clear: nothing selected shows all
+    tabs.append(t);
+  }
+  c.append(tabs, unconfirmedNote());
+  for (const [slot, items] of sections) c.append(el('h3', { className: 'group-title', textContent: `${CHAPTER_TITLES[slot] ?? catalog.wearables[slot].label} · ${items.length}` }), el('div', { className: 'grid' }, ...items.map(i => wearableCard(slot, i))));
+  if (!sections.length) c.append(el('p', { className: 'empty', textContent: 'Nothing here.' }));
 }
 
 function renderWearable(c, slot) {

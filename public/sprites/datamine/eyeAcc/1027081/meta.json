@@ -1,0 +1,32 @@
+{
+ "id": 1027081,
+ "name": "Chained Princess Face Accessory",
+ "source": "game files",
+ "kind": "wearable",
+ "vslots": [
+  "Ay"
+ ],
+ "islots": [
+  "Ay"
+ ],
+ "parts": [
+  {
+   "key": "default",
+   "w": 36,
+   "h": 14,
+   "origin": {
+    "x": 15,
+    "y": -4,
+    "isEmpty": false
+   },
+   "maps": {
+    "brow": {
+     "x": 0,
+     "y": 0,
+     "isEmpty": false
+    }
+   },
+   "position": "accessoryEye"
+  }
+ ]
+}

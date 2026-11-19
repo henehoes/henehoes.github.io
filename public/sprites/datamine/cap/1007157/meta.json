@@ -1,0 +1,33 @@
+{
+ "id": 1007157,
+ "name": "Dark Musician Headphones",
+ "source": "game files",
+ "kind": "wearable",
+ "vslots": [
+  "Cp",
+  "H5"
+ ],
+ "islots": [
+  "Cp"
+ ],
+ "parts": [
+  {
+   "key": "default",
+   "w": 52,
+   "h": 30,
+   "origin": {
+    "x": 17,
+    "y": 10,
+    "isEmpty": false
+   },
+   "maps": {
+    "brow": {
+     "x": 0,
+     "y": 0,
+     "isEmpty": false
+    }
+   },
+   "position": "capOverHair"
+  }
+ ]
+}

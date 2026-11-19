@@ -1,0 +1,33 @@
+{
+ "id": 1007190,
+ "name": "Chained Princess Ribbon",
+ "source": "game files",
+ "kind": "wearable",
+ "vslots": [
+  "Cp",
+  "H5"
+ ],
+ "islots": [
+  "Cp"
+ ],
+ "parts": [
+  {
+   "key": "default",
+   "w": 31,
+   "h": 38,
+   "origin": {
+    "x": 0,
+    "y": 18,
+    "isEmpty": false
+   },
+   "maps": {
+    "brow": {
+     "x": 0,
+     "y": 0,
+     "isEmpty": false
+    }
+   },
+   "position": "capOverHair"
+  }
+ ]
+}

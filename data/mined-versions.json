@@ -1,0 +1,42 @@
+{
+ "_comment": "What each game version (client update) added to the game files, newest first, for the Releases tab's Datamine category and the DATAMINE · NEW label (the label goes on the newest version's items only, while they are unreleased). `released` is the version's release date. `wearables`: Classic ids of clothing, weapons and rings; `pets`: pet and pet equipment ids; `styles`: Classic ids of faces and hairs. v.2.0.0 (the Nov 18 2026 update, scraped 19/11/2026): its 12 faces and hairs are the styles the files hold that the app had never listed, added at the owner's call (it cannot be told whether they are new in this patch; the male Intelligent Eyes, 20038, is included: only the female one, 21034, is released). Moon and Sun Cape (1107026) is listed although it is released now (Nov 18 crate): it shows without a label. After the next scrape: node scripts/save-baseline.mjs --diff, then add a version above this one.",
+ "versions": [
+  {
+   "name": "v.2.0.0",
+   "released": "2026-11-18",
+   "wearables": [
+    1057105,
+    1057124,
+    1027081,
+    1077092,
+    1077152,
+    1077153,
+    1107022,
+    1107023,
+    1107024,
+    1107025,
+    1007157,
+    1007190,
+    1107026
+   ],
+   "pets": [
+    5000034,
+    1802010
+   ],
+   "styles": [
+    30390,
+    30500,
+    31370,
+    31390,
+    20036,
+    20037,
+    20038,
+    20039,
+    20040,
+    21040,
+    21038,
+    21039
+   ]
+  }
+ ]
+}

@@ -1,3 +1,40 @@
 {
- "parts": []
+ "parts": [
+  {
+   "key": "weapon",
+   "w": 39,
+   "h": 39,
+   "origin": {
+    "x": 16,
+    "y": 26,
+    "isEmpty": false
+   },
+   "maps": {
+    "hand": {
+     "x": 0,
+     "y": 0,
+     "isEmpty": false
+    }
+   },
+   "position": "weaponOverArm"
+  },
+  {
+   "key": "effect",
+   "w": 77,
+   "h": 67,
+   "origin": {
+    "x": 16,
+    "y": 44,
+    "isEmpty": false
+   },
+   "maps": {
+    "hand": {
+     "x": 0,
+     "y": 0,
+     "isEmpty": false
+    }
+   },
+   "position": "characterEnd"
+  }
+ ]
 }

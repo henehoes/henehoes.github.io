@@ -1,0 +1,32 @@
+{
+ "id": 1107025,
+ "name": "Chained Princess Chain",
+ "source": "game files",
+ "kind": "wearable",
+ "vslots": [
+  "Sr"
+ ],
+ "islots": [
+  "Sr"
+ ],
+ "parts": [
+  {
+   "key": "cape",
+   "w": 91,
+   "h": 63,
+   "origin": {
+    "x": 37,
+    "y": 49,
+    "isEmpty": false
+   },
+   "maps": {
+    "navel": {
+     "x": 0,
+     "y": 0,
+     "isEmpty": false
+    }
+   },
+   "position": "capeBelowBody"
+  }
+ ]
+}

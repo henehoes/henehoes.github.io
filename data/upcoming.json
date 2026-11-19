@@ -1,5 +1,5 @@
 {
- "_comment": "Dyeable equipment in the game files that is not in the catalogue (the possible-upcoming list). UNCONFIRMED: dyeable may hint at items for an upcoming release, nothing more. `released: true` marks items that have since come out (the Halloween box, 28/10/2026, the Nov 4 Mystery Fashion Crate, 04/11/2026, and the Nov 18 one: Strawberry Milk Dress): build-catalog.mjs lists them as ordinary released items. Written by scripts/extract-upcoming.mjs, which keeps the `released` flags.",
+ "_comment": "Dyeable equipment in the game files that is not in the catalogue (the possible-upcoming list). UNCONFIRMED: dyeable may hint at items for an upcoming release, nothing more. `released: true` marks items that have since come out: build-catalog.mjs lists them as ordinary released items. Written by scripts/extract-upcoming.mjs, which keeps the `released` flags.",
  "items": [
   {
    "id": 1007013,
@@ -602,43 +602,43 @@
    "id": 1702013,
    "name": "Teddy Bear",
    "folder": "Weapon",
-   "weaponClass": 30,
-   "released": true
+   "released": true,
+   "weaponClass": 30
   },
   {
    "id": 1702017,
    "name": "Pink Rabbit Puppet",
    "folder": "Weapon",
-   "weaponClass": 47,
-   "released": true
+   "released": true,
+   "weaponClass": 47
   },
   {
    "id": 1702019,
    "name": "Pillow",
    "folder": "Weapon",
-   "weaponClass": 30,
-   "released": true
+   "released": true,
+   "weaponClass": 30
   },
   {
    "id": 1702026,
    "name": "White Rabbit's Foot",
    "folder": "Weapon",
-   "weaponClass": 47,
-   "released": true
+   "released": true,
+   "weaponClass": 47
   },
   {
    "id": 1702036,
    "name": "Witch's Broomstick",
    "folder": "Weapon",
-   "weaponClass": 43,
-   "released": true
+   "released": true,
+   "weaponClass": 43
   },
   {
    "id": 1702096,
    "name": "Glowing Pumpkin Basket",
    "folder": "Weapon",
-   "weaponClass": 30,
-   "released": true
+   "released": true,
+   "weaponClass": 30
   },
   {
    "id": 1702313,
@@ -650,15 +650,15 @@
    "id": 1702325,
    "name": "Evil Skull",
    "folder": "Weapon",
-   "weaponClass": 30,
-   "released": true
+   "released": true,
+   "weaponClass": 30
   },
   {
    "id": 1702326,
    "name": "Cat Soul",
    "folder": "Weapon",
-   "weaponClass": 30,
-   "released": true
+   "released": true,
+   "weaponClass": 30
   }
  ]
 }

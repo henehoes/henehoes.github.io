@@ -470,7 +470,7 @@
   },
   {
    "id": 1702124,
-   "name": "Blue Shiner ",
+   "name": "Blue Shiner",
    "weaponClass": 45
   },
   {
@@ -632,16 +632,6 @@
    "weaponClass": 30
   },
   {
-   "id": 1702156,
-   "name": "Blackbeard's Knuckle",
-   "weaponClass": 48
-  },
-  {
-   "id": 1702157,
-   "name": "Tiger Paw Knuckle",
-   "weaponClass": 48
-  },
-  {
    "id": 1702158,
    "name": "Dogged Out",
    "weaponClass": 47
@@ -686,11 +676,6 @@
    "id": 1702166,
    "name": "My Friend SH",
    "weaponClass": 30
-  },
-  {
-   "id": 1702167,
-   "name": "Electric Knuckle",
-   "weaponClass": 48
   },
   {
    "id": 1702168,
@@ -1171,16 +1156,6 @@
    "id": 1702268,
    "name": "Rabbit in a Hat",
    "weaponClass": 30
-  },
-  {
-   "id": 1702270,
-   "name": "Boom Box",
-   "weaponClass": 53
-  },
-  {
-   "id": 1702271,
-   "name": "Fierce Cat",
-   "weaponClass": 53
   },
   {
    "id": 1702272,

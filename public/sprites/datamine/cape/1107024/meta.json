@@ -1,0 +1,50 @@
+{
+ "id": 1107024,
+ "name": "Dark Musician Scarf",
+ "source": "game files",
+ "kind": "wearable",
+ "vslots": [
+  "Sr"
+ ],
+ "islots": [
+  "Sr"
+ ],
+ "parts": [
+  {
+   "key": "cape",
+   "w": 42,
+   "h": 37,
+   "origin": {
+    "x": -14,
+    "y": 14,
+    "isEmpty": false
+   },
+   "maps": {
+    "navel": {
+     "x": 0,
+     "y": 0,
+     "isEmpty": false
+    }
+   },
+   "position": "capeBelowBody"
+  },
+  {
+   "key": "capeArm",
+   "w": 28,
+   "h": 12,
+   "origin": {
+    "x": 11,
+    "y": 13,
+    "isEmpty": false
+   },
+   "maps": {
+    "navel": {
+     "x": 0,
+     "y": 0,
+     "isEmpty": false
+    }
+   },
+   "position": "cape"
+  }
+ ]
+}

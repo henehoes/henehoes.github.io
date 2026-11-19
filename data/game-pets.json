@@ -505,6 +505,21 @@
    "released": false
   },
   {
+   "id": 5000034,
+   "name": "Snail",
+   "icon": "sprites/pet/5000034/icon.png",
+   "iw": 30,
+   "ih": 31,
+   "stand": {
+    "file": "sprites/pet/5000034/stand.png",
+    "w": 37,
+    "h": 41,
+    "ox": 19,
+    "oy": 40
+   },
+   "released": false
+  },
+  {
    "id": 5000054,
    "name": "Snail",
    "icon": "sprites/pet/5000054/icon.png",
@@ -1388,6 +1403,21 @@
      "ox": 12,
      "oy": 56,
      "from": 5000009
+    }
+   },
+   "released": false
+  },
+  {
+   "id": 1802010,
+   "name": "Baby Turkey Carriage",
+   "icon": "sprites/pet/equip/1802010/icon.png",
+   "art": {
+    "5000018": {
+     "file": "sprites/pet/equip/1802010/5000018.png",
+     "w": 31,
+     "h": 30,
+     "ox": -4,
+     "oy": 30
     }
    },
    "released": false

@@ -3607,6 +3607,296 @@
       ]
     },
     {
+      "style": "Piercing Gaze",
+      "matchedAs": "Piercing Gaze",
+      "kind": "face",
+      "gender": "male",
+      "region": "MCW",
+      "version": "1",
+      "key": 20036,
+      "classicId": 20036,
+      "released": false,
+      "colours": [
+        {
+          "id": 20036,
+          "name": "Piercing Gaze",
+          "colour": 0
+        },
+        {
+          "id": 20136,
+          "name": "Piercing Gaze",
+          "colour": 1
+        },
+        {
+          "id": 20236,
+          "name": "Piercing Gaze",
+          "colour": 2
+        },
+        {
+          "id": 20336,
+          "name": "Piercing Gaze",
+          "colour": 3
+        },
+        {
+          "id": 20436,
+          "name": "Piercing Gaze",
+          "colour": 4
+        },
+        {
+          "id": 20536,
+          "name": "Piercing Gaze",
+          "colour": 5
+        },
+        {
+          "id": 20636,
+          "name": "Piercing Gaze",
+          "colour": 6
+        },
+        {
+          "id": 20736,
+          "name": "Piercing Gaze",
+          "colour": 7
+        },
+        {
+          "id": 20836,
+          "name": "Piercing Gaze",
+          "colour": 8
+        }
+      ]
+    },
+    {
+      "style": "Glamor Look",
+      "matchedAs": "Glamor Look",
+      "kind": "face",
+      "gender": "male",
+      "region": "MCW",
+      "version": "1",
+      "key": 20037,
+      "classicId": 20037,
+      "released": false,
+      "colours": [
+        {
+          "id": 20037,
+          "name": "Glamor Look",
+          "colour": 0
+        },
+        {
+          "id": 20137,
+          "name": "Glamor Look",
+          "colour": 1
+        },
+        {
+          "id": 20237,
+          "name": "Glamor Look",
+          "colour": 2
+        },
+        {
+          "id": 20337,
+          "name": "Glamor Look",
+          "colour": 3
+        },
+        {
+          "id": 20437,
+          "name": "Glamor Look",
+          "colour": 4
+        },
+        {
+          "id": 20537,
+          "name": "Glamor Look",
+          "colour": 5
+        },
+        {
+          "id": 20637,
+          "name": "Glamor Look",
+          "colour": 6
+        },
+        {
+          "id": 20737,
+          "name": "Glamor Look",
+          "colour": 7
+        },
+        {
+          "id": 20837,
+          "name": "Glamor Look",
+          "colour": 8
+        }
+      ]
+    },
+    {
+      "style": "Intelligent Eyes",
+      "matchedAs": "Intelligent Eyes",
+      "kind": "face",
+      "gender": "male",
+      "region": "MCW",
+      "version": "1",
+      "key": 20038,
+      "classicId": 20038,
+      "released": false,
+      "colours": [
+        {
+          "id": 20038,
+          "name": "Intelligent Eyes",
+          "colour": 0
+        },
+        {
+          "id": 20138,
+          "name": "Intelligent Eyes",
+          "colour": 1
+        },
+        {
+          "id": 20238,
+          "name": "Intelligent Eyes",
+          "colour": 2
+        },
+        {
+          "id": 20338,
+          "name": "Intelligent Eyes",
+          "colour": 3
+        },
+        {
+          "id": 20438,
+          "name": "Intelligent Eyes",
+          "colour": 4
+        },
+        {
+          "id": 20538,
+          "name": "Intelligent Eyes",
+          "colour": 5
+        },
+        {
+          "id": 20638,
+          "name": "Intelligent Eyes",
+          "colour": 6
+        },
+        {
+          "id": 20738,
+          "name": "Intelligent Eyes",
+          "colour": 7
+        },
+        {
+          "id": 20838,
+          "name": "Intelligent Eyes",
+          "colour": 8
+        }
+      ]
+    },
+    {
+      "style": "Sulky Look",
+      "matchedAs": "Sulky Look",
+      "kind": "face",
+      "gender": "male",
+      "region": "MCW",
+      "version": "1",
+      "key": 20039,
+      "classicId": 20039,
+      "released": false,
+      "colours": [
+        {
+          "id": 20039,
+          "name": "Sulky Look",
+          "colour": 0
+        },
+        {
+          "id": 20139,
+          "name": "Sulky Look",
+          "colour": 1
+        },
+        {
+          "id": 20239,
+          "name": "Sulky Look",
+          "colour": 2
+        },
+        {
+          "id": 20339,
+          "name": "Sulky Look",
+          "colour": 3
+        },
+        {
+          "id": 20439,
+          "name": "Sulky Look",
+          "colour": 4
+        },
+        {
+          "id": 20539,
+          "name": "Sulky Look",
+          "colour": 5
+        },
+        {
+          "id": 20639,
+          "name": "Sulky Look",
+          "colour": 6
+        },
+        {
+          "id": 20739,
+          "name": "Sulky Look",
+          "colour": 7
+        },
+        {
+          "id": 20839,
+          "name": "Sulky Look",
+          "colour": 8
+        }
+      ]
+    },
+    {
+      "style": "Noblesse Face",
+      "matchedAs": "Noblesse Face",
+      "kind": "face",
+      "gender": "male",
+      "region": "MCW",
+      "version": "1",
+      "key": 20040,
+      "classicId": 20040,
+      "released": false,
+      "colours": [
+        {
+          "id": 20040,
+          "name": "Noblesse Face",
+          "colour": 0
+        },
+        {
+          "id": 20140,
+          "name": "Noblesse Face",
+          "colour": 1
+        },
+        {
+          "id": 20240,
+          "name": "Noblesse Face",
+          "colour": 2
+        },
+        {
+          "id": 20340,
+          "name": "Noblesse Face",
+          "colour": 3
+        },
+        {
+          "id": 20440,
+          "name": "Noblesse Face",
+          "colour": 4
+        },
+        {
+          "id": 20540,
+          "name": "Noblesse Face",
+          "colour": 5
+        },
+        {
+          "id": 20640,
+          "name": "Noblesse Face",
+          "colour": 6
+        },
+        {
+          "id": 20740,
+          "name": "Noblesse Face",
+          "colour": 7
+        },
+        {
+          "id": 20840,
+          "name": "Noblesse Face",
+          "colour": 8
+        }
+      ]
+    },
+    {
       "style": "Defiant Face",
       "matchedAs": "Defiant Face",
       "kind": "face",
@@ -5806,6 +6096,180 @@
         {
           "id": 21837,
           "name": "Olivia Face",
+          "colour": 8
+        }
+      ]
+    },
+    {
+      "style": "Timid Face",
+      "matchedAs": "Timid Face",
+      "kind": "face",
+      "gender": "female",
+      "region": "MCW",
+      "version": "1",
+      "key": 21038,
+      "classicId": 21038,
+      "released": false,
+      "colours": [
+        {
+          "id": 21038,
+          "name": "Timid Face",
+          "colour": 0
+        },
+        {
+          "id": 21138,
+          "name": "Timid Face",
+          "colour": 1
+        },
+        {
+          "id": 21238,
+          "name": "Timid Face",
+          "colour": 2
+        },
+        {
+          "id": 21338,
+          "name": "Timid Face",
+          "colour": 3
+        },
+        {
+          "id": 21438,
+          "name": "Timid Face",
+          "colour": 4
+        },
+        {
+          "id": 21538,
+          "name": "Timid Face",
+          "colour": 5
+        },
+        {
+          "id": 21638,
+          "name": "Timid Face",
+          "colour": 6
+        },
+        {
+          "id": 21738,
+          "name": "Timid Face",
+          "colour": 7
+        },
+        {
+          "id": 21838,
+          "name": "Timid Face",
+          "colour": 8
+        }
+      ]
+    },
+    {
+      "style": "Arrogant Face",
+      "matchedAs": "Arrogant Face",
+      "kind": "face",
+      "gender": "female",
+      "region": "MCW",
+      "version": "1",
+      "key": 21039,
+      "classicId": 21039,
+      "released": false,
+      "colours": [
+        {
+          "id": 21039,
+          "name": "Arrogant Face",
+          "colour": 0
+        },
+        {
+          "id": 21139,
+          "name": "Arrogant Face",
+          "colour": 1
+        },
+        {
+          "id": 21239,
+          "name": "Arrogant Face",
+          "colour": 2
+        },
+        {
+          "id": 21339,
+          "name": "Arrogant Face",
+          "colour": 3
+        },
+        {
+          "id": 21439,
+          "name": "Arrogant Face",
+          "colour": 4
+        },
+        {
+          "id": 21539,
+          "name": "Arrogant Face",
+          "colour": 5
+        },
+        {
+          "id": 21639,
+          "name": "Arrogant Face",
+          "colour": 6
+        },
+        {
+          "id": 21739,
+          "name": "Arrogant Face",
+          "colour": 7
+        },
+        {
+          "id": 21839,
+          "name": "Female Evan Face",
+          "colour": 8
+        }
+      ]
+    },
+    {
+      "style": "Noblesse Face",
+      "matchedAs": "Noblesse Face",
+      "kind": "face",
+      "gender": "female",
+      "region": "MCW",
+      "version": "1",
+      "key": 21040,
+      "classicId": 21040,
+      "released": false,
+      "colours": [
+        {
+          "id": 21040,
+          "name": "Noblesse Face",
+          "colour": 0
+        },
+        {
+          "id": 21140,
+          "name": "Noblesse Face",
+          "colour": 1
+        },
+        {
+          "id": 21240,
+          "name": "Noblesse Face",
+          "colour": 2
+        },
+        {
+          "id": 21340,
+          "name": "Noblesse Face",
+          "colour": 3
+        },
+        {
+          "id": 21440,
+          "name": "Noblesse Face",
+          "colour": 4
+        },
+        {
+          "id": 21540,
+          "name": "Noblesse Face",
+          "colour": 5
+        },
+        {
+          "id": 21640,
+          "name": "Noblesse Face",
+          "colour": 6
+        },
+        {
+          "id": 21740,
+          "name": "Noblesse Face",
+          "colour": 7
+        },
+        {
+          "id": 21840,
+          "name": "Noblesse Face",
           "colour": 8
         }
       ]
@@ -8350,6 +8814,59 @@
       ]
     },
     {
+      "style": "Sweet Flip Hair",
+      "matchedAs": "Sweet Flip Hair",
+      "kind": "hair",
+      "gender": "male",
+      "region": "MCW",
+      "version": "1",
+      "key": 3039,
+      "classicId": 30390,
+      "released": false,
+      "colours": [
+        {
+          "id": 30390,
+          "name": "Sweet Flip Hair",
+          "colour": 0
+        },
+        {
+          "id": 30391,
+          "name": "Sweet Flip Hair",
+          "colour": 1
+        },
+        {
+          "id": 30392,
+          "name": "Sweet Flip Hair",
+          "colour": 2
+        },
+        {
+          "id": 30393,
+          "name": "Sweet Flip Hair",
+          "colour": 3
+        },
+        {
+          "id": 30394,
+          "name": "Sweet Flip Hair",
+          "colour": 4
+        },
+        {
+          "id": 30395,
+          "name": "Sweet Flip Hair",
+          "colour": 5
+        },
+        {
+          "id": 30396,
+          "name": "Sweet Flip Hair",
+          "colour": 6
+        },
+        {
+          "id": 30397,
+          "name": "Sweet Flip Hair",
+          "colour": 7
+        }
+      ]
+    },
+    {
       "style": "Tribal Buzz",
       "matchedAs": "Tribal Buzz",
       "kind": "hair",
@@ -8875,6 +9392,59 @@
         {
           "id": 30497,
           "name": "Messy Spikes",
+          "colour": 7
+        }
+      ]
+    },
+    {
+      "style": "Cute Boy Hair",
+      "matchedAs": "Cute Boy Hair",
+      "kind": "hair",
+      "gender": "male",
+      "region": "MCW",
+      "version": "1",
+      "key": 3050,
+      "classicId": 30500,
+      "released": false,
+      "colours": [
+        {
+          "id": 30500,
+          "name": "Cute Boy Hair",
+          "colour": 0
+        },
+        {
+          "id": 30501,
+          "name": "Cute Boy Hair",
+          "colour": 1
+        },
+        {
+          "id": 30502,
+          "name": "Cute Boy Hair",
+          "colour": 2
+        },
+        {
+          "id": 30503,
+          "name": "Cute Boy Hair",
+          "colour": 3
+        },
+        {
+          "id": 30504,
+          "name": "Cute Boy Hair",
+          "colour": 4
+        },
+        {
+          "id": 30505,
+          "name": "Cute Boy Hair",
+          "colour": 5
+        },
+        {
+          "id": 30506,
+          "name": "Cute Boy Hair",
+          "colour": 6
+        },
+        {
+          "id": 30507,
+          "name": "Cute Boy Hair",
           "colour": 7
         }
       ]
@@ -12961,6 +13531,59 @@
       ]
     },
     {
+      "style": "Aria Hair",
+      "matchedAs": "Aria Hair",
+      "kind": "hair",
+      "gender": "female",
+      "region": "MCW",
+      "version": "1",
+      "key": 3137,
+      "classicId": 31370,
+      "released": false,
+      "colours": [
+        {
+          "id": 31370,
+          "name": "Aria Hair",
+          "colour": 0
+        },
+        {
+          "id": 31371,
+          "name": "Aria Hair",
+          "colour": 1
+        },
+        {
+          "id": 31372,
+          "name": "Aria Hair",
+          "colour": 2
+        },
+        {
+          "id": 31373,
+          "name": "Aria Hair",
+          "colour": 3
+        },
+        {
+          "id": 31374,
+          "name": "Aria Hair",
+          "colour": 4
+        },
+        {
+          "id": 31375,
+          "name": "Aria Hair",
+          "colour": 5
+        },
+        {
+          "id": 31376,
+          "name": "Aria Hair",
+          "colour": 6
+        },
+        {
+          "id": 31377,
+          "name": "Aria Hair",
+          "colour": 7
+        }
+      ]
+    },
+    {
       "style": "Stylish Burst Hair",
       "matchedAs": "Stylish Burst Hair",
       "kind": "hair",
@@ -13009,6 +13632,59 @@
         {
           "id": 31387,
           "name": "Stylish Burst Hair",
+          "colour": 7
+        }
+      ]
+    },
+    {
+      "style": "Wavy Pigtails Hair",
+      "matchedAs": "Wavy Pigtails Hair",
+      "kind": "hair",
+      "gender": "female",
+      "region": "MCW",
+      "version": "1",
+      "key": 3139,
+      "classicId": 31390,
+      "released": false,
+      "colours": [
+        {
+          "id": 31390,
+          "name": "Wavy Pigtails Hair",
+          "colour": 0
+        },
+        {
+          "id": 31391,
+          "name": "Wavy Pigtails Hair",
+          "colour": 1
+        },
+        {
+          "id": 31392,
+          "name": "Wavy Pigtails Hair",
+          "colour": 2
+        },
+        {
+          "id": 31393,
+          "name": "Wavy Pigtails Hair",
+          "colour": 3
+        },
+        {
+          "id": 31394,
+          "name": "Wavy Pigtails Hair",
+          "colour": 4
+        },
+        {
+          "id": 31395,
+          "name": "Wavy Pigtails Hair",
+          "colour": 5
+        },
+        {
+          "id": 31396,
+          "name": "Wavy Pigtails Hair",
+          "colour": 6
+        },
+        {
+          "id": 31397,
+          "name": "Wavy Pigtails Hair",
           "colour": 7
         }
       ]
