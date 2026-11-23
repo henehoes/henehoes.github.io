@@ -1,5 +1,5 @@
 {
- "_comment": "Past crates and boxes and what each held, for the Past tab. Hand-maintained: names (matched to catalogue items by name) and the listed drop rates, as supplied by the user. `items: []` with `pending: true` means the contents have not been added yet (a placeholder, not an empty box). A hair/face entry needs `kind` and `gender`. build-catalog.mjs resolves the names into catalog.boxes and warns about any it cannot find. `pill` is the short name shown on the box's pill (omit it for an unnamed box: the pill then shows just the dates); `name` is the full name shown above the contents. Sources (saved Nexon cash shop update pages, 29/10/2026 and 04/11/2026): Founder's crate, Aurora crate and the Oct 6 Mystery Styles from the Grand Launch page; Mystery Fashion Crate (Oct 21) and Halloween crate and the Oct 28 Mystery Styles from the Oct 28 page; Mystery Fashion Crate (Nov 4) from the Nov 4 page. An `end` with no time (the Nov 4 crate: \"Wednesday, November 18 (Start of Maintenance)\") counts as a whole UTC day: on sale to the end of that day, shown as a date and days left, never an hour. Only these boxes are listed: pets, packs, megaphones, 10-day equip covers, Signature coupons and other shop items are not. Rates are known for the Halloween crate and the Nov 11 Mystery Styles (both supplied by the user, the latter pasted from the announcement: all 16.67%, six of each hair and face per gender); the pages link to the rates but do not print them. The post corrected the female Oct 28 hair list: Cecelia Twist, not Rockstar Hair. `match` on an item is the catalogue name to look for when the box's name differs (the game's hair names carry a colour prefix: Black Wild Tangles Hair, Black Romantic Braid Hair). `latest: true` marks the newest box, which the Released tab always opens on. A group's `tab` is the short label on its tab (the Released tab shows tabs, not the long `title`). `start` and `end` (UTC, ISO) are the times the Nexon update pages print for each box: the pages print the last minute (7:59 AM), so the box is on rotation up to and including that minute. A start with no time (2026-10-06, 2026-10-21) is a date only: the pages say \"End of Maintenance\" and \"Start of Grand Launch\" without a time. The page uses them for the On rotation / Out of rotation labels. The Nov 11 Mystery Styles runs UTC Wednesday, November 11 8:00 AM to Wednesday, November 25 7:59 AM (as supplied by the user). The Nov 18 Mystery Fashion Crate (UTC Wednesday, November 18 End of Maintenance to Wednesday, December 2 7:59 AM; start is a date only, as for Oct 21; 49 of its 50 pieces are in the game files, Moon and Sun Cape is not yet) comes from the Nov 18 Cash Shop Update page. Its rates (50 items, summing to 100%) were supplied by the user, as the page only links to them; its items were moved out of the datamine list through data/released-datamine.json. It is now the `latest` box (the Released tab opens on it).",
+ "_comment": "Past crates and boxes and what each held, for the Past tab. Hand-maintained: names (matched to catalogue items by name) and the listed drop rates, as supplied by the user. `items: []` with `pending: true` means the contents have not been added yet (a placeholder, not an empty box). A hair/face entry needs `kind` and `gender`. build-catalog.mjs resolves the names into catalog.boxes and warns about any it cannot find. `pill` is the short name shown on the box's pill (omit it for an unnamed box: the pill then shows just the dates); `name` is the full name shown above the contents. Sources (saved Nexon cash shop update pages, 29/10/2026 and 04/11/2026): Founder's crate, Aurora crate and the Oct 6 Mystery Styles from the Grand Launch page; Mystery Fashion Crate (Oct 21) and Halloween crate and the Oct 28 Mystery Styles from the Oct 28 page; Mystery Fashion Crate (Nov 4) from the Nov 4 page. An `end` with no time (the Nov 4 crate: \"Wednesday, November 18 (Start of Maintenance)\") counts as a whole UTC day: on sale to the end of that day, shown as a date and days left, never an hour. Only these boxes are listed: pets, packs, megaphones, 10-day equip covers, Signature coupons and other shop items are not. Rates are known for the Halloween crate and the Nov 11 Mystery Styles (both supplied by the user, the latter pasted from the announcement: all 16.67%, six of each hair and face per gender); the pages link to the rates but do not print them. The post corrected the female Oct 28 hair list: Cecelia Twist, not Rockstar Hair. `match` on an item is the catalogue name to look for when the box's name differs (the game's hair names carry a colour prefix: Black Wild Tangles Hair, Black Romantic Braid Hair). `latest: true` marks the newest box, which the Released tab always opens on. A group's `tab` is the short label on its tab (the Released tab shows tabs, not the long `title`). `start` and `end` (UTC, ISO) are the times the Nexon update pages print for each box: the pages print the last minute (7:59 AM), so the box is on rotation up to and including that minute. A start with no time (2026-10-06, 2026-10-21) is a date only: the pages say \"End of Maintenance\" and \"Start of Grand Launch\" without a time. The page uses them for the On rotation / Out of rotation labels. The Nov 11 Mystery Styles runs UTC Wednesday, November 11 8:00 AM to Wednesday, November 25 7:59 AM (as supplied by the user). The Nov 18 Mystery Fashion Crate (UTC Wednesday, November 18 End of Maintenance to Wednesday, December 2 7:59 AM; start is a date only, as for Oct 21; 49 of its 50 pieces are in the game files, Moon and Sun Cape is not yet) comes from the Nov 18 Cash Shop Update page. Its rates (50 items, summing to 100%) were supplied by the user, as the page only links to them; its items were moved out of the datamine list through data/released-datamine.json. It is now the `latest` box (the Released tab opens on it). The Black Friday Mystery Fashion Crate (UTC Wednesday, November 25 8:00 AM to Wednesday, December 2 7:59 AM) and the Nov 25 Mystery Styles (UTC November 25 8:00 AM to December 9, Start of Maintenance, so a whole-day end) are from the saved Nov 25 Cash Shop Update page (notes in reference/cash-shop/update-nov-25.md); the crate's rates were pasted by the user (50 items summing to 100%); the styles' rates are not printed on the page, so none are stored. The Black Friday crate is on sale alongside the Nov 18 crate until Dec 2 7:59 AM, as the page lists both.",
  "groups": [
   {
    "id": "mystery-crates",
@@ -700,7 +700,6 @@
      "dates": "Nov 18 – Dec 2",
      "start": "2026-11-18T18:00Z",
      "end": "2026-12-02T07:59Z",
-     "latest": true,
      "items": [
       {
        "name": "Tania Tailored Jacket",
@@ -901,6 +900,217 @@
       {
        "name": "Muscle Man T",
        "rate": 2.0
+      }
+     ]
+    },
+    {
+     "id": "mystery-crate-nov25",
+     "name": "Black Friday Mystery Fashion Crate",
+     "pill": "Black Friday",
+     "dates": "Nov 25 – Dec 2",
+     "start": "2026-11-25T08:00Z",
+     "end": "2026-12-02T07:59Z",
+     "latest": true,
+     "items": [
+      {
+       "name": "Dark Musician Headphones",
+       "rate": 2.0
+      },
+      {
+       "name": "Dark Musician Coat",
+       "rate": 2.0
+      },
+      {
+       "name": "Dark Musician Scarf",
+       "rate": 1.0
+      },
+      {
+       "name": "Dark Musician Shoes",
+       "rate": 2.0
+      },
+      {
+       "name": "Chained Princess Ribbon",
+       "rate": 2.0
+      },
+      {
+       "name": "Chained Princess Coat",
+       "rate": 1.0
+      },
+      {
+       "name": "Chained Princess Chain",
+       "rate": 1.0
+      },
+      {
+       "name": "Chained Princess Shoes",
+       "rate": 2.0
+      },
+      {
+       "name": "Chained Princess Face Accessory",
+       "rate": 2.0
+      },
+      {
+       "name": "Fluffy Cat Hood",
+       "rate": 2.5
+      },
+      {
+       "name": "Fluffy Cat Outfit",
+       "rate": 2.5
+      },
+      {
+       "name": "Cat Lolita Gloves",
+       "rate": 2.5
+      },
+      {
+       "name": "Cat Lolita Cape",
+       "rate": 2.0
+      },
+      {
+       "name": "Cat Lolita Shoes",
+       "rate": 2.5
+      },
+      {
+       "name": "Lucia Hat",
+       "rate": 2.5
+      },
+      {
+       "name": "Lucia Outfit",
+       "rate": 2.5
+      },
+      {
+       "name": "Lucia Cape",
+       "rate": 2.5
+      },
+      {
+       "name": "Lucia Shoes",
+       "rate": 3.0
+      },
+      {
+       "name": "Maid Headband",
+       "rate": 1.5
+      },
+      {
+       "name": "Maid Dress",
+       "rate": 2.0
+      },
+      {
+       "name": "Maid Shoes",
+       "rate": 2.5
+      },
+      {
+       "name": "Elizabeth Hat",
+       "rate": 2.0
+      },
+      {
+       "name": "Elizabeth Dress",
+       "rate": 2.0
+      },
+      {
+       "name": "Elizabeth Gloves",
+       "rate": 2.0
+      },
+      {
+       "name": "Elizabeth Fan",
+       "rate": 1.5
+      },
+      {
+       "name": "Butterfly Ball Mask",
+       "rate": 1.5
+      },
+      {
+       "name": "Rabbit Top",
+       "rate": 3.0
+      },
+      {
+       "name": "Rabbit Bottom",
+       "rate": 3.0
+      },
+      {
+       "name": "80's Knit Pullover",
+       "rate": 2.0
+      },
+      {
+       "name": "Funky Xylophone Leggings",
+       "rate": 3.0
+      },
+      {
+       "name": "Black Skull Hooded Vest",
+       "rate": 3.0
+      },
+      {
+       "name": "Low-Rise Ripped Jeans",
+       "rate": 3.0
+      },
+      {
+       "name": "Aviator Shades",
+       "rate": 1.5
+      },
+      {
+       "name": "Alien Mug",
+       "rate": 1.0
+      },
+      {
+       "name": "Blush",
+       "rate": 1.5
+      },
+      {
+       "name": "Pierced Apple",
+       "rate": 2.0
+      },
+      {
+       "name": "Slime Hair Pin",
+       "rate": 2.0
+      },
+      {
+       "name": "Mushroom Hair Pin",
+       "rate": 2.0
+      },
+      {
+       "name": "Red Hood Bandana",
+       "rate": 2.0
+      },
+      {
+       "name": "Little Red Riding Dress",
+       "rate": 2.0
+      },
+      {
+       "name": "Red Ribbon Shoes",
+       "rate": 3.0
+      },
+      {
+       "name": "Strawberry Basket",
+       "rate": 1.0
+      },
+      {
+       "name": "Hip Hop Sweats",
+       "rate": 2.0
+      },
+      {
+       "name": "Pink Pop Suit",
+       "rate": 2.0
+      },
+      {
+       "name": "Blazing Sword",
+       "rate": 1.0
+      },
+      {
+       "name": "Slime Stick",
+       "rate": 1.0
+      },
+      {
+       "name": "Love Gloves",
+       "rate": 2.0
+      },
+      {
+       "name": "Yellow Shades",
+       "rate": 2.0
+      },
+      {
+       "name": "Frog Label Ring",
+       "rate": 1.0
+      },
+      {
+       "name": "Frog Word Bubble Ring",
+       "rate": 1.5
       }
      ]
     }
@@ -1325,6 +1535,135 @@
       }
      ],
      "end": "2026-11-25T07:59Z"
+    },
+    {
+     "id": "mystery-styles-nov25",
+     "name": "Mystery Styles",
+     "dates": "Nov 25 – Dec 9",
+     "start": "2026-11-25T08:00Z",
+     "end": "2026-12-09",
+     "items": [
+      {
+       "kind": "hair",
+       "gender": "male",
+       "name": "Sweet Flip Hair"
+      },
+      {
+       "kind": "hair",
+       "gender": "male",
+       "name": "Cute Boy Hair"
+      },
+      {
+       "kind": "hair",
+       "gender": "male",
+       "name": "Tornade Hair"
+      },
+      {
+       "kind": "hair",
+       "gender": "male",
+       "name": "Messy Spikes"
+      },
+      {
+       "kind": "hair",
+       "gender": "male",
+       "name": "Metro"
+      },
+      {
+       "kind": "hair",
+       "gender": "male",
+       "name": "Fury"
+      },
+      {
+       "kind": "hair",
+       "gender": "female",
+       "name": "Wavy Pigtails Hair"
+      },
+      {
+       "kind": "hair",
+       "gender": "female",
+       "name": "Aria Hair"
+      },
+      {
+       "kind": "hair",
+       "gender": "female",
+       "name": "Darling Diva"
+      },
+      {
+       "kind": "hair",
+       "gender": "female",
+       "name": "Swooshy Ponytail Hair"
+      },
+      {
+       "kind": "hair",
+       "gender": "female",
+       "name": "Monica Hair"
+      },
+      {
+       "kind": "hair",
+       "gender": "female",
+       "name": "Fluffy Dolly Hair"
+      },
+      {
+       "kind": "face",
+       "gender": "male",
+       "name": "Noblesse Face"
+      },
+      {
+       "kind": "face",
+       "gender": "male",
+       "name": "Sulky Look"
+      },
+      {
+       "kind": "face",
+       "gender": "male",
+       "name": "Piercing Gaze"
+      },
+      {
+       "kind": "face",
+       "gender": "male",
+       "name": "Glamor Look"
+      },
+      {
+       "kind": "face",
+       "gender": "male",
+       "name": "Intelligent Eyes"
+      },
+      {
+       "kind": "face",
+       "gender": "male",
+       "name": "Edge of Emotion"
+      },
+      {
+       "kind": "face",
+       "gender": "female",
+       "name": "Noblesse Face"
+      },
+      {
+       "kind": "face",
+       "gender": "female",
+       "name": "Timid Face"
+      },
+      {
+       "kind": "face",
+       "gender": "female",
+       "name": "Pucker Up Face"
+      },
+      {
+       "kind": "face",
+       "gender": "female",
+       "name": "Arrogant Face"
+      },
+      {
+       "kind": "face",
+       "gender": "female",
+       "name": "Wisdom Glance"
+      },
+      {
+       "kind": "face",
+       "gender": "female",
+       "name": "Hypnotized Look"
+      }
+     ]
     }
    ]
   },
