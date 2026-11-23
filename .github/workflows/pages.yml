@@ -29,6 +29,7 @@ jobs:
       - run: npm run build
         env:
           VITE_DATAMINE: '1' # the test site lists every datamined item (the Vercel site does not)
+          VITE_GATE_URL: ${{ vars.GATE_URL }} # pass-code checker address (repository variable); empty means no pass-code screen
           VITE_GOATCOUNTER: ${{ vars.GOATCOUNTER_CODE }} # GoatCounter site code (repository variable); empty means no analytics
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3

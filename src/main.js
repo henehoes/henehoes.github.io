@@ -1,4 +1,5 @@
 import { assetUrl, loadCors } from './assets.js';
+import { passGate } from './gate.js';
 import '@fontsource/noto-sans-kr/latin-500.css'; // the game's own text font (its client embeds Noto Sans KR Medium), for the text drawn on the Ink-and-Wash rings
 import '@fontsource/pixelify-sans/400.css';
 import '@fontsource/pixelify-sans/600.css';
@@ -1763,4 +1764,4 @@ async function init() {
   let seenRatio = dpr();
   setInterval(() => { if (dpr() !== seenRatio) { seenRatio = dpr(); redraw(); } }, 500);
 }
-init().catch(err => { $('content').textContent = `Could not load the catalogue: ${err.message}`; });
+passGate().then(init).catch(err => { $('content').textContent = `Could not load the catalogue: ${err.message}`; }); // the pro site's pass-code screen first (a no-op unless VITE_GATE_URL is set)
