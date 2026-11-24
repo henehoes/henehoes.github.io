@@ -13,8 +13,8 @@ import { DATA, openWz, image, png, originOf, str } from './lib-wz.mjs';
 // Oct 28 and Nov 4 updates list the same): Brown Kitty, Brown Puppy, Pink Bunny, Black Kitty, White Bunny and Black Pig (3,500 NX, 30 days),
 // and Red Ribbon, Yellow Hat, Red Hat, Black Hat, Pink Laced Cap, Sky Blue Laced Cap, Blue Top Hat and Red Top Hat (3,200 NX, permanent).
 // Everything else (the other 29 pets, Rudolph's Hat and Tree Hat) is datamine.
-const RELEASED_PETS = new Set([5000000, 5000001, 5000002, 5000004, 5000005, 5000007]);
-const RELEASED_EQUIP = new Set([1802000, 1802001, 1802002, 1802003, 1802004, 1802005, 1802006, 1802007]);
+const RELEASED_PETS = new Set([5000000, 5000001, 5000002, 5000004, 5000005, 5000007, 5000018]); // 5000018 Turkey: released with the Nov 25 Aurora Stamp Deals
+const RELEASED_EQUIP = new Set([1802000, 1802001, 1802002, 1802003, 1802004, 1802005, 1802006, 1802007, 1802010]); // 1802010 Baby Turkey Carriage: same
 
 const list = folder => readdirSync(`${DATA}/${folder}`).filter(n => /_\d{3}\.wz$/.test(n)).flatMap(f => [...openWz(`${folder}/${f}`).getWzDirectory().wzImages()]);
 const petNames = image('String', 'Pet.img'), eqpNames = image('String', 'Eqp.img');
