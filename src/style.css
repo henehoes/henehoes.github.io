@@ -363,6 +363,8 @@ input { font: inherit; border-radius: 0; }
 .item-btn { position: absolute; z-index: 3; width: 22px; height: 22px; padding: 0; border: 0; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 0 0 2px var(--bench-line); }
 .item-btn[hidden] { display: none; }
 .item-flip { color: var(--ink); background: linear-gradient(to bottom, var(--brass-light), var(--brass)); }
+.item-state { color: var(--ink); background: linear-gradient(to bottom, var(--brass-light), var(--brass)); }
+.item-state[aria-pressed="true"] { background: linear-gradient(to bottom, oklch(92% .15 95), oklch(82% .16 90)); }
 .item-del { color: #fff; background: var(--danger); }
 .item-btn:hover { filter: brightness(1.12); }
 .item-btn:focus-visible { outline: 2px solid #fff; outline-offset: 1px; }

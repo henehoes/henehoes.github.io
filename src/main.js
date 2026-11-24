@@ -1355,7 +1355,7 @@ const ABOUT = [
     ['Pose buttons', ' in the preview show your character attacking or climbing.'],
     ['The copy button', ' copies your character, on a transparent background, to your clipboard.'],
     ['The save button', ' keeps your look in the Look Book so you can come back to it later.'],
-    ['Housing', ' lets you try out a home with up to 16 decor items, plus 1 chest and 1 crafting station.']] }],
+    ['Housing', ' lets you try out a home with up to 20 decor items, plus 1 chest and 1 crafting station.']] }],
   ['Questions', { qa: [
     ['Is this website monetized?', [
     "henehoes will always be ad-free. I originally made this for my friends and myself, but word of mouth took it much further than expected. Friends have suggested putting up ads to cover hosting costs, but ads are neither pretty nor enjoyable, and making this a pretty and enjoyable website is my singular goal."]],

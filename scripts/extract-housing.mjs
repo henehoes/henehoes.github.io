@@ -1,6 +1,8 @@
 // Reads the housing homes and furniture from the game's own files and writes public/housing/ (home pictures, furniture pictures
 // and catalog.json, the only file the Housing book reads). Needs the game installed: see scripts/lib-wz.mjs.
 //   WZ_DATA=".../maplestorycw/appdata/Data" node scripts/extract-housing.mjs
+//   WZ_DATA=".../maplestorycw/appdata/Data" node scripts/extract-housing.mjs --states-only   only add the pieces' other states (below) to the
+//                                                                                             existing public/housing/catalog.json; nothing else is redrawn
 //
 // Homes: the Yellow Mushroom House (map 010001008) and the Kerning City apartment (map 010003008), rebuilt from the map's own
 // backgrounds, tiles and objects (no parallax, animation or NPCs), then cropped to the house itself (the `focus` rectangle below,
@@ -8,13 +10,15 @@
 // Furniture: Item/Install 0300 (decor: has its own "placed" art), 0302 (chests) and 0303 (crafting stations), where the placed
 // art is the NPC the item puts in the home. Chairs (0301, a sit effect), the 0399 reward items and the straw dummy (0304, its
 // picture is in an encrypted pack) cannot be placed, so they are left out.
+// States: some decor has named picture sets next to the default one (image/on: the Flower Bud Ceiling Light lit up). Each one's first
+// frame is saved as <id>_<state>.png and listed in the piece's `states` (with its own size and anchor); the app switches between them.
 import { createRequire } from 'node:module';
 import { mkdirSync, writeFileSync, readFileSync, rmSync } from 'node:fs';
 import { image, png, originOf, at, num, str, openWz } from './lib-wz.mjs';
 import { PNG } from 'pngjs';
 
-const OUT = 'public/housing';
-rmSync(OUT, { recursive: true, force: true });
+const OUT = 'public/housing', STATES_ONLY = process.argv.includes('--states-only');
+if (!STATES_ONLY) rmSync(OUT, { recursive: true, force: true });
 mkdirSync(`${OUT}/homes`, { recursive: true }); mkdirSync(`${OUT}/furniture`, { recursive: true }); mkdirSync('tmp/housing', { recursive: true });
 
 // ---------- decoded sprites ----------
@@ -42,7 +46,7 @@ const HOMES = [
 ];
 const maps = openWz('Map/Map/Map0/Map0_000.wz').getWzDirectory();
 const homes = [];
-for (const h of HOMES) {
+for (const h of STATES_ONLY ? [] : HOMES) {
   const img = maps.getImageByName(`${h.mapId}.img`); img.parseImage();
   const info = img.getFromPath('info');
   const L = num(info, 'VRLeft'), T = num(info, 'VRTop'), R = num(info, 'VRRight'), B = num(info, 'VRBottom');
@@ -86,10 +90,10 @@ for (const h of HOMES) {
 // A placed item is one or more layers: image/0, image/1, ... (the Cherry Bed is a headboard and a footboard). Each layer's first
 // frame (its "0" canvas; the other numbers are animation frames) has an origin that points at one shared anchor, so the layers are
 // stacked by z and merged into one picture whose origin is that anchor. Items with only image/0 come out unchanged.
-function placedArt(it, id) {
-  const root = it.getFromPath('image'); if (!root) return null;
+function placedArt(it, id, state = '') { // state '' is the default picture set (the layers sit directly under image), otherwise image/<state>/
+  const root = state ? it.getFromPath(`image/${state}`) : it.getFromPath('image'); if (!root) return null;
   const layers = root.wzProperties().filter(l => /^\d+$/.test(l.getName())).map(l => ({ l, z: num(l, 'z', 0), i: Number(l.getName()) })).sort((a, b) => a.z - b.z || a.i - b.i);
-  const parts = layers.map(({ l, i }) => sprite(`placed:${id}:${i}`, l.getChildByName('0'))).filter(Boolean);
+  const parts = layers.map(({ l, i }) => sprite(`placed:${id}:${state}:${i}`, l.getChildByName('0'))).filter(Boolean);
   if (!parts.length) return null;
   if (parts.length === 1) return parts[0];
   const x0 = Math.min(...parts.map(s => -s.o[0])), y0 = Math.min(...parts.map(s => -s.o[1])), x1 = Math.max(...parts.map(s => s.w - s.o[0])), y1 = Math.max(...parts.map(s => s.h - s.o[1]));
@@ -102,19 +106,26 @@ const names = new Map();
 const ins = openWz('String/String_000.wz').getWzDirectory().getImageByName('Ins.img'); ins.parseImage();
 for (const p of ins.wzProperties()) names.set(p.getName(), { name: str(p, 'name'), desc: str(p, 'desc') });
 const GROUPS = [['0300', 'decor', 'Decor'], ['0302', 'chests', 'Chests'], ['0303', 'stations', 'Crafting stations']];
-const furniture = [];
+const furniture = STATES_ONLY ? JSON.parse(readFileSync(`${OUT}/catalog.json`, 'utf8')).furniture : [];
 const save = (s, file) => { writeFileSync(`${OUT}/furniture/${file}`, toPng(s.w, s.h, s.data)); return `housing/furniture/${file}`; };
+const STATE_LABELS = { on: 'On' };
+const statesOf = (it, id) => (it.getFromPath('image')?.wzProperties() ?? []).filter(l => !/^\d+$/.test(l.getName()) && l.getName() !== 'z').flatMap(l => {
+  const a = placedArt(it, id, l.getName()); if (!a) return [];
+  return [{ id: l.getName(), label: STATE_LABELS[l.getName()] ?? l.getName(), art: { file: save(a, `${id}_${l.getName()}.png`), w: a.w, h: a.h, ox: a.o[0], oy: a.o[1] } }];
+});
 for (const [f, group] of GROUPS) {
   const book = image('Item/Install', `${f}.img`);
   for (const it of book.wzProperties()) {
     const id = Number(it.getName()), nm = names.get(String(id)); if (!nm?.name) continue;
+    if (STATES_ONLY) { const piece = furniture.find(x => x.id === id); const states = piece && statesOf(it, id); if (states?.length) piece.states = states; continue; }
     const info = it.getFromPath('info'), icon = sprite(`icon:${id}`, at(it, 'info/icon'));
     let art = placedArt(it, id);
     if (!art && num(info, 'npcID')) { const npc = image('Npc', `${String(num(info, 'npcID')).padStart(7, '0')}.img`); const node = at(npc, 'stand/0') ?? at(npc, 'stand'); art = sprite(`npc:${id}`, node); } // a chest or station is shown as the NPC it adds
     if (!icon || !art) { console.log('skipped (no art)', id, nm.name); continue; }
-    furniture.push({ id, name: nm.name, desc: nm.desc, group, icon: save(icon, `${id}_icon.png`), art: { file: save(art, `${id}.png`), w: art.w, h: art.h, ox: art.o[0], oy: art.o[1] } });
+    furniture.push({ id, name: nm.name, desc: nm.desc, group, icon: save(icon, `${id}_icon.png`), art: { file: save(art, `${id}.png`), w: art.w, h: art.h, ox: art.o[0], oy: art.o[1] }, ...(statesOf(it, id).length && { states: statesOf(it, id) }) });
   }
 }
-console.log('furniture', furniture.length, GROUPS.map(([, g]) => `${g}:${furniture.filter(x => x.group === g).length}`).join(' '));
-writeFileSync(`${OUT}/catalog.json`, JSON.stringify({ homes, groups: GROUPS.map(([, id, label]) => ({ id, label })), furniture }));
+console.log('furniture', furniture.length, `(${furniture.filter(x => x.states).length} with states)`, GROUPS.map(([, g]) => `${g}:${furniture.filter(x => x.group === g).length}`).join(' '));
+if (STATES_ONLY) { const c = JSON.parse(readFileSync(`${OUT}/catalog.json`, 'utf8')); c.furniture = furniture; writeFileSync(`${OUT}/catalog.json`, JSON.stringify(c)); }
+else writeFileSync(`${OUT}/catalog.json`, JSON.stringify({ homes, groups: GROUPS.map(([, id, label]) => ({ id, label })), furniture }));
 rmSync('tmp/housing', { recursive: true, force: true });
