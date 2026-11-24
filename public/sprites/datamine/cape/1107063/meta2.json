@@ -17,6 +17,26 @@
     }
    },
    "position": "backWing"
+  },
+  {
+   "key": "effect",
+   "w": 147,
+   "h": 131,
+   "origin": {
+    "x": 68,
+    "y": 104,
+    "isEmpty": false
+   },
+   "maps": {
+    "navel": {
+     "x": -8,
+     "y": -21,
+     "isEmpty": false
+    }
+   },
+   "position": "backTamingMobMid",
+   "fx": true,
+   "shared": true
   }
  ]
 }

@@ -44,6 +44,7 @@ function partsOf(meta, dir, priority = ANCHOR_PRIORITY, pose2 = false) {
       x: anchors[map][0] - p.origin.x - v.x, y: anchors[map][1] - p.origin.y - v.y,
       z: zOf(p.position), ...(rules.partHiddenBy[p.position] && { hiddenBy: rules.partHiddenBy[p.position] }),
       ...(p.tones && { tones: p.tones }), // the hair shade: only drawn on these skin tones
+      ...(p.fx && { fx: true }), // an item effect (Tania Cloak's wings): marks it for the checks; it is dyed with the item
     });
   }
   return out;

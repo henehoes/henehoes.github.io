@@ -62,7 +62,23 @@ export function drawItem(it, dir) {
     if (q) {
       for (const part of parts) for (const suffix of ['', '.2']) rmSync(`${dir}/${part.key}${suffix}.png`, { force: true });
       q.saveToFile(`${dir}/effect.png`); const [ox, oy] = originOf(fx);
-      parts = [{ key: 'effect', w: q.getWidth(), h: q.getHeight(), origin: { x: ox, y: oy, isEmpty: false }, maps: { navel: { x: 0, y: 0, isEmpty: false } }, position: 'backTamingMobMid' }];
+      parts = [{ key: 'effect', w: q.getWidth(), h: q.getHeight(), origin: { x: ox, y: oy, isEmpty: false }, maps: { navel: { x: 0, y: 0, isEmpty: false } }, position: 'backTamingMobMid', fx: true }];
+    }
+  }
+  // A cape that keeps its own pictures but ALSO has an item effect (Tania Cloak: 18 frames of fiery wings, 147x131, z -2 = behind the character)
+  // gets the effect's first frame as one extra part behind the body, placed like the cloud above (origin on the navel: a guess at the game's
+  // placement). `fx` marks it as an effect (the wings ARE dyed with the cape, as in the game: the owner confirmed from in-game screenshots) and the pose files (extract-poses.mjs) add it to every pose. The animation is not played.
+  // CHECK Effect/ItemEff.img AT EVERY DATAMINE: see AGENTS.md "Item effects".
+  if (it.folder === 'Cape' && !parts.some(p => p.key === 'effect') && !image('Effect', 'ItemEff.img')?.getFromPath(`${it.id}/effect/default/pos`)) {
+    const fx = image('Effect', 'ItemEff.img')?.getFromPath(`${it.id}/effect/default/0`), q = fx && png(fx);
+    if (q) {
+      q.saveToFile(`${dir}/effect.png`); const [ox, oy] = originOf(fx);
+      // Placement: an effect with no `pos` (Tania Cloak's) hangs from the character's origin, the body picture's origin (bottom of the body = the
+      // feet line, the game's x/y of the character), by its own frame origin. The body's navel is 8 left and 21 up from that origin
+      // (Character/00002000.img stand1/0/body: origin 16,31, map/navel -8,-21), so the feet are expressed here as an offset from the navel anchor.
+      // (An effect with pos=1, e.g. Firefly Earrings, Silent Sea of Clouds, hangs from the top of the head instead: not done here.)
+      const part = { key: 'effect', w: q.getWidth(), h: q.getHeight(), origin: { x: ox, y: oy, isEmpty: false }, maps: { navel: { x: -8, y: -21, isEmpty: false } }, position: 'backTamingMobMid', fx: true };
+      parts.push(part); if (parts2.length) parts2.push({ ...part, shared: true }); // shared: the same picture in the two-handed stance (no effect.2.png)
     }
   }
   // a few items (Glowing Pumpkin Basket, Evil Skull, Cat Soul) have only iconRaw, no icon

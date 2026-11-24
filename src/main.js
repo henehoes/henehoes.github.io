@@ -277,7 +277,7 @@ async function buildLayers(sel, view = null) {
     ...base.map((it, n) => ({ owner: `base${n}`, codes: it.vslots ?? [] }))];
   const add = (parts, h = 0, c = 0, b = 0, owner = 'body') => {
     const covered = new Set(covering.filter(e => e.owner !== owner).flatMap(e => e.codes));
-    for (const p of parts.filter(p => !covered.has(p.hiddenBy) && (!p.tones || (!sel.noShade && p.tones.includes(sel.skin))))) jobs.push(tinted(p.file, h, c, b).then(img => ({ img, x: OX + p.x, y: OY + p.y, z: p.z })));
+    for (const p of parts.filter(p => !covered.has(p.hiddenBy) && (!p.tones || (!sel.noShade && p.tones.includes(sel.skin))))) jobs.push(tinted(p.file, h, c, b).then(img => ({ img, x: OX + p.x, y: OY + p.y, z: p.z }))); // an item effect part (fx: Tania Cloak's wings) is dyed with the item, as in the game
   };
   // A weapon with no standing pose (Orange Toy Hammer) puts the whole body in the two-handed pose.
   const twoHanded = isTwoHanded(sel);

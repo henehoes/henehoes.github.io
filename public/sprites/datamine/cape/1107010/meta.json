@@ -26,7 +26,8 @@
      "isEmpty": false
     }
    },
-   "position": "backTamingMobMid"
+   "position": "backTamingMobMid",
+   "fx": true
   }
  ]
 }

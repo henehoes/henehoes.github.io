@@ -5,7 +5,7 @@
 //   WZ_DATA=".../maplestorycw/appdata/Data" node scripts/save-baseline.mjs --diff   print what the game files hold that the saved lists do not
 // Needs the game files: see scripts/lib-wz.mjs. Run extract-datamine.mjs and build-catalog.mjs first so the clothing lists are current.
 import { readFileSync, writeFileSync, readdirSync, existsSync } from 'node:fs';
-import { openWz, DATA } from './lib-wz.mjs';
+import { openWz, image, DATA } from './lib-wz.mjs';
 import { readCatalog } from './lib-catalog.mjs';
 
 const FILE = 'data/scrape-baseline.json';
@@ -16,12 +16,16 @@ const now = {
   hair: ids('Hair'), face: ids('Face'),
   wearables: Object.fromEntries(Object.entries(catalogue.wearables).map(([slot, g]) => [slot, g.items.map(i => i.classicId ?? i.id).sort((a, b) => a - b)])),
   pets: pets.pets.map(p => p.id).sort((a, b) => a - b), petEquips: pets.equips.map(e => e.id).sort((a, b) => a - b),
+  // Item effects: an item can have art that is NOT in its Character/ file but in Effect/ItemEff.img/<id>/effect (Tania Cloak's fiery wings,
+  // Silent Sea of Clouds' cloud). They are easy to miss: the item looks complete without them. Every id listed here must be checked by hand.
+  itemEffects: image('Effect', 'ItemEff.img').wzProperties().map(p => Number(p.getName())).sort((a, b) => a - b),
 };
 if (process.argv.includes('--diff')) {
   if (!existsSync(FILE)) throw new Error(`No ${FILE} yet: run without --diff first.`);
   const old = JSON.parse(readFileSync(FILE, 'utf8')), fresh = (a, b) => (a ?? []).filter(x => !(b ?? []).includes(x));
   console.log(`Compared with the lists saved on ${old.saved}:`);
-  for (const k of ['hair', 'face', 'pets', 'petEquips']) console.log(`  ${k}: ${JSON.stringify(fresh(now[k], old[k]))}`);
+  for (const k of ['hair', 'face', 'pets', 'petEquips', 'itemEffects']) console.log(`  ${k}: ${JSON.stringify(fresh(now[k], old[k]))}`);
+  console.log(`  (itemEffects in the files now: ${JSON.stringify(now.itemEffects)}: check each one is drawn, see AGENTS.md "Item effects")`);
   for (const slot of Object.keys(now.wearables)) { const f = fresh(now.wearables[slot], old.wearables[slot]); if (f.length) console.log(`  ${slot}: ${JSON.stringify(f)}`); }
 } else {
   writeFileSync(FILE, JSON.stringify({ _comment: 'Everything the game files held at the last scrape, for telling what is new at the next one: node scripts/save-baseline.mjs --diff. hair/face: every id in Character/Hair and Character/Face; wearables: the ids of every item the catalogue holds per slot (released and datamined); pets/petEquips: ids from data/game-pets.json. Written by scripts/save-baseline.mjs.', saved: new Date().toLocaleDateString('en-CA'), client: 'Nov 18 2026 update (v.2.0.0)', ...now }));

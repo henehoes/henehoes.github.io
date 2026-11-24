@@ -136,7 +136,9 @@ body.motions = MOTIONS;
 writeFileSync('public/poses/body.json', JSON.stringify(body));
 
 // ---- an item: its parts per action and frame, placed on the body's points ----
-function itemPoses(img, actions, base = '') {
+// `extra`: an item effect piece (a cape's Effect/ItemEff.img art, e.g. Tania Cloak's fiery wings) added behind the body to every frame but the
+// ladder ones (the effect's own ladder variant is not read). Frame 0 of the effect only, anchored on the navel like the standing picture.
+function itemPoses(img, actions, base = '', extra = null) {
   const out = {};
   for (const act of actions) {
     const n = framePoints[act].length, frames = [];
@@ -145,7 +147,7 @@ function itemPoses(img, actions, base = '') {
       if (!f && !base && !img.getFromPath('stand1') && img.getFromPath('default')) f = frameOf(img, act === 'ladder' ? 'backDefault' : 'default') ?? frameOf(img, 'default'); // accessories: one picture
       if (!f) { frames.push(null); continue; }
       const pts = JSON.parse(JSON.stringify(framePoints[act][i]));
-      frames.push(place(pieces(f, img), pts).filter(({ pc }) => Object.keys(pc.maps).length).map(({ pc, x, y }) => ({ f: save(pc.p), x: x + DX, y: y + DY, z: zOf(pc.layer), layer: pc.layer, ...(hiddenByOf(pc.layer) && { hiddenBy: hiddenByOf(pc.layer) }), ...(pc.tones && { tones: pc.tones }) })));
+      frames.push(place([...pieces(f, img), ...(extra && act !== 'ladder' ? [extra] : [])], pts).filter(({ pc }) => Object.keys(pc.maps).length).map(({ pc, x, y }) => ({ f: save(pc.p), x: x + DX, y: y + DY, z: zOf(pc.layer), layer: pc.layer, ...(hiddenByOf(pc.layer) && { hiddenBy: hiddenByOf(pc.layer) }), ...(pc.tones && { tones: pc.tones }), ...(pc.fx && { fx: true }) })));
     }
     if (frames.some(Boolean)) out[act] = frames.map(f => f ?? []);
   }
@@ -164,7 +166,11 @@ for (const it of wearables) {
     const classes = [...img.wzProperties()].map(c => c.getName()).filter(n => /^\d+$/.test(n));
     const cls = String(it.weaponClass ?? (classes.includes('30') ? 30 : classes[0]));
     out = { actions: itemPoses(img, ACTIONS, `${cls}/`) }; // only the actions its file has
-  } else out = { actions: itemPoses(img, ACTIONS) };
+  } else {
+    // only an effect with no `pos` (hangs from the feet line, Tania Cloak); a pos=1 effect (Silent Sea of Clouds) is not placed this way
+    const itemEff = image('Effect', 'ItemEff.img'), fx = folder === 'Cape' && !at(itemEff, `${cid}/effect/default/pos`) ? at(itemEff, `${cid}/effect/default/0`) : null, fxPng = fx && png(fx);
+    out = { actions: itemPoses(img, ACTIONS, '', fxPng ? { name: 'effect', p: fxPng, origin: originOf(fx), maps: { navel: [-8, -21] }, layer: 'backTamingMobMid', fx: true } : null) };
+  }
   writeFileSync(`public/poses/w/${it.id}.json`, JSON.stringify(out)); written++;
 }
 let hairs = 0;

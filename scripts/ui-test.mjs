@@ -19,9 +19,20 @@ const CAT = (DM ? readCatalog() : JSON.parse(readFileSync('public/catalog.json',
 const released = slot => CAT[slot].items.filter(i => !i.upcoming && i.released !== false), upcoming = slot => CAT[slot].items.filter(i => i.upcoming);
 const fitOf = i => i.fit ?? (i.vslots?.includes('H2') || ['H3', 'H4', 'H6', 'Hf'].every(v => i.vslots?.includes(v)) ? 'helmet' : i.vslots?.includes('H1') ? 'cap' : 'topper');
 const HATS = released('cap'), FIT = f => HATS.filter(i => fitOf(i) === f).length;
+// Item effects (Effect/ItemEff.img): Tania Cloak's fiery wings are a second part behind the body, marked fx (dyed with the cape), in the standing pose and in the attack poses
+const taniaFx = await page.evaluate(async () => {
+  const cat = await (await fetch('/catalog.json')).json(), it = cat.wearables.cape.items.find(i => i.id === 1107063);
+  const poses = await (await fetch('/poses/w/1107063.json')).json(), swing = poses.actions.swingO1?.[0] ?? [], ladder = poses.actions.ladder?.[0] ?? [];
+  const img = await new Promise(r => { const i = new Image(); i.onload = () => r([i.naturalWidth, i.naturalHeight]); i.onerror = () => r(null); i.src = '/' + it.parts.find(p => p.fx)?.file; });
+  return { parts: it.parts.map(p => p.layer + (p.fx ? ':fx' : '')), parts2: it.parts2.map(p => p.layer + (p.fx ? ':fx' : '')), swing: swing.map(p => p.layer + (p.fx ? ':fx' : '')), ladderFx: ladder.some(p => p.fx), img };
+});
 const UPCOMING_TOTAL = Object.keys(CAT).reduce((n, k) => n + upcoming(k).length, 0);
 const results = [];
 const check = (name, ok, detail = '') => results.push(`${ok ? 'PASS' : 'FAIL'} ${name} ${detail}`);
+check('Tania Cloak: the fiery wings (item effect) are a second part behind the body (fx; dyed with the cape), in the standing, two-handed and swing poses, and the picture loads', taniaFx.parts.join() === 'backWing,backTamingMobMid:fx' && taniaFx.parts2.join() === 'backWing,backTamingMobMid:fx' && taniaFx.swing.includes('backTamingMobMid:fx') && !taniaFx.ladderFx && taniaFx.img?.[0] > 100, JSON.stringify(taniaFx));
+// Layers follow the game's current files (scripts/check-layers.mjs): Stocking Shorts sit below all shoes, so they no longer cover the Elephant Slippers; the Tania wings hang from the feet line (x -43, y -38)
+const layerFacts = await page.evaluate(async () => { const cat = await (await fetch('/catalog.json')).json(), sh = cat.wearables.pants.items.find(i => i.name === 'Stocking Shorts'), fx = cat.wearables.cape.items.find(i => i.id === 1107063).parts.find(p => p.fx); return { shorts: sh.parts.concat(sh.parts2).map(p => p.layer).join(), z: sh.parts[0].z, fx: [fx.x, fx.y].join() }; });
+check('Stocking Shorts are on pantsBelowShoes (below every shoe layer) in both stances, and the Tania wings sit at -43,-38', layerFacts.shorts === 'pantsBelowShoes,pantsBelowShoes' && layerFacts.z === 77 && layerFacts.fx === '-43,-38', JSON.stringify(layerFacts));
 const clickTab = label => page.evaluate(l => [...document.querySelectorAll('.tab')].find(t => t.title.startsWith(l)).click(), label);
 const pixels = () => page.evaluate(() => { const c = document.getElementById('preview'); const d = c.getContext('2d').getImageData(0, 0, c.width, c.height).data; let h = 0, n = 0; for (let i = 0; i < d.length; i += 4) if (d[i + 3]) { n++; h = (h * 31 + d[i] + d[i + 1] * 3 + d[i + 2] * 7) >>> 0; } return { n, h }; });
 const settle = () => new Promise(r => setTimeout(r, 700));
