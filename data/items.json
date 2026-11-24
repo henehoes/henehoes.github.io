@@ -2977,7 +2977,7 @@
       "version": "1",
       "key": 20025,
       "classicId": 20025,
-      "released": false,
+      "released": true,
       "colours": [
         {
           "id": 20025,
@@ -3615,7 +3615,7 @@
       "version": "1",
       "key": 20036,
       "classicId": 20036,
-      "released": false,
+      "released": true,
       "colours": [
         {
           "id": 20036,
@@ -3673,7 +3673,7 @@
       "version": "1",
       "key": 20037,
       "classicId": 20037,
-      "released": false,
+      "released": true,
       "colours": [
         {
           "id": 20037,
@@ -3731,7 +3731,7 @@
       "version": "1",
       "key": 20038,
       "classicId": 20038,
-      "released": false,
+      "released": true,
       "colours": [
         {
           "id": 20038,
@@ -3789,7 +3789,7 @@
       "version": "1",
       "key": 20039,
       "classicId": 20039,
-      "released": false,
+      "released": true,
       "colours": [
         {
           "id": 20039,
@@ -3847,7 +3847,7 @@
       "version": "1",
       "key": 20040,
       "classicId": 20040,
-      "released": false,
+      "released": true,
       "colours": [
         {
           "id": 20040,
@@ -4253,7 +4253,7 @@
       "version": "1",
       "key": 21006,
       "classicId": 21006,
-      "released": false,
+      "released": true,
       "colours": [
         {
           "id": 21006,
@@ -4485,7 +4485,7 @@
       "version": "1",
       "key": 21010,
       "classicId": 21010,
-      "released": false,
+      "released": true,
       "colours": [
         {
           "id": 21010,
@@ -4543,7 +4543,7 @@
       "version": "1",
       "key": 21011,
       "classicId": 21011,
-      "released": false,
+      "released": true,
       "colours": [
         {
           "id": 21011,
@@ -6109,7 +6109,7 @@
       "version": "1",
       "key": 21038,
       "classicId": 21038,
-      "released": false,
+      "released": true,
       "colours": [
         {
           "id": 21038,
@@ -6167,7 +6167,7 @@
       "version": "1",
       "key": 21039,
       "classicId": 21039,
-      "released": false,
+      "released": true,
       "colours": [
         {
           "id": 21039,
@@ -6225,7 +6225,7 @@
       "version": "1",
       "key": 21040,
       "classicId": 21040,
-      "released": false,
+      "released": true,
       "colours": [
         {
           "id": 21040,
@@ -7020,7 +7020,7 @@
       "version": "1",
       "key": 3005,
       "classicId": 30050,
-      "released": false,
+      "released": true,
       "colours": [
         {
           "id": 30050,
@@ -8822,7 +8822,7 @@
       "version": "1",
       "key": 3039,
       "classicId": 30390,
-      "released": false,
+      "released": true,
       "colours": [
         {
           "id": 30390,
@@ -9087,7 +9087,7 @@
       "version": "1",
       "key": 3044,
       "classicId": 30440,
-      "released": false,
+      "released": true,
       "colours": [
         {
           "id": 30440,
@@ -9193,7 +9193,7 @@
       "version": "1",
       "key": 3046,
       "classicId": 30460,
-      "released": false,
+      "released": true,
       "colours": [
         {
           "id": 30460,
@@ -9352,7 +9352,7 @@
       "version": "1",
       "key": 3049,
       "classicId": 30490,
-      "released": false,
+      "released": true,
       "colours": [
         {
           "id": 30490,
@@ -9405,7 +9405,7 @@
       "version": "1",
       "key": 3050,
       "classicId": 30500,
-      "released": false,
+      "released": true,
       "colours": [
         {
           "id": 30500,
@@ -12161,7 +12161,7 @@
       "version": "1",
       "key": 3111,
       "classicId": 31110,
-      "released": false,
+      "released": true,
       "colours": [
         {
           "id": 31110,
@@ -13486,7 +13486,7 @@
       "version": "1",
       "key": 3136,
       "classicId": 31360,
-      "released": false,
+      "released": true,
       "colours": [
         {
           "id": 31360,
@@ -13539,7 +13539,7 @@
       "version": "1",
       "key": 3137,
       "classicId": 31370,
-      "released": false,
+      "released": true,
       "colours": [
         {
           "id": 31370,
@@ -13645,7 +13645,7 @@
       "version": "1",
       "key": 3139,
       "classicId": 31390,
-      "released": false,
+      "released": true,
       "colours": [
         {
           "id": 31390,
@@ -13963,7 +13963,7 @@
       "version": "1",
       "key": 3145,
       "classicId": 31450,
-      "released": false,
+      "released": true,
       "colours": [
         {
           "id": 31450,
@@ -14758,7 +14758,7 @@
       "version": "1",
       "key": 3161,
       "classicId": 31610,
-      "released": false,
+      "released": true,
       "colours": [
         {
           "id": 31610,

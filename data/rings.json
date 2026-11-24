@@ -477,8 +477,7 @@
    "file": "sprites/ring/1112259.png",
    "w": 89,
    "h": 61,
-   "design": 123,
-   "released": false
+   "design": 123
   },
   {
    "name": "Oink Word Bubble Ring",
@@ -2249,7 +2248,6 @@
    "w": 88,
    "h": 25,
    "design": 122,
-   "released": false,
    "tag": {
     "dir": "sprites/ring/tag/1112144",
     "source": "cut from the sample picture",

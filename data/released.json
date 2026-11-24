@@ -35,7 +35,13 @@
    "Slick Dean",
    "Babby Cut",
    "Romance",
-   "Cabana Boy Hair"
+   "Cabana Boy Hair",
+   "Sweet Flip Hair",
+   "Cute Boy Hair",
+   "Tornade Hair",
+   "Messy Spikes",
+   "Metro",
+   "Fury"
   ],
   "female": [
    "Cutie Hair",
@@ -71,7 +77,13 @@
    "Curly Stream Hair",
    "Princess Warrior",
    "Dashing Damsel",
-   "Carla"
+   "Carla",
+   "Wavy Pigtails Hair",
+   "Aria Hair",
+   "Darling Diva",
+   "Swooshy Ponytail Hair",
+   "Monica Hair",
+   "Fluffy Dolly Hair"
   ]
  },
  "face": {
@@ -110,7 +122,13 @@
    "Confused Look",
    "Oliver Face",
    "Almond Face",
-   "Moonlight Eyes"
+   "Moonlight Eyes",
+   "Noblesse Face",
+   "Sulky Look",
+   "Piercing Gaze",
+   "Glamor Look",
+   "Intelligent Eyes",
+   "Edge of Emotion"
   ],
   "female": [
    "Defiant Face",
@@ -147,7 +165,13 @@
    "Confused Look",
    "Olivia Face",
    "Soul's Window",
-   "Angel Glow"
+   "Angel Glow",
+   "Noblesse Face",
+   "Timid Face",
+   "Pucker Up Face",
+   "Arrogant Face",
+   "Wisdom Glance",
+   "Hypnotized Look"
   ]
  }
 }
