@@ -21,7 +21,7 @@ const read = f => JSON.parse(readFileSync(f, 'utf8'));
 const strings = image('String', 'Eqp.img');
 const nameOf = id => { const n = at(strings, `ClassicWorld/${FOLDER}/${id}`); return n ? str(n, 'name') : null; };
 const genderOf = base => kind === 'hair' ? (base >= 30000 && base < 31000 ? 'male' : base >= 31000 && base < 32000 ? 'female' : 'both') : (base >= 20000 && base < 21000 ? 'male' : base >= 21000 && base < 22000 ? 'female' : 'both');
-const SKIN_TONES = [0, 1, 2, 3, 4, 5, 9, 10, 11, 12, 13]; // the skin tones the app has (catalog.skins[].tone)
+const SKIN_TONES = [0, 1, 2, 3, 4, 5, 9, 10, 11, 12]; // the skin tones the app has (catalog.skins[].tone)
 const pairs = s => (s ?? '').match(/.{1,2}/g) ?? [];
 
 const items = read('data/items.json');

@@ -50,7 +50,9 @@ const PREVIEW_VIEW = 150;
 const PREVIEW_FOCUS = [OX + 22, OY + 30];
 
 // In-game skin names (MeowDB, MapleStory Classic skin tones). Ids not listed here are not in Classic, so they are hidden.
-const SKIN_NAMES = { 0: 'Light', 1: 'Tan', 2: 'Brown', 3: 'Pale', 4: 'Ashen', 5: 'Green', 10: 'Pink', 11: 'Warm' };
+// The game's own names (String/Eqp.img ClassicWorld/Skin) are Dark, Blue Gray, Fair and Clay for 2, 4, 10 and 11; it numbers its tones differently
+// (Ghostly 5, Fair 6, Alabaster 7, Clay 8, Green 9), checked pixel for pixel against these pictures. Tone 13 (GMS only, not in the game files) was removed.
+const SKIN_NAMES = { 0: 'Light', 1: 'Tan', 2: 'Brown', 3: 'Pale', 4: 'Ashen', 5: 'Green', 9: 'Ghostly', 10: 'Pink', 11: 'Warm', 12: 'Alabaster' };
 
 const $ = id => document.getElementById(id);
 const el = (tag, props = {}, ...kids) => {

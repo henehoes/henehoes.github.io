@@ -129,7 +129,7 @@ A tab shows a check (`.tick`) when something in it is worn (never on Look Book, 
 - Other tabs have a per-list search box. It clears on tab change and is absent on Released, Upcoming and Look Book.
 
 **Body.**
-- Cards show the whole body per skin (`SKIN_NAMES`; tones 9, 12, 13 are not in Classic and are hidden).
+- Cards show the whole body per skin (`SKIN_NAMES`: 10 tones). The game has 10 skins (`Character/0000200N.img`, names in `String/Eqp.img` ClassicWorld/Skin 12000-12009: Light, Tan, Dark, Pale, Blue Gray, Ghostly, Fair, Alabaster, Clay, Green), numbered differently from our tones (our 9 = game 5 Ghostly, 10 = Fair, 12 = Alabaster, 11 = Clay, 5 = Green; compared pixel for pixel on 2026-11-25). Our old tone 13 (a GMS-only grey-white, not in the game files) was deleted on 2026-11-25 at the owner's request, with its pictures and its entry in every hair-shade `tones` list. Check the skin list at every datamine. Our names for 2, 4, 10, 11 (Brown, Ashen, Pink, Warm) differ from the game's (Dark, Blue Gray, Fair, Clay); not changed without the owner's say.
 - `Gender: Male | Female` (`renderSexPicker`, `state.sex`) picks the undergarments. It is separate from the Face/Hair list filter; whether they should be linked is undecided.
 
 **Face and Hair (`renderStyles`).**
