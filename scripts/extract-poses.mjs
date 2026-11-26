@@ -12,6 +12,7 @@ import { readCatalog } from './lib-catalog.mjs';
 import { readFileSync, writeFileSync, mkdirSync, rmSync, renameSync, readdirSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { image, png, originOf, at, str, val } from './lib-wz.mjs';
+import { gameToneOf } from './lib-skins.mjs';
 
 // The pose buttons' attack motions, as the game numbers them: each click plays the next one, then the character rests in the motion's
 // stance (stand2 holds the weapon in both hands). A weapon offers a motion when its file has any of the motion's actions (in the class
@@ -25,7 +26,7 @@ const MOTIONS = {
   crossbow: { acts: ['shoot2'], rest: 'stand2' },
 };
 const ACTIONS = [...Object.values(MOTIONS).flatMap(m => [...m.acts, ...m.fallback ?? []]), 'stand2', 'ladder'];
-const SKIN_TONES = [0, 1, 2, 3, 4, 5, 9, 10, 11, 12, 13];
+const SKIN_TONES = readCatalog().skins.map(s => s.tone); // every skin the app shows: a new one must be in lib-skins.mjs GAME_TONE, or this stops
 const FOLDERS = { 100: 'Cap', 101: 'Accessory', 102: 'Accessory', 103: 'Accessory', 104: 'Coat', 105: 'Longcoat', 106: 'Pants', 107: 'Shoes', 108: 'Glove', 110: 'Cape', 170: 'Weapon' };
 const POINT_ORDER = ['brow', 'hand', 'handMove', 'navel', 'neck'];
 
@@ -104,7 +105,7 @@ const frameOf = (img, path) => follow(at(img, path), img);
 const framesOf = (img, act) => { const a = at(img, act); return a ? [...a.wzProperties()].filter(f => /^\d+$/.test(f.getName())).length : 0; };
 
 // ---- the body ----
-const bodyImg = t => image('Character', `000020${String(t).padStart(2, '0')}.img`), headImg = t => image('Character', `000120${String(t).padStart(2, '0')}.img`);
+const bodyImg = t => image('Character', `000020${String(gameToneOf(t)).padStart(2, '0')}.img`), headImg = t => image('Character', `000120${String(gameToneOf(t)).padStart(2, '0')}.img`); // t: OUR tone (see lib-skins.mjs)
 // game -> app coordinates: the standing pose's navel is the catalogue's navel (17, 45)
 const standPoints = {}; place([...pieces(frameOf(bodyImg(0), 'stand1/0'), bodyImg(0)), ...pieces(frameOf(headImg(0), 'stand1/0'), headImg(0))], standPoints);
 const DX = 17 - standPoints.navel[0], DY = 45 - standPoints.navel[1];
@@ -131,6 +132,12 @@ for (const act of ACTIONS) {
     body.actions[act].push({ delay: Number(str(f0, 'delay') ?? 250), face: str(f0, 'face') !== 0, points: Object.fromEntries(Object.entries(points).map(([k, v]) => [k, app(v)])), parts: [...parts.values()] });
   }
 }
+// Every skin tone must have a body and a head in every frame of every action (a skin with no attack sprites was shipped once).
+for (const act of ACTIONS) body.actions[act].forEach((fr, i) => {
+  for (const tone of SKIN_TONES) for (const layer of act === 'ladder' ? ['backBody', 'backHead'] : ['body', 'head']) {
+    if (!fr.parts.some(p => p.layer === layer && p.files[tone])) throw new Error(`skin tone ${tone} has no ${layer} picture in ${act} frame ${i}: check lib-skins.mjs GAME_TONE`);
+  }
+});
 body.stand = Object.fromEntries(Object.entries(standPoints).map(([k, v]) => [k, app(v)]));
 body.motions = MOTIONS;
 writeFileSync('public/poses/body.json', JSON.stringify(body));

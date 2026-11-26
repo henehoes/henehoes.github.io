@@ -1004,6 +1004,15 @@ await page.screenshot({ path: 'tmp/ui-final.png' });
   await ultra.close();
 }
 
+// Every skin tone has attack, two-handed and ladder sprites: a body and head picture in every frame of every action (Ghostly and
+// Alabaster once had none, because the extractor read the game's skin files by our tone number, which the game numbers differently)
+{
+  const tones = readCatalog().skins.map(s => s.tone), body = JSON.parse(readFileSync('public/poses/body.json', 'utf8'));
+  const missing = [];
+  for (const [act, frames] of Object.entries(body.actions)) frames.forEach((fr, i) => { for (const t of tones) for (const l of act === 'ladder' ? ['backBody', 'backHead'] : ['body', 'head']) if (!fr.parts.some(p => p.layer === l && p.files[t])) missing.push(`${t}:${act}/${i}:${l}`); });
+  check('poses: every skin tone has a body and head picture in every frame of every attack, two-handed and ladder pose', tones.length >= 10 && Object.keys(body.actions).length > 10 && !missing.length, missing.slice(0, 5).join(' '));
+}
+
 // Hair is the front view only (no backDefault layers: those are the back-facing pose) plus the hair shade, one picture per skin tone
 {
   const FULL = readCatalog();
